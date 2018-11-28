@@ -14,10 +14,17 @@
 Route::get('/', function () {
     return view('welcome');
 });
-Route::get('/admin', function () {
-    return view('welcome');
-});
-Auth::routes();
+Route::get('/admin', ['uses'=>'Admin\LoginController@showLoginForm']);
+Route::get('/admin/login', ['uses'=>'Admin\LoginController@showLoginForm','as'=>'admin.login']);
+Route::post('/admin/login',['uses'=>'Admin\LoginController@login']);
+Route::get('/admin/logout', ['uses'=>'Admin\LoginController@logout','as'=>'admin.logout']);
 
+Auth::routes();
 Route::get('/home', 'HomeController@index')->name('home');
-Route::any('/wechat', ['use'=>'weixin/WechatinitController@serve']);
+
+Route::group(['prefix' => 'admin', 'namespace' => 'Admin','middleware'=>['admin:admin','menu']], function () {
+    include base_path('routes/admin.php');
+});
+Route::group(['prefix' => 'weixin', 'namespace' => 'weixin'], function () {
+    include base_path('routes/weixin.php');
+});
