@@ -12,14 +12,16 @@
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect()->route('admin.login');
 });
-Route::get('/admin', ['uses'=>'Admin\LoginController@showLoginForm']);
-Route::get('/admin/login', ['uses'=>'Admin\LoginController@showLoginForm','as'=>'admin.login']);
+Route::get('/admin', ['uses'=>'Admin\LoginController@showLoginForm','as'=>'admin.login']);
+Route::get('/admin/login', function () {
+    return redirect()->route('admin.login');
+});
 Route::post('/admin/login',['uses'=>'Admin\LoginController@login']);
 Route::get('/admin/logout', ['uses'=>'Admin\LoginController@logout','as'=>'admin.logout']);
 
-Auth::routes();
+//Auth::routes();
 Route::get('/home', 'HomeController@index')->name('home');
 
 Route::group(['prefix' => 'admin', 'namespace' => 'Admin','middleware'=>['admin:admin','menu']], function () {
