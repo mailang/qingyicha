@@ -69,11 +69,11 @@ class LoginController extends Controller
      */
     public function logout(Request $request)
     {
-        $this->guard()->logout();
+        $this->guard('admin')->logout();
 
         $request->session()->invalidate();
 
-        return redirect('admin/');
+        return redirect('/admin');
     }
 
     /**在验证里面加入验证码的规则验证即可

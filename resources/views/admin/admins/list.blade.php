@@ -1,6 +1,6 @@
 @include('admin.layouts.header')
 <body>
-<nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 管理员管理 <span class="c-gray en">&gt;</span> 管理员列表 <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a></nav>
+<nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 系统管理 <span class="c-gray en">&gt;</span> 管理员列表 <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a></nav>
 <div class="page-container">
     <div class="text-c"> 日期范围：
         <input type="text" onfocus="WdatePicker({ maxDate:'#F{$dp.$D(\'datemax\')||\'%y-%M-%d\'}' })" id="datemin" class="input-text Wdate" style="width:120px;">
@@ -33,11 +33,11 @@
             <td>{{$item->username}}</td>
             <td>{{$item->realname}}</td>
             <td>{{$item->created_at}}</td>
-            <td class="td-status"><span class="label label-success radius">{{$item->isenable==1?"已启用":"停用"}}</span></td>
+            <td class="td-status"><span class="label {{$item->isenable==1?"label-success":"label-default"}} radius">{{$item->isenable==1?"启用":"禁用"}}</span></td>
             <td class="td-manage">
-                <a style="text-decoration:none" onClick="admin_stop(this,'10001')" href="javascript:;" title="停用"><i class="Hui-iconfont">&#xe631;</i></a>
+                <a style="text-decoration:none" onClick="admin_stop(this,'{{$item->id}}')" href="javascript:;" title="停用"><i class="Hui-iconfont">&#xe631;</i></a>
                 <a title="编辑" href="javascript:;" onclick="admin_edit('管理员编辑','{{route('admins.add',$item->id)}}','1','800','500')" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe6df;</i></a>
-                <a title="删除" href="javascript:;" onclick="admin_del(this,'1')" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe6e2;</i></a></td>
+                <a title="删除" href="javascript:;" onclick="admin_del(this,'{{$item->id}}')" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe6e2;</i></a></td>
         </tr>
             @endforeach
         </tbody>
@@ -65,12 +65,12 @@
     function admin_del(obj,id){
         layer.confirm('确认要删除吗？',function(index){
             $.ajax({
-                type: 'POST',
-                url: '',
-                dataType: 'json',
+                type: 'get',
+                url: '/admin/admins/delete/'+id,
+                dataType: 'text',
                 success: function(data){
                     $(obj).parents("tr").remove();
-                    layer.msg('已删除!',{icon:1,time:1000});
+                    layer.msg(data,{icon:1,time:1000});
                 },
                 error:function(data) {
                     console.log(data.msg);
@@ -85,13 +85,22 @@
     }
     /*管理员-停用*/
     function admin_stop(obj,id){
-        layer.confirm('确认要停用吗？',function(index){
-            //此处请求后台程序，下方是成功后的前台处理……
-
+           layer.confirm('确认要停用吗？',function(index){
+               $.ajax({
+                   type: 'get',
+                   url: '/admin/admins/forbid/'+id,
+                   dataType: 'text',
+                   success: function(data){
+                       layer.msg(data,{icon:1,time:1000});
+                   },
+                   error:function(data) {
+                       console.log(data.msg);
+                   },
+               });
             $(obj).parents("tr").find(".td-manage").prepend('<a onClick="admin_start(this,id)" href="javascript:;" title="启用" style="text-decoration:none"><i class="Hui-iconfont">&#xe615;</i></a>');
             $(obj).parents("tr").find(".td-status").html('<span class="label label-default radius">已禁用</span>');
             $(obj).remove();
-            layer.msg('已停用!',{icon: 5,time:1000});
+            layer.msg('禁用!',{icon: 5,time:1000});
         });
     }
 

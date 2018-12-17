@@ -41,6 +41,8 @@ class EntrustSetupTables extends Migration
             $table->string('name')->unique();
             $table->string('display_name')->nullable();
             $table->string('description')->nullable();
+            $table->string('url')->nullable();
+            $table->integer('pid')->default(-1);
             $table->timestamps();
         });
 

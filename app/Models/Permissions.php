@@ -8,5 +8,5 @@ class Permissions extends EntrustPermission
 {
     //
     protected $table="permissions";
-    protected $fillable=['name','display_name','link','icon','pid'];
+    protected $fillable=['name','display_name','url','icon','pid'];
 }

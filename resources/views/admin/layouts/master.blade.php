@@ -24,7 +24,7 @@
                         <a href="#" class="dropDown_A">{{ auth('admin')->user()->username}} <i class="Hui-iconfont">&#xe6d5;</i></a>
                         <ul class="dropDown-menu menu radius box-shadow">
                             <!--  <li><a href="javascript:;" onClick="myselfinfo()"></a></li>-->
-                            <li><a href="#">修改密码</a></li>
+                            <li><a onclick="javascript:layer_show('修改密码','{{route('admin.person',auth('admin')->user()->id)}}','800','500')" href="javaScript:void(0)">修改密码</a></li>
                             <li><a href="{{route('admin.logout')}}">退出</a></li>
                         </ul>
                     </li>
@@ -74,5 +74,9 @@
     @include('admin.layouts.footer')
 <!--请在下方写此页面业务相关的脚本-->
 <script type="text/javascript" src="{{asset('lib/jquery.contextmenu/jquery.contextmenu.r2.js')}}"></script>
+<script>
+
+
+</script>
 </body>
 

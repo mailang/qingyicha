@@ -6,7 +6,7 @@
                 <ul>
                     <li><a data-href="{{route('admins.list')}}" data-title="用户管理" href="javascript:void(0)">用户管理</a></li>
                     <li><a data-href="{{route('roles.list')}}" data-title="角色管理" href="javascript:void(0)">角色管理</a></li>
-                    <li><a data-href="article-list.html" data-title="资讯管理" href="javascript:void(0)">栏目管理</a></li>
+                    <li><a data-href="{{route('permissions.list')}}" data-title="栏目管理" href="javascript:void(0)">栏目管理</a></li>
                 </ul>
             </dd>
         </dl>

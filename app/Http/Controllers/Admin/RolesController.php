@@ -39,7 +39,6 @@ class RolesController extends Controller
                     $permitids[] = $v->id;
                 }
             }
-            //dd($permitids);
             return  view('admin.roles.edit',compact('permissions','roles','permitids'));
         }
         else return view('admin.roles.add',compact('permissions'));
@@ -53,18 +52,19 @@ class RolesController extends Controller
      */
     public function store(Request $request)
     {
-        //
-        $req=$request->all();
-        $role=$req['new'];
-        $role["display_name"]=$role['name'];
-        $newrole=Roles::create($role);
-        $permissions=$req['permissions'];
+        $role=$request->all();
+        $roles["display_name"]=$role['name'];
+        $roles["name"]=$role['name'];
+        $roles["description"]=$role['description'];
+        $newrole=Roles::create($roles);
+        $permissions=$role['permissions'];
         if ($newrole&&$permissions)
         {
             $newrole->attachPermissions($permissions);
-            flash('操作成功');
+            return "操作成功";
         }
-        return redirect()->back();
+        else return "操作失败";
+
     }
 
     /**
@@ -96,30 +96,24 @@ class RolesController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
         //
-        if ($id){
-            $req=$request->all();
-            $new=$req['new'];
-            $role=Roles::find($id);
+            $new=$request->all();
+            $role=Roles::find($new["id"]);
             $role->name=$new['name'];
             $role->save();
             /*权限更新*/
             // dd($role->perms);
-
             $permitids=array();
             foreach ($role->perms as $v) {
                 $permitids[] = $v->id;
             }
             if ($permitids) $role->detachPermissions($permitids);//已有权限回收
             //dd($req['permissions'][0]);
-            $role->attachPermissions($req['permissions']);//重新分配新权限
-            flash("操作成功");
-        }else flash("参数错误");
-        return redirect()->back();
-
-
+            if(isset($new['permissions']))
+            $role->attachPermissions($new['permissions']);//重新分配新权限
+            return "操作成功";
     }
 
     /**
@@ -138,8 +132,7 @@ class RolesController extends Controller
             if ($roles)
             {
                 $roles->delete([$id]);
-                flash('删除成功');
-                return redirect()->back();
+               return "删除成功";
             }
         }
     }

@@ -22,14 +22,12 @@ class PermissionsController extends Controller
             $permissions=DB::table('permissions')->where('pid', '-1')->get();
         return view('admin.permission.list',compact('permissions','pid'));
     }
-    public function permschild($pid)
+     /*子栏目*/
+    public function child($id)
     {
-        if ($pid)
-        {
-            return view('admin.permission.add',compact('pid'));
-        }
+        $permissions=DB::table('permissions')->where('pid', $id)->get();
+        return view('admin.permission.child',compact('permissions'));
     }
-
     /**
      * Show the form for creating a new resource.
      *
@@ -37,10 +35,11 @@ class PermissionsController extends Controller
      */
     public function create($id=null)
     {
+        $permission=DB::table('permissions')->where('pid', '-1')->get();
         if ($id) {
-            $permission=Permissions::find($id);
-            return view('admin.permission.edit', compact('permission'));
-        } else{ $pid='-1'; return view('admin.permission.add',compact('pid'));}
+            $per=Permissions::find($id);
+            return view('admin.permission.edit', compact('permission','per'));
+        } else{return view('admin.permission.add',compact('permission'));}
     }
 
     /**
@@ -56,44 +55,17 @@ class PermissionsController extends Controller
      */
     public function store(Request $request)
     {
-        $req=$request->all();
-        $permission=$req['new'];
-        //$permission['pid']='-1';
+        $permission=$request->all();
         $permission['display_name']=$permission['name'];
         //dd($permission);
         $exist=Permissions::where('name',$permission['name'])->first();
-        if ($exist) {flash("该模块已经添加");return redirect()->back();}
+        if ($exist) { return "该模块已经添加";}
         else{
             $insert=Permissions::create($permission);
-            if ($insert) flash("操作成功");
-            else flash('操作失败');
-            return redirect()->back();
+            if ($insert)return  "操作成功";
+            else return '操作失败';
         }
     }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-
-    }
-
     /**
      * Update the specified resource in storage.
      *
@@ -101,19 +73,16 @@ class PermissionsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
-        if ($id){
-            $req=$request->all();
-            $permission=Permissions::find($id);
-            $new=$req['new'];
-            $permission['link']=$new['link'];
-            $permission['icon']=$new['icon'];
+            $new=$request->all();
+            $permission=Permissions::find($new["id"]);
+            $permission['url']=$new['url'];
             $permission['description']=$new['description'];
+            $permission['pid']=$new['pid'];
+           $permission['name']=$new['name'];
             $permission->save();
-            flash('操作成功');
-            return redirect()->back();
-        }
+            echo "操作成功";
     }
 
     /**
@@ -127,15 +96,12 @@ class PermissionsController extends Controller
 
         $child = Permissions::where('pid', $id)->first();
         if ($child) {
-            return redirect()->back()
-                ->withErrors("请先将子菜单删除后再做删除操作!");
+            DB::table('Permissions')->where('pid',"=",$id)->delete();
         }
-        else
-        {
             $permission= Permissions::find($id);
             $permission->delete([$id]);
-            return redirect()->back()->withSuccess('删除成功');
-        }
+            return "删除成功";
+
 
     }
 }
