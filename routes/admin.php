@@ -30,3 +30,6 @@ Route::post('/permissions/store', ['uses'=>'PermissionsController@store','as'=>'
 Route::post('/permissions/update', ['uses'=>'PermissionsController@update','as'=>'permissions.update']);
 Route::get('/permissions/delete/{id}', ['uses'=>'PermissionsController@destroy','as'=>'permissions.delete']);
 Route::get('/permissions/child/{id}', ['uses'=>'PermissionsController@child','as'=>'permissions.child']);
+/*微信菜单增删改*/
+Route::get('/menu/list', ['uses'=>'MenuController@edit','as'=>'menu.list']);
+Route::post('/menu/update', ['uses'=>'MenuController@update_menu','as'=>'menu.update']);

@@ -2,6 +2,7 @@
 
 namespace App\Http;
 
+use App\Http\Middleware\WechatOauth;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
 class Kernel extends HttpKernel
@@ -59,5 +60,6 @@ class Kernel extends HttpKernel
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'admin'=>\App\Http\Middleware\AdminsAuthenticate::class,
         'menu'=>\App\Http\Middleware\Leftmenu::class,
+        'oauth'=>WechatOauth::class,
     ];
 }

@@ -17,10 +17,10 @@
     <link rel="stylesheet" type="text/css" href="{{asset('lib/Hui-iconfont/1.0.8/iconfont.css')}}" />
     <link rel="stylesheet" type="text/css" href="{{asset('static/h-ui.admin/skin/default/skin.css')}}" id="skin" />
     <link rel="stylesheet" type="text/css" href="{{asset('static/h-ui.admin/css/style.css')}}" />
+    <script type="text/javascript" src="{{asset('lib/jquery/1.9.1/jquery.min.js')}}"></script>
     <!--[if IE 6]>
     <script type="text/javascript" src="{{asset('lib/DD_belatedPNG_0.0.8a-min.js')}}" ></script>
     <script>DD_belatedPNG.fix('*');</script>
     <![endif]-->
     <title>后台管理系统</title>
-    @yield('header')
 </head>

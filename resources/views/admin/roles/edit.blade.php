@@ -1,4 +1,4 @@
-@extends('admin.layouts.header')
+@include('admin.layouts.header')
 <body>
 <article class="page-container">
     <form action="" method="post" class="form form-horizontal" id="form-admin-role-add">

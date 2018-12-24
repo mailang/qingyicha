@@ -10,6 +10,14 @@
                 </ul>
             </dd>
         </dl>
+        <dl id="menu-weixin">
+            <dt class="selected" ><i class="Hui-iconfont" >&#xe616;</i> 微信管理<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
+            <dd>
+                <ul>
+                    <li><a data-href="{{route('menu.list')}}" data-title="菜单管理" href="javascript:void(0)">菜单管理</a></li>
+                </ul>
+            </dd>
+        </dl>
         <!--
         <dl id="menu-picture">
             <dt><i class="Hui-iconfont">&#xe613;</i> 图片管理<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
