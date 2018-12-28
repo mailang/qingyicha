@@ -33,11 +33,10 @@ class MenuController extends Controller
             $app = app('wechat.official_account');
            $msg=$app->menu->create($buttons);
             //"errcode":48001,"errmsg":"api unauthorized hint
-            $msg=\GuzzleHttp\json_decode($msg);
-            if ($msg["errcode"]!="")
-                return $msg["errmsg"];
-            else
-            return "操作成功";
+            if ($msg["errcode"]!=0)
+                return "错误码".$msg["errcode"].":".$msg["errmsg"];
+                else
+             return "操作成功";
         }
         catch (Exception $ex){
             return abort('400',$ex->getMessage());
