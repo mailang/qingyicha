@@ -31,5 +31,10 @@ Route::post('/permissions/update', ['uses'=>'PermissionsController@update','as'=
 Route::get('/permissions/delete/{id}', ['uses'=>'PermissionsController@destroy','as'=>'permissions.delete']);
 Route::get('/permissions/child/{id}', ['uses'=>'PermissionsController@child','as'=>'permissions.child']);
 /*微信菜单增删改*/
-Route::get('/menu/list', ['uses'=>'MenuController@edit','as'=>'menu.list']);
+Route::get('/menu/list',function(){return view('admin.wechat.list');})->name('menu.list');
+Route::get('/menu/getdata', ['uses'=>'MenuController@getdata','as'=>'menu.data']);
+Route::get('/menu/add/{id?}', ['uses'=>'MenuController@create','as'=>'menu.add']);
+Route::get('/menu/delete/{id}', ['uses'=>'MenuController@destroy','as'=>'menu.del']);
+Route::post('/menu/store', ['uses'=>'MenuController@store','as'=>'menu.store']);
 Route::post('/menu/update', ['uses'=>'MenuController@update_menu','as'=>'menu.update']);
+Route::get('/menu/push', ['uses'=>'MenuController@push_menu','as'=>'menu.push']);

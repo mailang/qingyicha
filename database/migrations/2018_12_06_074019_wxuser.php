@@ -17,11 +17,11 @@ class Wxuser extends Migration
             $table->increments('id');
             $table->string('openid')->unique();
             $table->string('nickname');
-            $table->string('sex');
-            $table->string('province');
-            $table->string('city');
-            $table->string('country');
-            $table->string('mobile');
+            $table->string('sex')->nullable();
+            $table->string('province')->nullable();
+            $table->string('city')->nullable();
+            $table->string('country')->nullable();
+            $table->string('mobile')->nullable();
             $table->timestamps();
         });
     }

@@ -15,7 +15,6 @@
                 <input type="text" class="input-text" value="" autocomplete="off" placeholder="" id="realname" name="realname">
             </div>
         </div>
-
         <div class="row cl">
             <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>初始密码：</label>
             <div class="formControls col-xs-8 col-sm-9">
