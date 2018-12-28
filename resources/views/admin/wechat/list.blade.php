@@ -11,7 +11,7 @@
     <div style="color: red;font-size: 12px; padding-left: 18px;"> 温馨提示：添加修改菜单栏目后需要点击同步微信，公众号栏目才会更新 </div>
     <div class="page-container" style=" text-align: center">
         <div class="cl pd-5 bg-1 bk-gray" style="text-align: left;">
-            <span >  <a class="btn btn-primary radius" href="javascript:;" onclick="wemenu_add('添加菜单','http://wechat.app/admin/menu/add','800')"><i class="Hui-iconfont"></i> 添加菜单</a> </span>
+            <span >  <a class="btn btn-primary radius" href="javascript:;" onclick="wemenu_add('添加菜单','/admin/menu/add','800')"><i class="Hui-iconfont"></i> 添加菜单</a> </span>
             <span >  <a class="btn btn-primary radius" href="javascript:;" onclick="push_menu()"> 同步到微信</a> </span>
         </div>
         <table id="table"></table>
