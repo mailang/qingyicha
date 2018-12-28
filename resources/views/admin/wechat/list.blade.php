@@ -8,7 +8,7 @@
 <form action="{{route('menu.update')}}" method="post">
     <input type="hidden" name="_token" value="{{ csrf_token() }}" />
     <nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 微信管理 <span class="c-gray en">&gt;</span> 菜单管理 <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a></nav>
-    <div style="color: red;font-size: 12px; padding-left: 18px;"> 温馨提示：添加修改菜单栏目后需要点击同步微信，公众号栏目才会更新 </div>
+    <div style="color: red;font-size: 12px; padding-left: 18px;"> 温馨提示：添加修改菜单栏目后需要点击同步微信，公众号栏目才会更新<br> 如果存在二级菜单，二级菜单个数至少有一个 </div>
     <div class="page-container" style=" text-align: center">
         <div class="cl pd-5 bg-1 bk-gray" style="text-align: left;">
             <span >  <a class="btn btn-primary radius" href="javascript:;" onclick="wemenu_add('添加菜单','/admin/menu/add','800')"><i class="Hui-iconfont"></i> 添加菜单</a> </span>
@@ -25,7 +25,7 @@
                url:'{{route('menu.push')}}',
                 dataType:'text',
                 success: function(data){
-                    layer.msg(data,{icon:1,time:1000});
+                    layer.msg(data,{icon:1,time:4000});
                 },
                 error:function(data) {
                     layer.msg(data);
