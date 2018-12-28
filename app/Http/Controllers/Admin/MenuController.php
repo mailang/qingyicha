@@ -31,7 +31,12 @@ class MenuController extends Controller
             $buttons= array_merge($buttons,$arr);
         }
             $app = app('wechat.official_account');
-            $app->menu->create($buttons);
+           $msg=$app->menu->create($buttons);
+            //"errcode":48001,"errmsg":"api unauthorized hint
+            $msg=\GuzzleHttp\json_decode($msg);
+            if ($msg["errcode"]!="")
+                return $msg["errmsg"];
+            else
             return "操作成功";
         }
         catch (Exception $ex){
