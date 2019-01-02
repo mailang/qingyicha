@@ -22,6 +22,8 @@ class Wxuser extends Migration
             $table->string('city')->nullable();
             $table->string('country')->nullable();
             $table->string('mobile')->nullable();
+            /*推荐人*/
+            $table->string('referee')->default(0);
             $table->timestamps();
         });
     }
