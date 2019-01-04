@@ -10,7 +10,7 @@ class SubscribeController extends Controller
 
     function init()
     {
-            $content=file_get_contents(app_path('Src/chat.json'));
+            $content=file_get_contents(resource_path('json/chat.json'));
             $data=\GuzzleHttp\json_decode($content);
             $subscribe=$data[0]->subscribe;
        return view('admin.wechat.subscribe',compact('subscribe'));
@@ -19,7 +19,7 @@ class SubscribeController extends Controller
     function store(Request $request)
     {
             $req=$request->all();
-            $path=app_path('Src/chat.json');
+            $path=resource_path('json/chat.json');
             $content=file_get_contents($path);
             $data=\GuzzleHttp\json_decode($content);
             $data[0]->subscribe=$req["description"];
