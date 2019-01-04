@@ -15,6 +15,7 @@
             <dd>
                 <ul>
                     <li><a data-href="{{route('menu.list')}}" data-title="菜单管理" href="javascript:void(0)">菜单管理</a></li>
+                    <li><a data-href="{{route('weixin.subscribe')}}" data-title="关注回复" href="javascript:void(0)">关注回复</a></li>
                 </ul>
             </dd>
         </dl>

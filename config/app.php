@@ -15,6 +15,8 @@ return [
 
     'name' => env('APP_NAME', 'Laravel'),
 
+
+
     /*
     |--------------------------------------------------------------------------
     | Application Environment
@@ -171,6 +173,7 @@ return [
         Overtrue\LaravelWeChat\ServiceProvider::class,
         Zizaco\Entrust\EntrustServiceProvider::class,
         Mews\Captcha\CaptchaServiceProvider::class,
+        SimpleSoftwareIO\QrCode\QrCodeServiceProvider::class,
         /*
          * Application Service Providers...
          */
@@ -231,6 +234,7 @@ return [
         'EasyWeChat' => Overtrue\LaravelWeChat\Facade::class,
         'Entrust'   => Zizaco\Entrust\EntrustFacade::class,
         'Captcha' => Mews\Captcha\Facades\Captcha::class,
+        'QrCode' => SimpleSoftwareIO\QrCode\Facades\QrCode::class,
     ],
 
 ];

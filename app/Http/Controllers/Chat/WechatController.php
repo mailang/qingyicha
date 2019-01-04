@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use EasyWeChat\Factory;
 use EasyWeChat\Work\Application;
 use Illuminate\Support\Facades\Log;
+use  App\Src\chatevent;
 
 class WechatController extends Controller
 {
@@ -25,7 +26,8 @@ class WechatController extends Controller
             Log::info(var_export($message));
             switch ($message['MsgType']) {
                 case 'event':
-                    return '收到事件消息';
+                    $result=chatevent::handle_event($message);
+                    return $result;
                     break;
                 case 'text':
                     return '收到文字消息';
@@ -53,7 +55,6 @@ class WechatController extends Controller
                     break;
             }
         });
-
         return $app->server->serve();
 
     }

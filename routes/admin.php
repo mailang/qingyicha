@@ -38,3 +38,6 @@ Route::get('/menu/delete/{id}', ['uses'=>'MenuController@destroy','as'=>'menu.de
 Route::post('/menu/store', ['uses'=>'MenuController@store','as'=>'menu.store']);
 Route::post('/menu/update', ['uses'=>'MenuController@update_menu','as'=>'menu.update']);
 Route::get('/menu/push', ['uses'=>'MenuController@push_menu','as'=>'menu.push']);
+/*微信关注*/
+Route::get('/weixin/subscribe',['uses'=>'SubscribeController@init','as'=>'weixin.subscribe']);
+Route::post('/subscribe/store', ['uses'=>'SubscribeController@store','as'=>'subscribe.store']);

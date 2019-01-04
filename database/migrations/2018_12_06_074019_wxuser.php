@@ -16,14 +16,17 @@ class Wxuser extends Migration
         Schema::create('wxuser', function (Blueprint $table) {
             $table->increments('id');
             $table->string('openid')->unique();
-            $table->string('nickname');
+            $table->string('nickname')->nullable();
             $table->string('sex')->nullable();
             $table->string('province')->nullable();
             $table->string('city')->nullable();
             $table->string('country')->nullable();
             $table->string('mobile')->nullable();
+            $table->string('subscribe')->nullable();
             /*推荐人*/
             $table->string('referee')->default(0);
+            /*邀请码*/
+            $table->string('code');
             $table->timestamps();
         });
     }
