@@ -70,9 +70,9 @@ class  chatevent
             $app = app('wechat.official_account');
             $base=new base();
             $pgurl=$base->erweima(route('weixin.tuiguang')."?openid=o3MeN5knIrECm5dZys4nrOVRc5Ow&qyc_code=ZcprMA");
-            Log::info($pgurl);
             $result = $app->material->uploadImage($pgurl);
-            Log::info($result);
+            Log::info(var_export($result));
+            Log::info($result["media_id"]);
             //$data=\GuzzleHttp\json_decode($result);
             //if (file_exists($pgurl)) unlink($pgurl);
            // return new Image($data->media_id);
