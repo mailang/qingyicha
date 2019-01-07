@@ -19,8 +19,8 @@ class base
     function  erweima($text)
     {
         $name=\EasyWeChat\Kernel\Support\str_random(10).'.png';
-        if(!is_dir(resource_path('template/qrcodes')))
-            mkdir(resource_path('template/qrcodes'));
+        #if(is_dir(resource_path('template/qrcodes'))==false)
+         #   mkdir(resource_path('template/qrcodes'));
           $qrpath=resource_path('template/qrcodes/'.$name);
         $qrcode = new BaconQrCodeGenerator;
         $qrcode->format('png')->generate($text,$qrpath);

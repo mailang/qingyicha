@@ -72,7 +72,7 @@ class  chatevent
             $result = $app->material->uploadImage($pgurl);
             //   $result='{"media_id":"10001", "url":"http://test.com/"}';
             $data=\GuzzleHttp\json_decode($result);
-            if (file_exists($pgurl)) unlink($pgurl);
+            //if (file_exists($pgurl)) unlink($pgurl);
             return new Image($data->media_id);
         }
 
