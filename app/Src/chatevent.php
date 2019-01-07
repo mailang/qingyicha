@@ -75,7 +75,7 @@ class  chatevent
             Log::info($result["media_id"]);
             //$data=\GuzzleHttp\json_decode($result);
             //if (file_exists($pgurl)) unlink($pgurl);
-           // return new Image($data->media_id);
+           return new Image($result["media_id"]);
         }
 
 }
