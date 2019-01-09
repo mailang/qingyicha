@@ -18,21 +18,19 @@ class WechatOauth
      */
     public function handle($request, Closure $next)
     {
-       
         $app = app('wechat.official_account');
         $oauth = $app->oauth;
         // 未登录
         if (empty($_SESSION['wechat_user']))
         {
             $_SESSION['target_url'] = $request->url();
+            Session_start();
             Log::info($_SESSION['target_url'].'地址'.$request->url());
             return $oauth->redirect();
             // 这里不一定是return，如果你的框架action不是返回内容的话你就得使用
             //// $oauth->redirect()->send();
         }
         Log::info($_SESSION['wechat_user']);
-           // 已经登录过
-           $user = $_SESSION['wechat_user'];
         return $next($request);
     }
 }
