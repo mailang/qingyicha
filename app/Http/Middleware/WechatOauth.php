@@ -3,6 +3,8 @@
 namespace App\Http\Middleware;
 
 use Closure;
+use EasyWeChat\Factory;
+use Illuminate\Support\Facades\Log;
 
 class WechatOauth
 {
@@ -16,19 +18,20 @@ class WechatOauth
      */
     public function handle($request, Closure $next)
     {
-        if (empty(session("id"))){
-            $user = session('wechat.oauth_user');
-            $openid = $user['id'];
-            //检测数据库中用户账号和微信号是否绑定
-        $result="200";// = WxStudent::check_boundwechat($openid);
-        if ($result=='200'){
-            return $next($request);
-        }else{
-            return response("请登录", 403)->header("X-CSRF-TOKEN", csrf_token());
+        $app = app('wechat.official_account');
+        $oauth = $app->oauth;
+        //dd($oauth);
+        // 未登录
+        if (empty($_SESSION['wechat_user']))
+        {
+            $_SESSION['target_url'] = $request->url();
+            return $oauth->redirect();
+            // 这里不一定是return，如果你的框架action不是返回内容的话你就得使用
+            //// $oauth->redirect()->send();
         }
-    } else if(!empty(session("id"))) {
-            return $next($request);
-        }
+        dd($_SESSION['wechat_user']);
+           // 已经登录过
+           $user = $_SESSION['wechat_user'];
         return $next($request);
     }
 }

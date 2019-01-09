@@ -1,8 +1,5 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: user
- * Date: 2018/11/27
- * Time: 14:23
- */
+/*分享二维码的地址链接*/
 Route::get("/weixin/tuiguang",['uses'=>"TuiguangController@tuiguang",'as'=>'weixin.tuiguang']);
+/*我的*/
+Route::get("/chat/my",['uses'=>"MyController@mine",'as'=>'weixin.my']);

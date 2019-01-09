@@ -49,7 +49,6 @@ class WechatController extends Controller
                     break;
                 case 'file':
                     return '收到文件消息';
-                // ... 其它消息
                 default:
                     return '收到其它消息';
                     break;
@@ -57,6 +56,18 @@ class WechatController extends Controller
         });
         return $app->server->serve();
 
+    }
+
+    function  chat_callback()
+    {
+        $app = app('wechat.official_account');
+        $oauth = $app->oauth;
+        // 获取 OAuth 授权结果用户信息
+        $user = $oauth->user();
+        $_SESSION['wechat_user'] = $user->toArray();
+        $targetUrl = empty($_SESSION['target_url']) ? '/' : $_SESSION['target_url'];
+        dd($targetUrl);
+        header('location:'. $targetUrl);
     }
 
 }

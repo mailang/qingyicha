@@ -29,6 +29,9 @@ Route::group(['prefix' => 'admin', 'namespace' => 'Admin','middleware'=>['admin:
 });
 /*微信接入*/
 Route::any('/chat/wechat', ['uses'=>'Chat\WechatController@serve','as'=>'weixin.init']);
-Route::group(['prefix' => 'weixin', 'namespace' => 'Chat','middleware'=>['oauth']], function () {
+/*授权回调*/
+Route::get("/url/callback",['uses'=>"Chat\WechatController@callback",'as'=>'weixin.callback']);
+
+Route::group(['prefix' => 'weixin', 'namespace' => 'Chat','middleware'=>['web','oauth']], function () {
     include base_path('routes/weixin.php');
 });

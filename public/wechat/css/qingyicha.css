@@ -1,0 +1,23 @@
+body{height: 100%;overflow-y: auto;  background: #eee;font-family: Helvetica Neue, Helvetica, Arial, sans-serif;font-size: 14px;margin: 0;padding: 0;}
+.qyc_camera{
+    background: url("../images/camera.jpg");float: left;
+    position: relative;
+    margin-right: 9px;
+    margin-bottom: 9px;
+    width: 77px;
+    height: 77px;
+    border: 1px solid #d9d9d9;}
+.qyc_container{border-bottom: 56px solid transparent}
+.footer{bottom: 0;height: 56px;position: fixed;width: 100%;left: 0;}
+.white-bgcolor {background: #fff !important;}
+.zyw-container {position: relative;}
+/*my*/
+.home-head{padding-bottom: 16px;}
+.home-head .head-img{background: url("../images/me.jpg") no-repeat top center;position:relative;height: 168px;  width: auto; background-size:100%;}
+.home-head .head-img .head-logo {overflow: hidden;width: 70px;height: 70px;border-radius: 50px;background: #fff;position: absolute;left: 2rem;bottom: 0;margin-bottom: -35px;}
+.home-head .head-img .head-name {position: absolute;bottom: 0;left: 110px;line-height: 2.5rem;color: #fff;font-weight: bold;}
+.home-head .head-img .head-logo img {width: 100%;vertical-align: center;border: 0;}
+.tips{font-size: 0.7rem;color: #999977}
+.home-order {padding-top: 1rem;border-top: 1px solid #f2f2f2;display: flex;text-align: center;}
+.mb-625 {margin-bottom: 0.625rem;margin-top: 0;}
+.home-order .weui-flex__label {margin: 0;color: #777;font-size: 1rem;}
