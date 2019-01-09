@@ -20,10 +20,11 @@ class WechatOauth
     {
         $app = app('wechat.official_account');
         $oauth = $app->oauth;
+        Session_start();
         // 未登录
         if (empty($_SESSION['wechat_user']))
         {
-            Session_start();
+
             $_SESSION['target_url'] = $request->url();\
             Log::info($_SESSION['target_url'].'地址'.$request->url());
             return $oauth->redirect();
