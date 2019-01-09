@@ -30,9 +30,9 @@ Route::group(['prefix' => 'admin', 'namespace' => 'Admin','middleware'=>['admin:
 /*微信非授权链接*/
 Route::group(['prefix'=>'chat','namespace'=>'Chat'],function(){
     /*微信接入*/
-    Route::any('/wechat', ['uses'=>'Chat\WechatController@serve','as'=>'weixin.init']);
+    Route::any('/wechat', ['uses'=>'WechatController@serve','as'=>'weixin.init']);
     /*授权回调*/
-    Route::get("/callback",['uses'=>"Chat\WechatController@chat_callback",'as'=>'weixin.callback']);
+    Route::get("/callback",['uses'=>"WechatController@chat_callback",'as'=>'weixin.callback']);
     /*分享二维码的地址链接*/
     Route::get("/tuiguang",['uses'=>"TuiguangController@tuiguang",'as'=>'weixin.tuiguang']);
 });
