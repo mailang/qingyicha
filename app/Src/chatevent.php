@@ -12,7 +12,7 @@ class  chatevent
         switch (strtolower($message["Event"])) {
             case "subscribe":$result = chatevent::subscribe($message["FromUserName"]); break;
             case "unsubscribe":chatevent::unsubscribe($message["FromUserName"]); break;
-            case "click":if($message["EventKey"]=="qyctuiguang")  $result=chatevent::generate_tuiguang();break;
+            case "click":if($message["EventKey"]=="qyctuiguang")  $result=chatevent::generate_tuiguang($message["FromUserName"]);break;
             default : break;
         }
         return $result;
@@ -63,11 +63,12 @@ class  chatevent
      *    "url":URL
      *}
      */
-    static function generate_tuiguang()
+    static function generate_tuiguang($openid)
     {
         $app = app('wechat.official_account');
         $base=new base();
-        $pgurl=$base->erweima(route('weixin.tuiguang')."?openid=o3MeN5knIrECm5dZys4nrOVRc5Ow&qyc_code=ZcprMA");
+        $user=Wxuser::where('openid',$openid)->first();
+        $pgurl=$base->erweima(route('weixin.tuiguang')."?openid=".$openid."&qyc_code=".$user["code"]);
         $result = $app->material->uploadImage($pgurl);
         if (isset($result["errmsg"]))
             return $result["errmsg"];

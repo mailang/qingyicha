@@ -10,6 +10,7 @@ class MyController extends Controller
 
     function  mine()
     {
+
         return view('wechat.my.my');
 
     }

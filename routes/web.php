@@ -27,11 +27,15 @@ Route::get('/home', function(){ return "欢迎";})->name('home');
 Route::group(['prefix' => 'admin', 'namespace' => 'Admin','middleware'=>['admin:admin','menu']], function () {
     include base_path('routes/admin.php');
 });
-/*微信接入*/
-Route::any('/chat/wechat', ['uses'=>'Chat\WechatController@serve','as'=>'weixin.init']);
-/*授权回调*/
-Route::get("/url/callback",['uses'=>"Chat\WechatController@chat_callback",'as'=>'weixin.callback']);
-
-Route::group(['prefix' => 'weixin', 'namespace' => 'Chat','middleware'=>['web','oauth']], function () {
+/*微信非授权链接*/
+Route::group(['prefix'=>'chat','namespace'=>'Chat'],function(){
+    /*微信接入*/
+    Route::any('/wechat', ['uses'=>'Chat\WechatController@serve','as'=>'weixin.init']);
+    /*授权回调*/
+    Route::get("/callback",['uses'=>"Chat\WechatController@chat_callback",'as'=>'weixin.callback']);
+    /*分享二维码的地址链接*/
+    Route::get("/tuiguang",['uses'=>"TuiguangController@tuiguang",'as'=>'weixin.tuiguang']);
+});
+Route::group(['prefix' => 'weixin', 'namespace' => 'Chat','middleware'=>['oauth']], function () {
     include base_path('routes/weixin.php');
 });

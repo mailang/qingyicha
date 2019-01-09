@@ -8,6 +8,7 @@ use EasyWeChat\Factory;
 use EasyWeChat\Work\Application;
 use Illuminate\Support\Facades\Log;
 use  App\Src\chatevent;
+use App\Models\Wxuser;
 
 class WechatController extends Controller
 {
@@ -66,6 +67,35 @@ class WechatController extends Controller
         $user = $oauth->user();
         Session_start();
         $_SESSION['wechat_user'] = $user->toArray();
+        /*保存用户信息*/
+        $user=Wxuser::where('openid',$_SESSION['wechat_user']['openid'])->first();
+        if ($user)
+        {
+            $user["nickname"]=$_SESSION['wechat_user']['nickname'];
+            $user["sex"]=$_SESSION['wechat_user']['sex'];
+            $user["province"]=$_SESSION['wechat_user']['province'];
+            $user["city"]=$_SESSION['wechat_user']['city'];
+            $user["country"]=$_SESSION['wechat_user']['nickname'];
+            $user["mobile"]=$_SESSION['wechat_user']['nickname'];
+            $user["referee"]=empty($_SESSION['referee'])?'':$_SESSION['referee'];
+            $base=new base();
+            $user["code"]=$base->code();
+            $user->save();
+        }
+        else
+        {
+            $user["nickname"]=$_SESSION['wechat_user']['nickname'];
+            $user["sex"]=$_SESSION['wechat_user']['sex'];
+            $user["province"]=$_SESSION['wechat_user']['province'];
+            $user["city"]=$_SESSION['wechat_user']['city'];
+            $user["country"]=$_SESSION['wechat_user']['nickname'];
+            $user["mobile"]=$_SESSION['wechat_user']['nickname'];
+            $user["referee"]=empty($_SESSION['referee'])?'':$_SESSION['referee'];
+            $base=new base();
+            $user["code"]=$base->code();
+            Wxuser::create($user);
+        }
+
         $targetUrl = empty($_SESSION['target_url']) ? '/home' : $_SESSION['target_url'];
         header('location:'. $targetUrl);
     }

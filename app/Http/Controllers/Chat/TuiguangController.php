@@ -9,8 +9,8 @@ class TuiguangController extends Controller
 {
     function tuiguang()
     {
-       $reffer=$_GET["openid"];
-        $code=$_GET["qyc_code"];
+         $reffer=$_GET["openid"];
+         $code=$_GET["qyc_code"];
 
     }
 }
