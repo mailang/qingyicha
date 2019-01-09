@@ -18,7 +18,7 @@ class WechatOauth
      */
     public function handle($request, Closure $next)
     {
-        dd($request->url());
+       
         $app = app('wechat.official_account');
         $oauth = $app->oauth;
         // 未登录
