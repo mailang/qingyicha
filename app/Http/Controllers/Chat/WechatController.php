@@ -68,36 +68,33 @@ class WechatController extends Controller
         Session_start();
         $_SESSION['wechat_user'] = $user->toArray();
         /*保存用户信息*/
-        $user=Wxuser::where('openid',$_SESSION['wechat_user']['openid'])->first();
+        $user=Wxuser::where('openid',$_SESSION['wechat_user']['id'])->first();
+        $wx= $_SESSION['wechat_user']['original'];
         if ($user)
         {
-            $user["nickname"]=$_SESSION['wechat_user']['nickname'];
-            $user["sex"]=$_SESSION['wechat_user']['sex'];
-            $user["province"]=$_SESSION['wechat_user']['province'];
-            $user["city"]=$_SESSION['wechat_user']['city'];
-            $user["country"]=$_SESSION['wechat_user']['nickname'];
-            $user["mobile"]=$_SESSION['wechat_user']['nickname'];
+            $user["nickname"]=$wx['nickname'];
+            $user["sex"]=$wx['sex'];
+            $user["province"]=$wx['province'];
+            $user["city"]=$wx['city'];
+            $user["country"]=$wx['country'];
+            $data["headimgurl"]=$wx['headimgurl'];
             $user["referee"]=empty($_SESSION['referee'])?'':$_SESSION['referee'];
-            $base=new base();
-            $user["code"]=$base->code();
             $user->save();
         }
         else
         {
-            $data["openid"]=$_SESSION['wechat_user']['openid'];
-            $data["nickname"]=$_SESSION['wechat_user']['nickname'];
-            $data["sex"]=$_SESSION['wechat_user']['sex'];
-            $data["province"]=$_SESSION['wechat_user']['province'];
-            $data["city"]=$_SESSION['wechat_user']['city'];
-            $data["country"]=$_SESSION['wechat_user']['country'];
-            $data["headimgurl"]=$_SESSION['wechat_user']['headimgurl'];
-            $data["mobile"]=$_SESSION['wechat_user']['nickname'];
+            $data["openid"]=$wx['openid'];
+            $data["nickname"]=$wx['nickname'];
+            $data["sex"]=$wx['sex'];
+            $data["province"]=$wx['province'];
+            $data["city"]=$wx['city'];
+            $data["country"]=$wx['country'];
+            $data["headimgurl"]=$wx['headimgurl'];
             $data["referee"]=empty($_SESSION['referee'])?'':$_SESSION['referee'];
             $base=new base();
             $data["code"]=$base->code();
             Wxuser::create($data);
         }
-
         $targetUrl = empty($_SESSION['target_url']) ? '/home' : $_SESSION['target_url'];
         header('location:'. $targetUrl);
     }
