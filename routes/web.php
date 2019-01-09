@@ -22,7 +22,7 @@ Route::post('/admin/login',['uses'=>'Admin\LoginController@login']);
 Route::get('/admin/logout', ['uses'=>'Admin\LoginController@logout','as'=>'admin.logout']);
 
 //Auth::routes();
-Route::get('/home', 'HomeController@index')->name('home');
+Route::get('/home', function(){ return "欢迎";})->name('home');
 
 Route::group(['prefix' => 'admin', 'namespace' => 'Admin','middleware'=>['admin:admin','menu']], function () {
     include base_path('routes/admin.php');

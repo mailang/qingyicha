@@ -47,8 +47,6 @@ class  chatevent
     static function  unsubscribe($openid)
     {
         $user=Wxuser::where('openid',$openid);
-        $user["subscribe"]="subscribe";
-        $user["openid"]=$openid;
         if ($user->first())
         {
             $data=$user->first();

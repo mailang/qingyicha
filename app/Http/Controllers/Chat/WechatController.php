@@ -65,7 +65,7 @@ class WechatController extends Controller
         // 获取 OAuth 授权结果用户信息
         $user = $oauth->user();
         $_SESSION['wechat_user'] = $user->toArray();
-        $targetUrl = empty($_SESSION['target_url']) ? '/' : $_SESSION['target_url'];
+        $targetUrl = empty($_SESSION['target_url']) ? '/home' : $_SESSION['target_url'];
         header('location:'. $targetUrl);
     }
 
