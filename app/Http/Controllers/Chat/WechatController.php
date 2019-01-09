@@ -84,16 +84,18 @@ class WechatController extends Controller
         }
         else
         {
-            $user["nickname"]=$_SESSION['wechat_user']['nickname'];
-            $user["sex"]=$_SESSION['wechat_user']['sex'];
-            $user["province"]=$_SESSION['wechat_user']['province'];
-            $user["city"]=$_SESSION['wechat_user']['city'];
-            $user["country"]=$_SESSION['wechat_user']['nickname'];
-            $user["mobile"]=$_SESSION['wechat_user']['nickname'];
-            $user["referee"]=empty($_SESSION['referee'])?'':$_SESSION['referee'];
+            $data["openid"]=$_SESSION['wechat_user']['openid'];
+            $data["nickname"]=$_SESSION['wechat_user']['nickname'];
+            $data["sex"]=$_SESSION['wechat_user']['sex'];
+            $data["province"]=$_SESSION['wechat_user']['province'];
+            $data["city"]=$_SESSION['wechat_user']['city'];
+            $data["country"]=$_SESSION['wechat_user']['country'];
+            $data["headimgurl"]=$_SESSION['wechat_user']['headimgurl'];
+            $data["mobile"]=$_SESSION['wechat_user']['nickname'];
+            $data["referee"]=empty($_SESSION['referee'])?'':$_SESSION['referee'];
             $base=new base();
-            $user["code"]=$base->code();
-            Wxuser::create($user);
+            $data["code"]=$base->code();
+            Wxuser::create($data);
         }
 
         $targetUrl = empty($_SESSION['target_url']) ? '/home' : $_SESSION['target_url'];
