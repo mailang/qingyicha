@@ -13,6 +13,6 @@ class Wxuser extends Model
      * @var array
      */
     protected $fillable = [
-        'openid', 'nickname','sex','province', 'city','country','mobile','headimgurl','subscribe','referee','code'
+        'openid', 'nickname','sex','province', 'city','country','mobile','headimgurl','subscribe','referee','code','auth_id'
     ];
 }

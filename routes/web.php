@@ -23,7 +23,6 @@ Route::get('/admin/logout', ['uses'=>'Admin\LoginController@logout','as'=>'admin
 
 //Auth::routes();
 Route::get('/home', function(){ return "欢迎";})->name('home');
-
 Route::group(['prefix' => 'admin', 'namespace' => 'Admin','middleware'=>['admin:admin','menu']], function () {
     include base_path('routes/admin.php');
 });

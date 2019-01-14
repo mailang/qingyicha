@@ -26,4 +26,10 @@ class base
         $qrcode->format('png')->generate($text,$qrpath);
         return $qrpath;
     }
+
+    /*生成订单号*/
+    function  No_create()
+    {
+
+    }
 }

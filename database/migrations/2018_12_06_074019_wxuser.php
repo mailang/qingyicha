@@ -29,6 +29,8 @@ class Wxuser extends Migration
             $table->string('referee')->default(0);
             /*邀请码*/
             $table->string('code');
+            /*Authorization中的id*/
+            $table->integer('auth_id')->default(0);
             $table->timestamps();
         });
     }
