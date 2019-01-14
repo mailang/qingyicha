@@ -17,7 +17,7 @@ class CreditController extends Controller
       /*查看用户是否认证，认证了进协议页面，没有认证进入认证页面*/
       $openid=$_SESSION['wechat_user']['id'];
       $user=Wxuser::where('openid',$openid)->first();
-      if ($user)
+      if ($user["auth_id"]!=null&&$user["auth_id"]>0)
       {
             /*已认证*/
             $order=Order::where('auth_id',$user['auth_id'])->where('state','>','0')->orderByDesc('id')->limit(1)->get(['id','state']);
