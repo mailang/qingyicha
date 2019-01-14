@@ -33,5 +33,20 @@
         <div class="weui-btn-area"> <a id="SubmitBtn" href="javascript:" class="weui-btn radio_disable" disable="false">支付1元进行查询</a> </div>
     </div></section>
 @include('wechat.layouts.footer')
+<script>
+
+    function chk(obj) {
+        if ($(obj).prop("checked"))
+        {
+            $("#SubmitBtn").addClass('weui-btn_primary').removeClass('radio_disable');
+            $("#SubmitBtn").prop('disable',false);
+        }
+        else
+        {
+            $("#SubmitBtn").addClass('radio_disable').removeClass('weui-btn_primary');
+            $("#SubmitBtn").prop('disable',true);
+        }
+    }
+</script>
 </body>
 </html>
