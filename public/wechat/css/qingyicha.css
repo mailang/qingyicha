@@ -21,3 +21,10 @@ body{height: 100%;overflow-y: auto;  background: #eee;font-family: Helvetica Neu
 .home-order {padding-top: 1rem;border-top: 1px solid #f2f2f2;display: flex;text-align: center;}
 .mb-625 {margin-bottom: 0.625rem;margin-top: 0;}
 .home-order .weui-flex__label {margin: 0;color: #777;font-size: 1rem;}
+/*xieyi*/
+.bgfff{background: #fff;width: 82%;margin: 0 auto;padding: 20px;margin-top: 20px;}
+.fb{font-weight:bold;}
+.font_p{font-size:12px}
+.xieyi{height: 250px;width: 100%;overflow: auto;margin-top: 15px;}
+.xieyi p  {text-indent: 2em;color: #9c9c9c;padding-top: 15px;line-height: 18px;font-size: 12px;}
+.radio_disable{background-color:#9c9c9c;}
