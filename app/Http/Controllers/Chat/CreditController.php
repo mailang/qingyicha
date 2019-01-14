@@ -15,7 +15,7 @@ class CreditController extends Controller
   function  apply()
   {
       /*查看用户是否认证，认证了进协议页面，没有认证进入认证页面*/
-      $openid=$_SESSION["id"];
+      $openid=$_SESSION['wechat_user']['id'];
       $user=Wxuser::where('openid',$openid)->first();
       if ($user)
       {
