@@ -28,7 +28,7 @@
             </div>
         </div>
       <div class="weui-cell">
-            <div class="weui-cell__hd"><label class="weui-label">验证码</label></div>
+            <div class="weui-cell__hd"><label class="weui-label">短信验证码</label></div>
             <div class="weui-cell__bd">
                 <input id="valicode" name="valicode" class="weui-input" type="text"  placeholder="请输入验证码">
             </div>
