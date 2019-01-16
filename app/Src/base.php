@@ -27,6 +27,24 @@ class base
         return $qrpath;
     }
 
+    /*curl请求一个地址*/
+    function  get_curl($url)
+    {
+        $headers=array("Content-type: application/json;charset='utf-8'");
+        $curl=curl_init();
+        curl_setopt($curl,CURLOPT_URL,$url);
+        //curl_setopt($curl, CURLOPT_HEADER, 1);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);//返回结果存入$output变量
+        curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE); // https请求 不验证证书和hosts
+        curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, FALSE);
+        $output = curl_exec($curl);
+        curl_close($curl);
+        return $output;
+
+    }
+
+
     /*生成订单号*/
     function  No_create()
     {

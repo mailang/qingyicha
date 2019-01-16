@@ -16,4 +16,5 @@
         </a>
     </div></footer>
 <script src="{{asset('wechat/js/jquery.min.js')}}"></script>
+<script src="{{asset('wechat/js/zepto.min.js')}}"></script>
 <script src="//res.wx.qq.com/open/libs/weuijs/1.0.0/weui.min.js"></script>

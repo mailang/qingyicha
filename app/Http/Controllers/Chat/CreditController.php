@@ -8,6 +8,9 @@ use App\Models\Wxuser;
 use App\Models\Order;
 use App\Models\Authorization;
 use App\Models\User_interface;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
+use App\Src\base;
 
 class CreditController extends Controller
 {
@@ -62,15 +65,60 @@ class CreditController extends Controller
   /*获取短信认证的验证码*/
   function  validate_code()
   {
-
-
+        $path='https://rip.linrico.com/userAuthorization/addSMS?';
+        $name=urlencode($_GET["name"]);
+        $idCard=urlencode($_GET["cardNo"]);
+        $phone=urlencode($_GET["phone"]);
+        $prams='username=shbd&accessToken=40db8b4b95ac91ed6e905c80d45ebac5'."&name=".$name.'&idCard='.$idCard."&phone=".$phone;
+        $url=$path.$prams;
+        $base=new base();
+        $output=$base->get_curl($url);
+         if ($output!=null&&$output!='')
+         {
+             $msg=\GuzzleHttp\json_decode($output);
+             return $msg->message;
+         }
+         return "服务出错";
   }
   /*存储*/
   function validate_store()
   {
+      $path='https://rip.linrico.com/userAuthorization/input?';
+      $name=urlencode($_POST["name"]);
+      $idCard=urlencode($_POST["cardNo"]);
+      $phone=urlencode($_POST["phone"]);
+      $telcode=urlencode($_POST["telcode"]);
+      //用户验证成功
+      $prams='username=shbd&accessToken=40db8b4b95ac91ed6e905c80d45ebac5'."&name=".$name.'&idCard='.$idCard."&phone=".$phone."&securityCode=".$telcode;
+      $url=$path.$prams;
+      $base=new base();
+      $output=$base->get_curl($url);
+      if ($output!=null&&$output!='')
+      {
+          $msg=\GuzzleHttp\json_decode($output);
+          if ($msg->code=='1001'&&$msg->success)
+          {
+              //用户验证成功
+              $openid=$_SESSION['wechat_user']['id'];
+              $data["openid"]=$openid;
+              $data["name"]=$name;
+              $data["cardNo"]=$idCard;
+              $data["phone"]=$phone;
+              $id=DB::table('authorization')->insertGetId($data);
+              if ($id)
+              {
+                  $user=Wxuser::where('openid',$openid)->first();
+                  $user["auth_id"]=$id;
+                  $user->save();
+              }
+              return "认证成功";
+          }
+          else
+          return $msg->message;
+      }
+      return "服务出错";
 
   }
-
   /*生成订单*/
   function  order_create()
   {
