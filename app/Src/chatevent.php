@@ -37,7 +37,10 @@ class  chatevent
             $data["code"]=$base->code();
             Wxuser::create($data);
         }
-        return  "欢迎关注我们".$data["code"];
+        $path=resource_path('json/chat.json');
+        $content=file_get_contents($path);
+        $data=\GuzzleHttp\json_decode($content);
+        return  $data[0]->subscribe;
     }
 
     /*
