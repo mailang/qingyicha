@@ -1,10 +1,10 @@
 <footer class="footer">
     <div class="weui-tabbar">
-        <a href="index.html" class="weui-tabbar__item">
+        <a href="{{route('weixin.index')}}" class="weui-tabbar__item">
                     <span style="display: inline-block;position: relative;">
                         <img src="{{asset('wechat/images/foot-1.svg')}}" alt="" class="weui-tabbar__icon">
                     </span>
-            <p class="weui-tabbar__label">..信用</p>
+            <p class="weui-tabbar__label">首页</p>
         </a>
         <a href="{{route('credit.apply')}}" class="weui-tabbar__item">
             <img src="{{asset('wechat/images/foot-2.svg')}}" alt="" class="weui-tabbar__icon">

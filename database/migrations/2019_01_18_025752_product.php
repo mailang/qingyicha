@@ -22,7 +22,6 @@ class Product extends Migration
             $table->float('price')->default(0);
             $table->integer('isenable')->default(1);
             $table->timestamps();
-
         });
     }
 

@@ -38,6 +38,36 @@
             -webkit-align-items: center;
             align-items: center;
         }
+        /*图标*/
+        .nl-home-icon {
+            display: block;
+            margin: 0 auto;
+            width: 36px;
+            height: 36px;
+            background-image: url({{asset('wechat/upload/product/myserver_icon.png')}});
+            background-repeat: no-repeat;
+            background-size: 108px;
+            background-position: 0 0;
+            zoom: 1.04;
+        }
+        .home-icon01 {
+            background-position: 50% 0;
+        }
+        .home-icon02 {
+            background-position: 50% 5%;
+        }
+        .home-icon08 {
+            background-position: 50% 36.3%;
+        }
+        .home-icon09 {
+            background-position: 50% 41.9%;
+        }
+        .home-icon04 {
+            background-position: 50% 15.5%;
+        }
+        .home-icon11{
+            background-position: 50% 52.5%;
+        }
     </style>
 </head><body ontouchstart>
 <section class="qyc_container white-bgcolor">
@@ -53,6 +83,7 @@
             <!-- Add Pagination -->
             <div class="swiper-pagination"></div>
         </div>
+        <!--
         @foreach($products as $product)
         <div class="weui-grids ">
             <a href="javascript:;" class="weui-grid">
@@ -63,12 +94,44 @@
             </a>
         </div>
         @endforeach
+        -->
         <div class="weui-grids ">
+            <a href="{{route('credit.apply')}}" class="weui-grid">
+                <div class="weui-grid__icon">
+                    <i class="nl-home-icon home-icon11"></i>
+                </div>
+                <p class="weui-grid__label">普通查询</p>
+            </a>
             <a href="javascript:;" class="weui-grid">
                 <div class="weui-grid__icon">
-                    <img src="{{asset('wechat/images/foot-3.svg')}}" alt="">
+                    <i class="nl-home-icon home-icon02"></i>
                 </div>
-                <p class="weui-grid__label">银行</p>
+                <p class="weui-grid__label">社保</p>
+            </a>
+            <a href="javascript:;" class="weui-grid">
+                <div class="weui-grid__icon">
+                    <i class="nl-home-icon home-icon01"></i>
+                </div>
+                <p class="weui-grid__label">公积金</p>
+            </a>
+            <a href="javascript:;" class="weui-grid">
+                <div class="weui-grid__icon">
+                    <i class="nl-home-icon home-icon09"></i>
+                </div>
+                <p class="weui-grid__label">淘宝</p>
+            </a>
+            <a href="javascript:;" class="weui-grid">
+                <div class="weui-grid__icon">
+                    <i class="nl-home-icon home-icon08"></i>
+
+                </div>
+                <p class="weui-grid__label">支付宝报告</p>
+            </a>
+            <a href="javascript:;" class="weui-grid">
+                <div class="weui-grid__icon">
+                    <i class="nl-home-icon home-icon04"></i>
+                </div>
+                <p class="weui-grid__label">京东报告</p>
             </a>
         </div>
     </div>
