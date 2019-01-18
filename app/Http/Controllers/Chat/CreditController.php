@@ -95,7 +95,7 @@ class CreditController extends Controller
           $interfaces=Interfaces::where('pro_id',$order["pro_id"])->where('isenable',1)->get();
       }
       else
-          $interfaces=User_interface::where('order_id',$req["order_id"])->where('state',)->get();
+          $interfaces=User_interface::where('order_id',$req["order_id"])->where('state',2)->get();
 
 
       $chArr=[];
