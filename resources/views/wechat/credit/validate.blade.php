@@ -4,6 +4,7 @@
     <section class="qyc_container">
     <div class="weui-tab__panel">
             <input type="hidden" name="_token" value="{{csrf_token()}}">
+        <div class="weui-cells__title"><img src="{{asset('wechat/images/arrow.png')}}" width="30px" alt=""><font style="color:#484646; font-weight: bold;">&nbsp;实名认证</font></div>
         <div class="weui-cell">
             <div class="weui-cell__hd"><label class="weui-label">真实姓名</label></div>
             <div class="weui-cell__bd">

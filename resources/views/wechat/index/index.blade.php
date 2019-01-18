@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="{{asset('wechat/css/qingyicha.css')}}">
     <link rel="stylesheet" href="{{asset('wechat/css/swiper.min.css')}}">
     <script src="{{asset('wechat/js/swiper.min.js')}}"></script>
-    <title>信用查询</title>
+    <title>普信天下</title>
     <!-- Demo styles -->
     <style>
         html, body {

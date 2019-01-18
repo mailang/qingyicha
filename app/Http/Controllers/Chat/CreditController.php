@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Chat;
 
+use App\Models\Interfaces;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Wxuser;
@@ -73,26 +74,31 @@ class CreditController extends Controller
           return view('wechat.credit.validate');
       }
   }
-  /*征信接口查询并生成征信报告
+  /*征信接口查询并生成征信报告，一次性查询多个接口
    从订单中取出state=1的订单type,确定用户购买的产品类型，根据
   */
   function apply_store(Request $request)
   {
       $req=$request->all();
-      /* "_token" => "fJcPzt1jSfTw06Lsc7HC2DS1abMa4kBpwi083SRp"
-  "bankcard" => null
-  "entname" => null
-  "creditCode" => null
-  "licensePlate" => null
-  "carType" => "00"
-  "vin" => null
-  "engineNo" => null*/
-            $order=Order::find($req["order_id"]);//获取用户购买的订单
+      $bankcard=$req["bankcard"]==null?"":$req["bankcard"];
+      $entname=$req["entname"]==null?"":$req["entname"];
+      $creditCode=$req["creditCode"]==null?"":$req["creditCode"];
+      $licensePlate=$req["licensePlate"]==null?"":$req["licensePlate"];
+      $carType=$req["carType"]==null?"":$req["carType"];
+      $vin=$req["vin"]==null?"":$req["vin"];
+      $engineNo=$req["engineNo"]==null?"":$req["engineNo"];
+      $order=Order::find($req["order_id"]);//获取用户购买的订单
+      $auth=Authorization::find($order["auth_id"]);
+      if ($order["state"]==1)
+      {
+          //已付款未查询状态，获取查询的接口
+          $interfaces=Interfaces::where('pro_id',$order["pro_id"])->where('isenable',1)->get();
+      }
+      else
+          $interfaces=User_interface::where('order_id',$req["order_id"])->where('state',)->get();
 
-//      $srart_time = microtime(TRUE);//计算时间用
 
       $chArr=[];
-
       //创建多个cURL资源
       for($i=0; $i<1; $i++){
           $chArr[$i]=curl_init();

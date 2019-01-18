@@ -6,6 +6,6 @@
     <link rel=stylesheet href="//res.wx.qq.com/open/libs/weui/1.1.2/weui.min.css">
     <link rel="stylesheet" href="{{asset('wechat/css/qingyicha.css')}}">
     <meta name="csrf-token" content="{{ csrf_token() }}" />
-    <title>信用查询</title>
+    <title>普信天下</title>
 
 </head>
