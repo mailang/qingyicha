@@ -19,7 +19,7 @@ class Interfaces extends Migration
             $table->string('api_name');//代码调用接口判断
             $table->string('description')->nullable();//接口详细描述
             $table->integer('isenable')->default(0);//1：可用；0：不可用
-            $table->integer('type')->default(1);
+            $table->integer('pro_id');
             $table->float('price')->default(0);
             $table->integer('sort')->default(1);//排序
             $table->timestamps();

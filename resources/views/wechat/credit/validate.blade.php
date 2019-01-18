@@ -1,7 +1,7 @@
 @include('wechat.layouts.header')
-<body>
+<body  class="white-bgcolor">
 <form id="form1">
-    <section class="qyc_container white-bgcolor">
+    <section class="qyc_container">
     <div class="weui-tab__panel">
             <input type="hidden" name="_token" value="{{csrf_token()}}">
         <div class="weui-cell">

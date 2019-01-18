@@ -27,7 +27,7 @@ class Order extends Migration
             $table->integer('state')->default(0);
             $table->string ('time_start')->nullable();//格式20091225091010
             $table->string ('time_expire')->nullable();//格式20091225091010
-            $table->integer('type')->default(1); //备用字段，接口分类
+            $table->integer('pro_id'); //备用字段，接口分类
             $table->timestamps();
         });
     }

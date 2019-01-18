@@ -1,6 +1,6 @@
 @include('wechat.layouts.header')
-<body>
-<section class="qyc_container white-bgcolor">
+<body class="white-bgcolor">
+<section class="qyc_container">
     <div class="weui-tab__panel">
         <div class="bgfff form ov">
             <div class="fb">免责申明：</div>
@@ -34,7 +34,6 @@
     </div></section>
 @include('wechat.layouts.footer')
 <script>
-
     function chk(obj) {
         if ($(obj).prop("checked"))
         {
@@ -47,6 +46,34 @@
             $("#SubmitBtn").prop('disable',true);
         }
     }
+    $(function () {
+        $("#SubmitBtn").click(function () {
+            $.ajax({
+                url: '{{route('order.create')}}',
+                type: 'get',
+                datatype: 'json',
+                success: function (data) {
+                    $re=eval(data);
+                    wx.chooseWXPay({
+                        timestamp:$re["timestamp"],
+                        nonceStr: $re["nonceStr"],
+                        package: $re["package"],
+                        signType:$re["signType"],
+                        paySign: $re["paySign"], // 支付签名
+                        success: function (res) {
+                             //支付成功后的回调函数
+                             //支付成功后生成征信报告
+                        }
+                    });
+                },
+                error: function () {
+                    weui.toast('系统故障');
+                }
+            });
+
+        });
+    });
+
 </script>
 </body>
 </html>

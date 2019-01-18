@@ -44,10 +44,11 @@ class base
 
     }
 
-
     /*生成订单号*/
-    function  No_create()
+    function  No_create($id=null)
     {
-
+        if ($id!=null)return  date('YmdHis').$id.rand(1,999);
+        else
+         return   date('YmdHis').rand(1,999);
     }
 }
