@@ -59,10 +59,10 @@ return [
      */
     'official_account' => [
         'default' => [
-            'app_id' => env('WECHAT_OFFICIAL_ACCOUNT_APPID', 'wx7509ee88036f82d8'),         // AppID
-            'secret' => env('WECHAT_OFFICIAL_ACCOUNT_SECRET', '21bfc8b39a8b6fe4ceacc8bb708717fe'),    // AppSecret 0c11a028d9c17af42e0503de4a5230f4
-            'token' => env('WECHAT_OFFICIAL_ACCOUNT_TOKEN', 'qingyicha'),           // Token
-            'aes_key' => env('WECHAT_OFFICIAL_ACCOUNT_AES_KEY', 'G5yG5YtnYDNM73qzmbhJ1ldjDwf9NdQ8519ZgFc4iCV'),                 // EncodingAESKey UECgz8rYhNyP0BXs1jwB13DcPTJhBxa7qGmH7o4AyQO
+            'app_id' => env('WECHAT_OFFICIAL_ACCOUNT_APPID', 'wxaffee917b46f14d8'),         // AppID
+            'secret' => env('WECHAT_OFFICIAL_ACCOUNT_SECRET', 'fc3514ebd43539535944f2536778ed4c'),    // AppSecret 0c11a028d9c17af42e0503de4a5230f4
+            'token' => env('WECHAT_OFFICIAL_ACCOUNT_TOKEN', 'puxintianxia'),           // Token
+            'aes_key' => env('WECHAT_OFFICIAL_ACCOUNT_AES_KEY', 'ot2AplhoZnWpuzBfx6Jbx7elPBQZkyz6VJtYG4giCa3'),                 // EncodingAESKey UECgz8rYhNyP0BXs1jwB13DcPTJhBxa7qGmH7o4AyQO
 
             /*
              * OAuth 配置
@@ -76,7 +76,6 @@ return [
              ],
         ],
     ],
-
     /*
      * 开放平台第三方平台
      */
