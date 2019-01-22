@@ -65,7 +65,7 @@ $(function () {
                         {
                             weui.confirm('您已授权成功！', function(){ window.location.href='{{route('weixin.index')}}'; }, function(){ console.log('no') });
                         }
-                        else  weui.toast(data, 3000);
+                        else alert(data);//  weui.toast(data, 3000);
                     },
                     error:function () {
                       alert('系统服务出错');

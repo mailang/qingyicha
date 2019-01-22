@@ -107,12 +107,12 @@ return [
      'payment' => [
         'default' => [
             'sandbox'            => env('WECHAT_PAYMENT_SANDBOX', false),
-             'app_id'             => env('WECHAT_PAYMENT_APPID', ''),
-             'mch_id'             => env('WECHAT_PAYMENT_MCH_ID', 'your-mch-id'),
-             'key'                => env('WECHAT_PAYMENT_KEY', 'key-for-signature'),
+             'app_id'             => env('WECHAT_PAYMENT_APPID', 'wxaffee917b46f14d8'),
+             'mch_id'             => env('WECHAT_PAYMENT_MCH_ID', '1524529661'),
+             'key'                => env('WECHAT_PAYMENT_KEY', 'd0107e34707e4156b2a985c452194746'),
              'cert_path'          => env('WECHAT_PAYMENT_CERT_PATH', 'path/to/cert/apiclient_cert.pem'),    // XXX: 绝对路径！！！！
              'key_path'           => env('WECHAT_PAYMENT_KEY_PATH', 'path/to/cert/apiclient_key.pem'),      // XXX: 绝对路径！！！！
-             'notify_url'         => 'http://example.com/payments/wechat-notify',                           // 默认支付结果通知地址
+             'notify_url'         => 'http://qingyicha.com/payments/wechat-notify',                           // 默认支付结果通知地址
          ],
      ],
 

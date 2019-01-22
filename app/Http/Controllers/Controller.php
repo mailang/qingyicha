@@ -17,18 +17,26 @@ class Controller extends BaseController
     {
 
         //用户验证成功
+        $msg=\GuzzleHttp\json_decode('{"success": false,"message": "授权成功","code": 1001,"timestamp": 1544535771604}');
         $openid='o3MeN5knIrECm5dZys4nrOVRc5Ow';
-        $data["openid"]=$openid;
-        $data["name"]='张承林';
-        $data["cardNo"]="340825198902194728";
-        $data["phone"]='15675515689';
-        $id=DB::table('authorization')->insertGetId($data);
-        if ($id)
+        if ($msg->code=='1001'&&$msg->success)
         {
-            $user=Wxuser::where('openid',$openid)->first();
-            $user["auth_id"]=$id;
-            $user->save();
+            dd($msg->success);
+            //用户验证成功
+            $openid='lll';
+            $data["openid"]=$openid;
+            $data["name"]='test';
+            $data["cardNo"]='2333';
+            $data["phone"]='15675515689';
+            $id=DB::table('authorization')->insertGetId($data);
+            if ($id)
+            {
+                $user=Wxuser::where('openid',$openid)->first();
+                $user["auth_id"]=$id;
+                $user->save();
+                return "认证成功";
+            }
+            else return "服务出错";
         }
-        return "认证成功";
     }
 }

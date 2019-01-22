@@ -16,7 +16,6 @@ class Order extends Migration
         Schema::create('order', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('wxuser_id');
-            $table->integer('auth_id');
             $table->string('openid');
             $table->string('out_trade_no')->nullable();//订单号
             $table->string('transaction_id')->nullable();//微信订单号
@@ -28,13 +27,6 @@ class Order extends Migration
             $table->string ('time_start')->nullable();//格式20091225091010
             $table->string ('time_expire')->nullable();//格式20091225091010
             $table->integer('pro_id'); //备用字段，接口分类
-            $table->string('entname')->nullable();//企业名称
-            $table->string('creditCode')->nullable();//统一的信用代码
-            $table->string('licensePlate')->nullable();//车牌号
-            $table->integer('carType')->nullable();//车型,值参考文档
-            $table->string('vin')->nullable();//车架号
-            $table->string('engineNo')->nullable();//发动机号
-            $table->string('bankcard')->nullable();//银行卡号
             $table->timestamps();
         });
     }

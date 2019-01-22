@@ -52,6 +52,7 @@
                 url: '{{route('order.create')}}',
                 type: 'get',
                 datatype: 'json',
+                data:{'proid':}
                 success: function (data) {
                     $re=eval(data);
                     wx.chooseWXPay({

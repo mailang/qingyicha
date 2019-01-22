@@ -96,7 +96,7 @@
         @endforeach
         -->
         <div class="weui-grids ">
-            <a href="{{route('credit.apply')}}" class="weui-grid">
+            <a href="{{route('weixin.product',1)}}" class="weui-grid">
                 <div class="weui-grid__icon">
                     <i class="nl-home-icon home-icon11"></i>
                 </div>

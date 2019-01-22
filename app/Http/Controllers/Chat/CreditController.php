@@ -22,42 +22,42 @@ class CreditController extends Controller
         return view('wechat.credit.apply',compact('oauth','order_id'));
     }
     /*征信查询*/
-  function  apply()
+  function  apply($id)
   {
       /*查看用户是否认证，认证了进协议页面，没有认证进入认证页面*/
       $openid=$_SESSION['wechat_user']['id'];
-      $user=Wxuser::where('openid',$openid)->first();
-      if ($user["auth_id"]!=null&&$user["auth_id"]>0)
+      $order=Order::where('pro_id',$id)->where('state','>','0')->orderByDesc('id')->limit(1)->get(['id','state']);
+      if ($order->first())
       {
-            /*已认证*/
-            $order=Order::where('auth_id',$user['auth_id'])->where('state','>','0')->orderByDesc('id')->limit(1)->get(['id','state']);
-            if ($order->first())
-            {
-                $odata=$order->first();
-                //订单状态 0:未支付1：已付款，2：征信接口已成功查询；3.接口已查询存在异常接口-1：超时未支付的无效订单
-                switch ($odata['state'])
-                {
-                    case 1:  /*已付款未查询接口*/
-                        $oauth=Authorization::find($user['auth_id']);
-                        $order_id=$odata['id'];
-                        return view('wechat.credit.apply',compact('oauth','order_id')); break;
-                    case 3: $oauth=Authorization::find($user['auth_id']);
-                        $order_id=$odata['id'];
-                        return view('wechat.credit.apply',compact('oauth','order_id')); break;
-                    default:/*不存在查询失败的接口，可以重新支付查询最新的接口*/
-                        return view('wechat.credit.xieyi'); break;
-                }
-            }
-            else
-            {
-                /*不存在支付完成的订单，弹出协议让用户下单支付*/
-                return view('wechat.credit.xieyi');
-            }
+          $user=Wxuser::where('openid',$openid)->first();
+          if ($user["auth_id"]!=null&&$user["auth_id"]>0)
+          {
+              /*已认证*/
+          }
+          else
+          {
+              /*未认证用户*/
+              return view('wechat.credit.validate');
+          }
+          $odata=$order->first();
+          //订单状态 0:未支付1：已付款，2：征信接口已成功查询；3.接口已查询存在异常接口-1：超时未支付的无效订单
+          switch ($odata['state'])
+          {
+              case 1:  /*已付款未查询接口*/
+                  $oauth=Authorization::find($user['auth_id']);
+                  $order_id=$odata['id'];
+                  return view('wechat.credit.apply',compact('oauth','order_id')); break;
+              case 3: $oauth=Authorization::find($user['auth_id']);
+                  $order_id=$odata['id'];
+                  return view('wechat.credit.apply',compact('oauth','order_id')); break;
+              default:/*不存在查询失败的接口，可以重新支付查询最新的接口*/
+                  return view('wechat.credit.xieyi'); break;
+          }
       }
       else
       {
-          /*未认证用户*/
-          return view('wechat.credit.validate');
+          /*不存在支付完成的订单，弹出协议让用户下单支付*/
+          return view('wechat.credit.xieyi');
       }
   }
   /*征信接口查询并生成征信报告，一次性查询多个接口
@@ -171,6 +171,7 @@ class CreditController extends Controller
           {
               //用户验证成功
               $openid=$_SESSION['wechat_user']['id'];
+              DB::table('record')->insert([$openid,$output]);
               $data["openid"]=$openid;
               $data["name"]=$name;
               $data["cardNo"]=$idCard;
