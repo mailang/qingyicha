@@ -181,8 +181,9 @@ class CreditController extends Controller
                   $user=Wxuser::where('openid',$openid)->first();
                   $user["auth_id"]=$id;
                   $user->save();
+                  return "认证成功";
               }
-              return "认证成功";
+              else return "服务出错";
           }
           else
           return $msg->message;
