@@ -1,6 +1,7 @@
 <?php
 /*我的*/
 Route::get("/chat/my",['uses'=>"MyController@mine",'as'=>'weixin.my']);
+/*首页*/
 Route::get("/chat/index",['uses'=>"IndexController@index",'as'=>'weixin.index']);
 /*授权接口*/
 Route::get("/credit/apply",['uses'=>"CreditController@apply",'as'=>'credit.apply']);
@@ -13,3 +14,4 @@ Route::get("/test/apply",['uses'=>"CreditController@testapply",'as'=>'test.apply
 
 /*订单支付配置*/
 Route::get("/get/pay",['uses'=>"PayController@order_create",'as'=>'order.create']);//认证
+Route::get("/credit/report",['uses'=>"ReportController@report",'as'=>'credit.report']);//信用报告

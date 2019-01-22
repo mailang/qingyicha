@@ -34,8 +34,10 @@ Route::group(['prefix'=>'chat','namespace'=>'Chat'],function(){
     Route::get("/callback",['uses'=>"WechatController@chat_callback",'as'=>'weixin.callback']);
     /*分享二维码的地址链接*/
     Route::get("/tuiguang",['uses'=>"TuiguangController@tuiguang",'as'=>'weixin.tuiguang']);
+    /*支付回调*/
+    Route::get("/pay/notify",['uses'=>"PayController@pay_notify",'as'=>'weixin.tuiguang']);
 });
 //,'middleware'=>['oauth']
-Route::group(['prefix' => 'weixin', 'namespace' => 'Chat','middleware'=>['oauth']], function () {
+Route::group(['prefix' => 'weixin', 'namespace' => 'Chat'], function () {
     include base_path('routes/weixin.php');
 });

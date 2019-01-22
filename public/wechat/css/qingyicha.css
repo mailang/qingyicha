@@ -28,3 +28,13 @@ body{height: 100%;overflow-y: auto;  background: #eee;font-family: Helvetica Neu
 .xieyi{height: 250px;width: 100%;overflow: auto;margin-top: 15px;}
 .xieyi p  {text-indent: 2em;color: #9c9c9c;padding-top: 15px;line-height: 18px;font-size: 12px;}
 .radio_disable{background-color:#9c9c9c;}
+/*report*/
+.headTop {height: 85px;line-height: 85px;background: #00bf49;text-align: center;position: relative;z-index: 15;}
+.headTop .back {float: left;width: 40px;height: 44px;}
+.headTop span {font-size: 18px;color: #fff;display: inline-block;vertical-align: top;width: 70%;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;}
+.headTop .more, .headTop .btn {float: right;height: 44px;width: 40px;text-align: center;}
+.headTop .more i {margin: 19px 5px 0 0;vertical-align: top;}
+.iconDian {display: inline-block;width: 4px;height: 4px;background: #fff;border-radius: 50%;}
+.rp_person{background-color:#f0eff4;position:inherit;border-top:0.01em solid #a2a4a8;}
+.report{margin-top: 0.01em;}
+.rp_head{line-height:42px;background-color:#ccced2;position:inherit;border-top:0.01em solid #b1b4b9;color: #333333; }

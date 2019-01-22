@@ -41,8 +41,8 @@
 @include('wechat.layouts.footer')
 <script>
 $(function () {
-    /* form */
-    // 约定正则
+    weui.confirm('您已授权成功,是否立即查询', function(){ window.location.href='{{route('weixin.index')}}'; }, function(){ console.log('no') });
+
     var regexp = {
         regexp: {
             IDNUM: /(?:^\d{15}$)|(?:^\d{18}$)|^\d{17}[\dXx]$/
@@ -65,7 +65,7 @@ $(function () {
                     success:function (data) {
                         if(data=="认证成功")
                         {
-                            weui.confirm('您已授权成功,是否立即查询', function(){ self.location.href='{{route('credit.apply')}}'; }, function(){ console.log('no') });
+                            weui.confirm('您已授权成功,是否立即查询', function(){ window.location.href='{{route('weixin.index')}}'; }, function(){ console.log('no') });
                         }
                         else  weui.toast(data, 3000);
                     },

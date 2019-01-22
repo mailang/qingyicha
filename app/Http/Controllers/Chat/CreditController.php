@@ -34,32 +34,18 @@ class CreditController extends Controller
             if ($order->first())
             {
                 $odata=$order->first();
-
-                if ($odata['state']==1)
+                //订单状态 0:未支付1：已付款，2：征信接口已成功查询；3.接口已查询存在异常接口-1：超时未支付的无效订单
+                switch ($odata['state'])
                 {
-                    /*已付款未查询接口*/
-                    $oauth=Authorization::find($user['auth_id']);
-                    $order_id=$odata['id'];
-                    return view('wechat.credit.apply',compact('oauth','order_id'));
-                }
-                else
-                {
-                 if ($odata['state']==2)
-                 {
-                    /*查询是否有查询失败的接口，失败的接口可以重新查询*/
-                    $fail=User_interface::where('state','0');
-                    if (count($fail)>0)
-                    {
+                    case 1:  /*已付款未查询接口*/
                         $oauth=Authorization::find($user['auth_id']);
                         $order_id=$odata['id'];
-                        return view('wechat.credit.apply',compact('oauth','order_id'));
-                    }
-                    else
-                    {
-                        /*不存在查询失败的接口，可以重新支付查询最新的接口*/
-                        return view('wechat.credit.xieyi');
-                    }
-                 }
+                        return view('wechat.credit.apply',compact('oauth','order_id')); break;
+                    case 3: $oauth=Authorization::find($user['auth_id']);
+                        $order_id=$odata['id'];
+                        return view('wechat.credit.apply',compact('oauth','order_id')); break;
+                    default:/*不存在查询失败的接口，可以重新支付查询最新的接口*/
+                        return view('wechat.credit.xieyi'); break;
                 }
             }
             else
@@ -89,6 +75,8 @@ class CreditController extends Controller
       $engineNo=$req["engineNo"]==null?"":$req["engineNo"];
       $order=Order::find($req["order_id"]);//获取用户购买的订单
       $auth=Authorization::find($order["auth_id"]);
+      //订单状态 0:未支付1：已付款，2：征信接口已成功查询；3.接口已查询存在异常接口-1：超时未支付的无效订单
+      if (!in_array($order["state"],array(1,3))) return "暂无有效接口";
       if ($order["state"]==1)
       {
           //已付款未查询状态，获取查询的接口

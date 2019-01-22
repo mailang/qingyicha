@@ -23,11 +23,18 @@ class Order extends Migration
             $table->string('body')->nullable();//商品简单描述
             $table->float('total_fee')->nullable();//订单总金额
             $table->float('actual_fee')->nullable();//实际支付金额
-            //  订单状态 0:未支付1：已付款，2：征信接口已查询；-1：超时未支付的无效订单
+            //  订单状态 0:未支付1：已付款，2：征信接口已成功查询；3.接口已查询存在异常接口-1：超时未支付的无效订单
             $table->integer('state')->default(0);
             $table->string ('time_start')->nullable();//格式20091225091010
             $table->string ('time_expire')->nullable();//格式20091225091010
             $table->integer('pro_id'); //备用字段，接口分类
+            $table->string('entname')->nullable();//企业名称
+            $table->string('creditCode')->nullable();//统一的信用代码
+            $table->string('licensePlate')->nullable();//车牌号
+            $table->integer('carType')->nullable();//车型,值参考文档
+            $table->string('vin')->nullable();//车架号
+            $table->string('engineNo')->nullable();//发动机号
+            $table->string('bankcard')->nullable();//银行卡号
             $table->timestamps();
         });
     }
