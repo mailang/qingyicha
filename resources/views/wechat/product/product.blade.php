@@ -2,7 +2,7 @@
 <body class="white-bgcolor">
 <section class="qyc_container">
     <div class="headTop">
-        <a href="javascript:history.go(-1)" class="back"><i class="iconBack"></i></a><span>基础查询</span><a class="more"><i class="iconDian"></i><i class="iconDian"></i><i class="iconDian"></i></a>
+        <a href="javascript:history.go(-1)" class="back"><i class="iconBack"></i></a><span>{{$product->pro_name}}</span><a class="more"><i class="iconDian"></i><i class="iconDian"></i><i class="iconDian"></i></a>
     </div>
     <div class="weui-form-preview">
         <div class="weui-form-preview__hd">

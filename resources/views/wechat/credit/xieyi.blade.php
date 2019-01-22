@@ -1,6 +1,9 @@
 @include('wechat.layouts.header')
 <body class="white-bgcolor">
 <section class="qyc_container">
+    <div class="headTop">
+        <a href="javascript:history.go(-1)" class="back"><i class="iconBack"></i></a><span>{{$product->pro_name}}</span>
+    </div>
     <div class="weui-tab__panel">
         <div class="bgfff form ov">
             <div class="fb">免责申明：</div>
@@ -30,9 +33,12 @@
         <div class="weui-cells weui-cells_checkbox" style="margin-top: 0;">
             <label class="weui-cell weui-check__label" for="c1"> <div class="weui-cell__hd"> <input onclick="javascript:chk(this)" pattern="{1}" type="checkbox" class="weui-check" name="assistance" id="c1"> <i class="weui-icon-checked"></i> </div> <div class="weui-cell__bd" style="font-size: 12px">本人已阅读协议内容并接受协议各条款</div> </label>
         </div>
-        <div class="weui-btn-area"> <a id="SubmitBtn" href="javascript:" class="weui-btn radio_disable" disable="false">支付1元进行查询</a> </div>
+        <input type="hidden" value="{{$product->id}}" id="proid">
+        <div class="weui-btn-area"> <a id="SubmitBtn" href="javascript:" class="weui-btn radio_disable" disable="false">支付{{$product->price}}元进行查询</a> </div>
     </div></section>
 @include('wechat.layouts.footer')
+<script src="//res.wx.qq.com/open/js/jweixin-1.4.0.js"></script>
+<script src="http://res2.wx.qq.com/open/js/jweixin-1.4.0.js"></script>
 <script>
     function chk(obj) {
         if ($(obj).prop("checked"))
@@ -47,14 +53,25 @@
         }
     }
     $(function () {
+
+        wx.checkJsApi({
+            jsApiList: ['chooseImage'], // 需要检测的JS接口列表，所有JS接口列表见附录2,
+            success: function(res) {
+                // 以键值对的形式返回，可用的api值true，不可用为false
+                // 如：{"checkResult":{"chooseImage":true},"errMsg":"checkJsApi:ok"}
+                alert(1);
+            }
+        });
+
         $("#SubmitBtn").click(function () {
+
+
             $.ajax({
-                url: '{{route('order.create')}}',
+                url: '{{route('order.create',$product->id)}}',
                 type: 'get',
                 datatype: 'json',
-                data:{'proid':}
                 success: function (data) {
-                    $re=eval(data);
+                   $re=$.parseJSON(data);
                     wx.chooseWXPay({
                         timestamp:$re["timestamp"],
                         nonceStr: $re["nonceStr"],
@@ -62,8 +79,8 @@
                         signType:$re["signType"],
                         paySign: $re["paySign"], // 支付签名
                         success: function (res) {
-                             //支付成功后的回调函数
-                             //支付成功后生成征信报告
+                            //支付成功后的回调函数
+                            //支付成功后生成征信报告
                         }
                     });
                 },
@@ -71,7 +88,6 @@
                     weui.toast('系统故障');
                 }
             });
-
         });
     });
 

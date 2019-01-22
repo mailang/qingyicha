@@ -6,36 +6,70 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Src\base;
 use  App\Models\Wxuser;
+use App\Models\Product;
+use Illuminate\Support\Facades\Log;
 
 class PayController extends Controller
 {
     //
     /*生成订单,并发起支付*/
-    function  order_create()
+    function  order_create($id)
     {
-        $openid='o3MeN5knIrECm5dZys4nrOVRc5Ow';//$_SESSION['wechat_user']['id'];
+//return '{"appId":"wxaffee917b46f14d8","nonceStr":"5c46d829ee4c6","package":"prepay_id=wx221645424410449e96a87f0b2066641826","signType":"MD5","paySign":"6C4600732B204DA08AEC02283C997BE3","timestamp":"1548146729"}';
+        $app = app('wechat.payment');
+        $jssdk = $app->jssdk;
+        $openid=$_SESSION['wechat_user']['id'];
         $user=Wxuser::where('openid',$openid)->first();
         $base=new base();
         $order_No=$base->No_create($user["id"]);//获取订单号
-        $app = app('wechat.official_account');
+
+        $product=Product::find($id);
+
         $result = $app->order->unify([
-            'body' => '腾讯充值中心-QQ会员充值',
+            'body' => '普信天下'.$product->pro_name,
             'out_trade_no' => $order_No,
-            'total_fee' => 88,
-            'spbill_create_ip' => '123.12.12.123', // 可选，如不传该参数，SDK 将会自动获取相应 IP 地址
+            'total_fee' => $product->price*100,
+            'spbill_create_ip' => '123.206.254.31', // 可选，如不传该参数，SDK 将会自动获取相应 IP 地址
             'notify_url' => 'https://pay.weixin.qq.com/wxpay/pay.action', // 支付结果通知网址，如果不设置则会使用配置里的默认地址
             'trade_type' => 'JSAPI', // 请对应换成你的支付方式对应的值类型
-            'openid' => 'oUpF8uMuAJO_M2pxb1Q9zNjWeS6o',
+            'openid' => $openid,
         ]);
-         dd($order_No);
-
+         $config = $jssdk->sdkConfig($result["prepay_id"]); // 返回数组
+       return  \GuzzleHttp\json_encode($config);
     }
 
 
     /* 支付回调 */
     function pay_notify()
     {
-     return 1;
+        $app = app('wechat.official_account');
+        $response = $app->handlePaidNotify(function($message, $fail){
+            Log::info(var_export($message));
+            // 使用通知里的 "微信支付订单号" 或者 "商户订单号" 去自己的数据库找到订单
+            $order = $message['out_trade_no'];
+            if($order || $order->paid_at) { // 如果订单不存在 或者 订单已经支付过了
+              return true; // 告诉微信，我已经处理完了，订单没找到，别再通知我了
+    }
+     //<- 建议在这里调用微信的【订单查询】接口查一下该笔订单的情况，确认是已经支付 /////////////
+      if($message['return_code'] === 'SUCCESS') { // return_code 表示通信状态，不代表支付状态
+         // 用户是否支付成功
+        if (array_get($message, 'result_code') === 'SUCCESS') {
+            $order->paid_at = time(); // 更新支付时间为当前时间
+            $order->status = 'paid';
+            // 用户支付失败
+        } elseif (array_get($message, 'result_code') === 'FAIL') {
+            $order->status = 'paid_fail';
+        }
+      } else {
+                return $fail('通信失败，请稍后再通知我');
+    }
+
+    $order->save(); // 保存订单
+
+    return true; // 返回处理完成
+    });
+
+    $response->send(); // return $response;
 
     }
 }

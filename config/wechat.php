@@ -111,7 +111,7 @@ return [
              'key'                => env('WECHAT_PAYMENT_KEY', 'd0107e34707e4156b2a985c452194746'),
              'cert_path'          => env('WECHAT_PAYMENT_CERT_PATH', 'path/to/cert/apiclient_cert.pem'),    // XXX: 绝对路径！！！！
              'key_path'           => env('WECHAT_PAYMENT_KEY_PATH', 'path/to/cert/apiclient_key.pem'),      // XXX: 绝对路径！！！！
-             'notify_url'         => 'http://qingyicha.com/payments/wechat-notify',                           // 默认支付结果通知地址
+             'notify_url'         => 'http://qingyicha.com/chat/pay/notify',                           // 默认支付结果通知地址
          ],
      ],
 
