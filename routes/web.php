@@ -38,6 +38,6 @@ Route::group(['prefix'=>'chat','namespace'=>'Chat'],function(){
     Route::get("/pay/notify",['uses'=>"PayController@pay_notify",'as'=>'weixin.tuiguang']);
 });
 //,'middleware'=>['oauth']
-Route::group(['prefix' => 'weixin', 'namespace' => 'Chat'], function () {
+Route::group(['prefix' => 'weixin', 'namespace' => 'Chat','middleware'=>['oauth']], function () {
     include base_path('routes/weixin.php');
 });
