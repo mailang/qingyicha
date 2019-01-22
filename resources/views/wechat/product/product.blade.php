@@ -16,7 +16,7 @@
                 <label class="weui-label">描述</label>
             </div>
             <div class="weui-cell__bd white-bgcolor">
-               {{$procut->description}}
+               {{$product->description}}
             </div>
         </div>
         <div class="weui-form-preview__ft">
