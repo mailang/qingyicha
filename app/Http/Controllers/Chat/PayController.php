@@ -47,7 +47,7 @@ class PayController extends Controller
              $data["total_fee"]=$product->price;
              $data["time_start"]=date('Y-m-d H:i:s');
              $data["time_expire"]=date('Y-m-d H:i:s',strtotime('+ 1 h'));
-             $data["pro_id"]=$product->pro_id;
+             $data["pro_id"]=$id;
              Order::create($data);
             return  \GuzzleHttp\json_encode($config);
         }
