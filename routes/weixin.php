@@ -16,3 +16,4 @@ Route::get("/test/apply",['uses'=>"CreditController@testapply",'as'=>'test.apply
 /*订单支付配置*/
 Route::get("/get/pay/{id}",['uses'=>"PayController@order_create",'as'=>'order.create']);//统一下单
 Route::get("/credit/report",['uses'=>"ReportController@report",'as'=>'credit.report']);//信用报告
+Route::get("/get/signature",['uses'=>"PayController@configSignature",'as'=>'get.signature']);//获取签名

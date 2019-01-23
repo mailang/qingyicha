@@ -11,6 +11,11 @@ use Illuminate\Support\Facades\Log;
 
 class PayController extends Controller
 {
+    function  configSignature()
+    {
+        $app = app('wechat.official_account');
+        return $app->jssdk->buildConfig(array('chooseWXPay'), true);//$app->configSignature();
+    }
     //
     /*生成订单,并发起支付*/
     function  order_create($id)
@@ -18,7 +23,7 @@ class PayController extends Controller
     //return '{"appId":"wxaffee917b46f14d8","nonceStr":"5c46d829ee4c6","package":"prepay_id=wx221645424410449e96a87f0b2066641826","signType":"MD5","paySign":"6C4600732B204DA08AEC02283C997BE3","timestamp":"1548146729"}';
         $app = app('wechat.payment');
         $jssdk = $app->jssdk;
-        $openid=$_SESSION['wechat_user']['id'];//'offTY1fb81WxhV84LWciHzn4qwqU';//$_SESSION['wechat_user']['id'];
+        $openid=$_SESSION['wechat_user']['id'];//'offTY1fb81WxhV84LWciHzn4qwqU';
         $user=Wxuser::where('openid',$openid)->first();
         $base=new base();
         $order_No=$base->No_create($user["id"]);//获取订单号
