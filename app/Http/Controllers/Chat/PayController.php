@@ -63,7 +63,7 @@ class PayController extends Controller
 
         $app = app('wechat.payment');
         $payment=$app->payment;
-        $response =$payment->handlePaidNotify(function($message, $fail){
+        $response =$payment->handleNotify(function($message, $fail){
             Log::info(var_export($message));
             // 使用通知里的 "微信支付订单号" 或者 "商户订单号" 去自己的数据库找到订单
             $data['openid']="offTY1fb81WxhV84LWciHzn4qwqU";
