@@ -23,10 +23,11 @@ class CreditController extends Controller
         return view('wechat.credit.apply',compact('oauth','order_id'));
     }
     /*征信查询*/
-  function  apply($id)
+  function  apply()
   {
       /*查看用户是否已经购买，购买后看是否已认证*/
-      $openid=$_SESSION['wechat_user']['id'];
+      $id=$_GET["proid"];
+      $openid=$_SESSION['wechat_user']['id'];//'offTY1fb81WxhV84LWciHzn4qwqU';
       $order=Order::where('pro_id',$id)->where('state','>','0')->orderByDesc('id')->limit(1)->get(['id','state']);
       if ($order->first())
       {
