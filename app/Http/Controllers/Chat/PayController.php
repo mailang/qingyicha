@@ -57,11 +57,17 @@ class PayController extends Controller
     /* 支付回调 */
     function pay_notify()
     {
-        Log::info("支付回调");
+        $data1['openid']="offTY1fb81WxhV84LWciHzn4qwqU";
+        $data1["result"]="进入到了回调地址里";
+        \DB::table('record')->insert($data1);
+
         $app = app('wechat.official_account');
         $response = $app->handlePaidNotify(function($message, $fail){
             Log::info(var_export($message));
             // 使用通知里的 "微信支付订单号" 或者 "商户订单号" 去自己的数据库找到订单
+            $data['openid']="offTY1fb81WxhV84LWciHzn4qwqU";
+            $data["result"]=var_export($message);
+            \DB::table('record')->insert($data);
             $order = $message['out_trade_no'];
             if($order || $order->paid_at) { // 如果订单不存在 或者 订单已经支付过了
               return true; // 告诉微信，我已经处理完了，订单没找到，别再通知我了
