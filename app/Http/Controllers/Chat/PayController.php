@@ -56,16 +56,11 @@ class PayController extends Controller
 
     /* 支付回调 */
     function pay_notify()
-    {
-        $data1['openid']="offTY1fb81WxhV84LWciHzn4qwqU";
-        $data1["result"]="进入到了回调地址里";
-        \DB::table('record')->insert($data1);
-
+    {   \DB::table('record')->insert(['offTY1fb81WxhV84LWciHzn4qwqU','进入到了回调地址里']);
         $app = app('wechat.payment');
-        $payment=$app->payment;
-        $response =$payment->handleNotify(function($message, $fail){
+        $response = $app->handlePaidNotify(function($message, $fail){
+            \DB::table('record')->insert(['notify','进入到了PaidNotify']);
             Log::info(var_export($message));
-            // 使用通知里的 "微信支付订单号" 或者 "商户订单号" 去自己的数据库找到订单
             $data['openid']="offTY1fb81WxhV84LWciHzn4qwqU";
             $data["result"]=var_export($message);
             \DB::table('record')->insert($data);
