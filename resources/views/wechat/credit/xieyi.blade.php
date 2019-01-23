@@ -53,24 +53,14 @@
         }
     }
     $(function () {
-        wx.checkJsApi({
-            jsApiList: ['chooseImage'], // 需要检测的JS接口列表，所有JS接口列表见附录2,
-            success: function(res) {
-                // 以键值对的形式返回，可用的api值true，不可用为false
-                // 如：{"checkResult":{"chooseImage":true},"errMsg":"checkJsApi:ok"}
-                alert(1);
-            }
-        });
+        wx.config(<?php echo app('wechat.official_account')->js->config(array('chooseWXPay'), false) ?>);
         $("#SubmitBtn").click(function () {
-
-
             $.ajax({
                 url: '{{route('order.create',$product->id)}}',
                 type: 'get',
                 datatype: 'json',
                 success: function (data) {
                     $re=$.parseJSON(data);
-                    //alert($re["timestamp"]+"nonceStr"+$re["nonceStr"]+"package"+$re["package"]+"signType"+$re["signType"]+"paySign"+$re["paySign"]);
                     wx.chooseWXPay({
                         timestamp:$re["timestamp"],
                         nonceStr: $re["nonceStr"],
