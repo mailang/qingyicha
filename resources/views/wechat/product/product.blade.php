@@ -20,7 +20,7 @@
             </div>
         </div>
         <div class="weui-form-preview__ft">
-            <a href="{{route('credit.apply',$product->id)}}" class="weui-btn weui-btn_primary">下一步</a>
+            <a href="{{route('credit.apply')}}?proid={{$product->id}}" class="weui-btn weui-btn_primary">下一步</a>
         </div>
     </div>
 </section>
