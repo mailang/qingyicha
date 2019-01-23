@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Chat;
 
+use App\Models\Order;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Src\base;
@@ -27,21 +28,31 @@ class PayController extends Controller
         $user=Wxuser::where('openid',$openid)->first();
         $base=new base();
         $order_No=$base->No_create($user["id"]);//获取订单号
-
         $product=Product::find($id);
-
         $result = $app->order->unify([
             'body' => '普信天下'.$product->pro_name,
             'out_trade_no' => $order_No,
             'total_fee' => $product->price*100,
-            'spbill_create_ip' => '123.206.254.31', // 可选，如不传该参数，SDK 将会自动获取相应 IP 地址
+            'spbill_create_ip' =>'123.206.254.31', // 可选，如不传该参数，SDK 将会自动获取相应 IP 地址
             'trade_type' => 'JSAPI', // 请对应换成你的支付方式对应的值类型
             'openid' => $openid,
         ]);
-         $config = $jssdk->sdkConfig($result["prepay_id"]); // 返回数组
-       return  \GuzzleHttp\json_encode($config);
+        if (strtolower($result["return_code"])=='success')
+        {
+             $config = $jssdk->sdkConfig($result["prepay_id"]); // 返回数组
+             $data["openid"]=$openid;
+             $data["wxuser_id"]=$user["id"];
+             $data["out_trade_no"]=$order_No;
+             $data["body"]='普信天下'.$product->pro_name;
+             $data["total_fee"]=$product->price;
+             $data["time_start"]=date('Y-m-d H:i:s');
+             $data["time_expire"]=date('Y-m-d H:i:s',strtotime('+ 1 h'));
+             $data["pro_id"]=$product->pro_id;
+             Order::create($data);
+            return  \GuzzleHttp\json_encode($config);
+        }
+        else return '{result_code:success}';
     }
-
 
     /* 支付回调 */
     function pay_notify()
@@ -75,6 +86,21 @@ class PayController extends Controller
     });
 
     $response->send(); // return $response;
+
+    }
+
+    /*微信退款*/
+    function  refund($order_id)
+    {
+        $app = app('wechat.official_account');
+        $order=Order::find($order_id);
+        $data["transaction_id"]=$order["transaction_id"];
+        $base=new base();
+        $data["refundNumber"]=$base->No_create($order_id);//获取订单号
+        $data["totalFee"]=$data["refundFee"]=$order["actual_fee"];
+        $app->refund->byTransactionId(  $data["transactionId"],  $data["refundNumber"],  $data["totalFee"],  $data["totalFee"],[ 'refund_desc' => 'test',]);
+       // 可在此处传入其他参数，详细参数见微信支付文档
+
 
     }
 }
