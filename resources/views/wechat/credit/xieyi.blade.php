@@ -53,7 +53,6 @@
         }
     }
     $(function () {
-
         wx.checkJsApi({
             jsApiList: ['chooseImage'], // 需要检测的JS接口列表，所有JS接口列表见附录2,
             success: function(res) {
@@ -62,7 +61,6 @@
                 alert(1);
             }
         });
-
         $("#SubmitBtn").click(function () {
 
 
@@ -71,7 +69,8 @@
                 type: 'get',
                 datatype: 'json',
                 success: function (data) {
-                   $re=$.parseJSON(data);
+                    $re=$.parseJSON(data);
+                    //alert($re["timestamp"]+"nonceStr"+$re["nonceStr"]+"package"+$re["package"]+"signType"+$re["signType"]+"paySign"+$re["paySign"]);
                     wx.chooseWXPay({
                         timestamp:$re["timestamp"],
                         nonceStr: $re["nonceStr"],
@@ -81,6 +80,7 @@
                         success: function (res) {
                             //支付成功后的回调函数
                             //支付成功后生成征信报告
+                            weui.toast('支付回调');
                         }
                     });
                 },

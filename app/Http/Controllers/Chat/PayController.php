@@ -15,10 +15,10 @@ class PayController extends Controller
     /*生成订单,并发起支付*/
     function  order_create($id)
     {
-//return '{"appId":"wxaffee917b46f14d8","nonceStr":"5c46d829ee4c6","package":"prepay_id=wx221645424410449e96a87f0b2066641826","signType":"MD5","paySign":"6C4600732B204DA08AEC02283C997BE3","timestamp":"1548146729"}';
+    //return '{"appId":"wxaffee917b46f14d8","nonceStr":"5c46d829ee4c6","package":"prepay_id=wx221645424410449e96a87f0b2066641826","signType":"MD5","paySign":"6C4600732B204DA08AEC02283C997BE3","timestamp":"1548146729"}';
         $app = app('wechat.payment');
         $jssdk = $app->jssdk;
-        $openid=$_SESSION['wechat_user']['id'];
+        $openid=$_SESSION['wechat_user']['id'];//'offTY1fb81WxhV84LWciHzn4qwqU';//$_SESSION['wechat_user']['id'];
         $user=Wxuser::where('openid',$openid)->first();
         $base=new base();
         $order_No=$base->No_create($user["id"]);//获取订单号
@@ -30,7 +30,6 @@ class PayController extends Controller
             'out_trade_no' => $order_No,
             'total_fee' => $product->price*100,
             'spbill_create_ip' => '123.206.254.31', // 可选，如不传该参数，SDK 将会自动获取相应 IP 地址
-            'notify_url' => 'https://pay.weixin.qq.com/wxpay/pay.action', // 支付结果通知网址，如果不设置则会使用配置里的默认地址
             'trade_type' => 'JSAPI', // 请对应换成你的支付方式对应的值类型
             'openid' => $openid,
         ]);
@@ -42,6 +41,7 @@ class PayController extends Controller
     /* 支付回调 */
     function pay_notify()
     {
+        Log::info("支付回调");
         $app = app('wechat.official_account');
         $response = $app->handlePaidNotify(function($message, $fail){
             Log::info(var_export($message));
