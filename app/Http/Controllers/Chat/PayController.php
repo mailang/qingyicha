@@ -136,8 +136,8 @@ class PayController extends Controller
                 $data["transaction_id"]=$result["transaction_id"];
                 $base=new base();
                 $data["refundNumber"]=$base->No_create($order_id);//获取订单号
-                $data["totalFee"]=$order["total_fee"];
-                $data["refundFee"]=$order["total_fee"];
+                $data["totalFee"]=$order["total_fee"]*100;//单位转化
+                $data["refundFee"]=$order["total_fee"]*100;
                 $refund= $app->refund->byTransactionId(  $data["transaction_id"],  $data["refundNumber"],  $data["totalFee"],  $data["totalFee"],[ 'refund_desc' => 'test',]);
                 // 可在此处传入其他参数，详细参数见微信支付文档
                 dd($refund);
