@@ -153,6 +153,8 @@ class PayController extends Controller
                             Order_refund::create($data);
                             return "退款申请成功";
                         }
+                        else
+                            return $refund["err_code_des"];
                     } else
                         return $refund["return_msg"];
 
