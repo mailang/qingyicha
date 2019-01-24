@@ -16,7 +16,7 @@ class Product extends Migration
         Schema::create('product', function (Blueprint $table) {
             $table->increments('id');
             $table->string('pro_name');//订单号
-            $table->string('description')->nullable();
+            $table->text('description')->nullable();
             $table->string('icon')->nullable();
             $table->string('url')->nullable();
             $table->float('price')->default(0);

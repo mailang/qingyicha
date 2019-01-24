@@ -22,7 +22,7 @@ class OrderRefund extends Migration
             $table->string('out_trade_no')->nullable();//微信订单号
             $table->float('total_fee')->nullable();//订单总金额
             $table->float('refund_fee')->nullable();//实际退款金额
-            $table->float('refund_id')->nullable();//微信退款id
+            $table->string('refund_id')->nullable();//微信退款id
             $table->timestamps();
         });
     }
