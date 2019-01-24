@@ -64,7 +64,7 @@ class PayController extends Controller
         $data["result"]=file_get_contents("php://input");
         $response = $app->handlePaidNotify(function($message, $fail){
             //<- 建议在这里调用微信的【订单查询】接口查一下该笔订单的情况，确认是已经支付 /////////////
-            $data["open_id"]=$message["openid"];
+            $data["openid"]=$message["openid"];
             $data["out_trade_no"]=$message["out_trade_no"];
             $data["transaction_id"]=$message["transaction_id"];
             $data["return_code"]=$message["return_code"];
