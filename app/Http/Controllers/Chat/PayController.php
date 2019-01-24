@@ -35,7 +35,6 @@ class PayController extends Controller
             'out_trade_no' => $order_No,
             'total_fee' => $product->price*100,
             'spbill_create_ip' =>'123.206.254.31', // 可选，如不传该参数，SDK 将会自动获取相应 IP 地址
-            'notify_url' => 'http://www.qingyicha.com/chat/pay/notify',
             'trade_type' => 'JSAPI', // 请对应换成你的支付方式对应的值类型
             'openid' => $openid,
         ]);
