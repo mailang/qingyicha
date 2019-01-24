@@ -59,6 +59,7 @@ class PayController extends Controller
     {
         $data1['openid']="offTY1fb81WxhV84LWciHzn4qwqU";
         $data1["result"]="进入到了回调地址里";
+        $data1["created_at"]=date('Y-m-d H:i:s');
         \DB::table('record')->insert($data1);
         $app = app('wechat.payment');
         $response = $app->handlePaidNotify(function($message, $fail){
