@@ -68,11 +68,6 @@ class PayController extends Controller
             $data2['openid']="notify";
             $data2["result"]="进入到了PaidNotify";
             \DB::table('record')->insert($data2);
-            Log::info(var_export($message));
-            // 使用通知里的 "微信支付订单号" 或者 "商户订单号" 去自己的数据库找到订单
-            $data['openid']="offTY1fb81WxhV84LWciHzn4qwqU";
-            $data["result"]=var_export($message);
-            \DB::table('record')->insert($data);
             //<- 建议在这里调用微信的【订单查询】接口查一下该笔订单的情况，确认是已经支付 /////////////
             if(strtolower($message['return_code']) === 'success') { // return_code 表示通信状态，不代表支付状态
                 $order = Order::where('out_trade_no',$message['out_trade_no'])->first();
