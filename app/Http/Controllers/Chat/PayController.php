@@ -133,7 +133,7 @@ class PayController extends Controller
             $out_trade_no=$order["out_trade_no"];
             $result= $app->order->queryByOutTradeNumber($out_trade_no);
             if ($result["return_code"]=="SUCCESS") {
-                if ($result["result_code"] == 'OK') {
+                if ($result["result_code"] == 'SUCCESS') {
                     $data["transaction_id"] = $result["transaction_id"];
                     $base = new base();
                     $data["refundNumber"] = $base->No_create($order_id);//获取订单号
@@ -156,7 +156,10 @@ class PayController extends Controller
                     } else
                         return $refund["return_msg"];
 
-                } else return "订单未支付成功";
+                } else
+                {
+                    return "订单未付款";
+                }
             }
             else return $result["return_msg"];
 
