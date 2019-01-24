@@ -61,9 +61,9 @@ class PayController extends Controller
     function pay_notify()
     {
         $app = app('wechat.payment');
-        $data["result"]=file_get_contents("php://input");
+
         $response = $app->handlePaidNotify(function($message, $fail){
-            //<- 建议在这里调用微信的【订单查询】接口查一下该笔订单的情况，确认是已经支付 /////////////
+            $data["result"]=file_get_contents("php://input");
             $data["openid"]=$message["openid"];
             $data["out_trade_no"]=$message["out_trade_no"];
             $data["transaction_id"]=$message["transaction_id"];
@@ -95,7 +95,6 @@ class PayController extends Controller
             Order_result::create($data);
               return true;
     });
-
     $response->send(); // return $response;
 
     }
