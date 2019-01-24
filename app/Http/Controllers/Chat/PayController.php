@@ -76,6 +76,9 @@ class PayController extends Controller
                     // 用户是否支付成功
                     if (array_get($message, 'result_code') === 'SUCCESS') {
                         $order["state"]=1;
+                        $order["time_pay"]=$message["time_end"];
+                        $order["transaction_id"]=$message["transaction_id"];
+                        $order["cash_fee"]=$message["cash_fee"];
                         // 用户支付失败
                     } elseif (array_get($message, 'result_code') === 'FAIL') {
                         $order["state"]=-2;
