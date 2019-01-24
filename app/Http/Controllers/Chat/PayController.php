@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Chat;
 
 use App\Models\Order;
+use App\Models\Order_refund;
 use App\Models\Order_result;
 use EasyWeChat\Factory;
 use Illuminate\Http\Request;
@@ -127,28 +128,64 @@ class PayController extends Controller
     {
         $app = app('wechat.payment');
         $order=Order::find($order_id);
-        if ($order)
+        if ($order['state']!=-3)
         {
             $out_trade_no=$order["out_trade_no"];
             $result= $app->order->queryByOutTradeNumber($out_trade_no);
-            if ($result["return_msg"]=='OK')
-            {
-                $data["transaction_id"]=$result["transaction_id"];
-                $base=new base();
-                $data["refundNumber"]=$base->No_create($order_id);//获取订单号
-                $data["totalFee"]=$order["total_fee"]*100;//单位转化
-                $data["refundFee"]=$order["total_fee"]*100;
-                $refund= $app->refund->byTransactionId(  $data["transaction_id"],  $data["refundNumber"],  $data["totalFee"],  $data["totalFee"],[ 'refund_desc' => 'test',]);
-                // 可在此处传入其他参数，详细参数见微信支付文档
-                dd($refund);
-                return "退款成功";
+            if ($result["return_code"]=="SUCCESS") {
+                if ($result["result_code"] == 'OK') {
+                    $data["transaction_id"] = $result["transaction_id"];
+                    $base = new base();
+                    $data["refundNumber"] = $base->No_create($order_id);//获取订单号
+                    $data["totalFee"] = $order["total_fee"] * 100;//单位转化
+                    $data["refundFee"] = $order["total_fee"] * 100;
+                    $refund = $app->refund->byTransactionId($data["transaction_id"], $data["refundNumber"], $data["totalFee"], $data["totalFee"], ['refund_desc' => 'test',]);
+                    // 可在此处传入其他参数，详细参数见微信支付文档
+                    if ($refund["return_code"] == 'SUCCESS') {
+                        if ($refund["result_code"] == 'SUCCESS')
+                        {
+                            $data["order_id"]=$order_id;
+                            $data["openid"]=$order["openid"];
+                            $data["out_trade_no"]=$order["out_trade_no"];
+                            $data["total_fee"]=$order["total_fee"];
+                            $data["refund_fee"]=$order["refund_fee"]/100;
+                            $data["refund_id"]=$order["refund_id"];
+                            Order_refund::create($data);
+                            return "退款申请成功";
+                        }
+                    } else
+                        return $refund["return_msg"];
+
+                } else return "订单未支付成功";
             }
-            else return "订单未支付成功";
+            else return $result["return_msg"];
 
         }
         else
             return "订单不存在";
 
     }
+    /*
+     *  [▼
+  "return_code" => "SUCCESS"
+  "return_msg" => "OK"
+  "appid" => "wxaffee917b46f14d8"
+  "mch_id" => "1524529661"
+  "nonce_str" => "eDqROSUf2uVy1ke6"
+  "sign" => "244B1167F9D0D5442D43ABD8BC0C2B25"
+  "result_code" => "SUCCESS"
+  "transaction_id" => "4200000264201901235160686715"
+  "out_trade_no" => "201901230741392675"
+  "out_refund_no" => "201901240802211554"
+  "refund_id" => "50000309592019012408142124453"
+  "refund_channel" => null
+  "refund_fee" => "1"
+  "coupon_refund_fee" => "0"
+  "total_fee" => "1"
+  "cash_fee" => "1"
+  "coupon_refund_count" => "0"
+  "cash_refund_fee" => "1"
+]
+     */
 
 }
