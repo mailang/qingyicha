@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Chat;
 
 use App\Models\Order;
+use App\Models\Order_result;
 use EasyWeChat\Factory;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -59,21 +60,21 @@ class PayController extends Controller
     /* 支付回调 */
     function pay_notify()
     {
-        $data1['openid']="offTY1fb81WxhV84LWciHzn4qwqU";
-        $data1["result"]=  file_get_contents("php://input");
-        $data1["created_at"]=date('Y-m-d H:i:s');
-        \DB::table('record')->insert($data1);
         $app = app('wechat.payment');
+        $data["result"]=file_get_contents("php://input");
         $response = $app->handlePaidNotify(function($message, $fail){
-            $data2['openid']="notify";
-            $data2["result"]=$message['out_trade_no'];
-            \DB::table('record')->insert($data2);
             //<- 建议在这里调用微信的【订单查询】接口查一下该笔订单的情况，确认是已经支付 /////////////
+            $data["open_id"]=$message["openid"];
+            $data["out_trade_no"]=$message["out_trade_no"];
+            $data["transaction_id"]=$message["transaction_id"];
+            $data["return_code"]=$message["return_code"];
+            $data["result_code"]=$message["result_code"];
             if(strtolower($message['return_code']) === 'success') { // return_code 表示通信状态，不代表支付状态
                 $order = Order::where('out_trade_no',$message['out_trade_no'])->first();
                 if ($order)
                 {
                     // 用户是否支付成功
+                     $data["order_id"]=$order["id"];
                     if (array_get($message, 'result_code') === 'SUCCESS') {
                         $order["state"]=1;
                         $order["time_pay"]=$message["time_end"];
@@ -87,11 +88,13 @@ class PayController extends Controller
                 }
                 else
                     return $fail('订单号不存在');
+
             } else {
                 return $fail('通信失败，请稍后再通知我');
             }
-              return true; // 告诉微信，我已经处理完了，订单没找到，别再通知我了
+              return true;
     });
+        Order_result::create($data);
     $response->send(); // return $response;
 
     }

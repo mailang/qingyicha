@@ -15,8 +15,8 @@ class OrderResult extends Migration
     {
         Schema::create('order_result', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('openid');
-            $table->integer('order_id');
+            $table->string('openid')->nullable();
+            $table->integer('order_id')->nullable();
             $table->string('out_trade_no')->nullable();//订单号
             $table->string('transaction_id')->nullable();//微信订单号
             $table->string('return_code')->nullable();//返回状态值SUCCESS/FAIL
