@@ -11,6 +11,7 @@ use App\Src\base;
 use  App\Models\Wxuser;
 use App\Models\Product;
 use Illuminate\Support\Facades\Log;
+use Monolog\Handler\ElasticSearchHandler;
 
 class PayController extends Controller
 {
@@ -100,17 +101,54 @@ class PayController extends Controller
     }
 
     /*微信退款*/
+    /*   "return_code" => "SUCCESS"
+  "return_msg" => "OK"
+  "appid" => "wxaffee917b46f14d8"
+  "mch_id" => "1524529661"
+  "nonce_str" => "F5mK5YUPjViw7pvc"
+  "sign" => "D9D9F65F40A35BC28B85EEB9E886F517"
+  "result_code" => "SUCCESS"
+  "openid" => "offTY1fb81WxhV84LWciHzn4qwqU"
+  "is_subscribe" => "Y"
+  "trade_type" => "JSAPI"
+  "bank_type" => "CFT"
+  "total_fee" => "1"
+  "fee_type" => "CNY"
+  "transaction_id" => "4200000264201901235160686715"
+  "out_trade_no" => "201901230741392675"
+  "attach" => null
+  "time_end" => "20190123154144"
+  "trade_state" => "SUCCESS"
+  "cash_fee" => "1"
+  "trade_state_desc" => "支付成功"
+         */
+
     function  refund($order_id)
     {
-        $app = app('wechat.official_account');
+        $app = app('wechat.payment');
         $order=Order::find($order_id);
-        $data["transaction_id"]=$order["transaction_id"];
-        $base=new base();
-        $data["refundNumber"]=$base->No_create($order_id);//获取订单号
-        $data["totalFee"]=$data["refundFee"]=$order["actual_fee"];
-        $app->refund->byTransactionId(  $data["transactionId"],  $data["refundNumber"],  $data["totalFee"],  $data["totalFee"],[ 'refund_desc' => 'test',]);
-       // 可在此处传入其他参数，详细参数见微信支付文档
+        if ($order)
+        {
+            $out_trade_no=$order["out_trade_no"];
+            $result= $app->order->queryByOutTradeNumber($out_trade_no);
+            if ($result["return_msg"]=='OK')
+            {
+                $data["transaction_id"]=$result["transaction_id"];
+                $base=new base();
+                $data["refundNumber"]=$base->No_create($order_id);//获取订单号
+                $data["totalFee"]=$order["total_fee"];
+                $data["refundFee"]=$order["total_fee"];
+                $refund= $app->refund->byTransactionId(  $data["transaction_id"],  $data["refundNumber"],  $data["totalFee"],  $data["totalFee"],[ 'refund_desc' => 'test',]);
+                // 可在此处传入其他参数，详细参数见微信支付文档
+                dd($refund);
+                return "退款成功";
+            }
+            else return "订单未支付成功";
 
+        }
+        else
+            return "订单不存在";
 
     }
+
 }

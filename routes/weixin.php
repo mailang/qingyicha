@@ -17,4 +17,4 @@ Route::get("/test/apply",['uses'=>"CreditController@testapply",'as'=>'test.apply
 Route::get("/get/pay/{id}",['uses'=>"PayController@order_create",'as'=>'order.create']);//统一下单
 Route::get("/credit/report",['uses'=>"ReportController@report",'as'=>'credit.report']);//信用报告
 Route::get("/get/signature",['uses'=>"PayController@configSignature",'as'=>'get.signature']);//
-Route::get("/order/refund",['uses'=>"PayController@refund",'as'=>'order.refund']);//退款
+Route::get("/order/refund/{id}",['uses'=>"PayController@refund",'as'=>'order.refund']);//退款
