@@ -66,7 +66,7 @@ class PayController extends Controller
         $app = app('wechat.payment');
         $response = $app->handlePaidNotify(function($message, $fail){
             $data2['openid']="notify";
-            $data2["result"]="进入到了PaidNotify";
+            $data2["result"]=$message['out_trade_no'];
             \DB::table('record')->insert($data2);
             //<- 建议在这里调用微信的【订单查询】接口查一下该笔订单的情况，确认是已经支付 /////////////
             if(strtolower($message['return_code']) === 'success') { // return_code 表示通信状态，不代表支付状态
