@@ -35,11 +35,13 @@ Route::group(['prefix'=>'chat','namespace'=>'Chat'],function(){
     /*分享二维码的地址链接*/
     Route::get("/tuiguang",['uses'=>"TuiguangController@tuiguang",'as'=>'weixin.tuiguang']);
     /*支付回调*/
-    Route::get("/pay/notify",['uses'=>"PayController@pay_notify",'as'=>'weixin.tuiguang']);
+    Route::any("/notify",['uses'=>"PayController@pay_notify",'as'=>'order.notify']);
+    /*不需要微信授权的退款路径*/
+    Route::get("/order/refund/{id}",['uses'=>"PayController@refund",'as'=>'order.refund']);//退款
+
 });
 //,'middleware'=>['oauth']
 Route::group(['prefix' => 'weixin', 'namespace' => 'Chat','middleware'=>['oauth']], function () {
     include base_path('routes/weixin.php');
 });
-
 Route::get('/test',['uses'=>'Controller@test']);
