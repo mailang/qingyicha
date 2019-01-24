@@ -61,10 +61,10 @@ class PayController extends Controller
     function pay_notify()
     {
         $data1['openid']="offTY1fb81WxhV84LWciHzn4qwqU";
-        $data1["result"]="进入到了回调地址里";
+        $data1["result"]=  file_get_contents("php://input");
         $data1["created_at"]=date('Y-m-d H:i:s');
         \DB::table('record')->insert($data1);
-         $app = app('wechat.payment');
+      /*   $app = app('wechat.payment');
         $response = $app->handlePaidNotify(function($message, $fail){
             $data2['openid']="notify";
             $data2["result"]="进入到了PaidNotify";
@@ -96,6 +96,8 @@ class PayController extends Controller
               return true; // 告诉微信，我已经处理完了，订单没找到，别再通知我了
     });
     $response->send(); // return $response;
+      */
+      return "<xml><return_code><![CDATA[SUCCESS]]></return_code><return_msg><![CDATA[OK]]></return_msg></xml> ";
     }
 
     /*微信退款*/
