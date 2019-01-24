@@ -71,16 +71,16 @@ class PayController extends Controller
             //<- 建议在这里调用微信的【订单查询】接口查一下该笔订单的情况，确认是已经支付 /////////////
             if(strtolower($message['return_code']) === 'success') { // return_code 表示通信状态，不代表支付状态
                 $order = Order::where('out_trade_no',$message['out_trade_no'])->first();
-                if ($order )
+                if ($order)
                 {
                     // 用户是否支付成功
                     if (array_get($message, 'result_code') === 'SUCCESS') {
-                        //$order->paid_at = time(); // 更新支付时间为当前时间
                         $order["state"]=1;
                         // 用户支付失败
                     } elseif (array_get($message, 'result_code') === 'FAIL') {
                         $order["state"]=-2;
                     }
+                    $order->save();
                 }
                 else
                     return $fail('订单号不存在');
