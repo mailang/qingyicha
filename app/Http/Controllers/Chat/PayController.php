@@ -151,6 +151,8 @@ class PayController extends Controller
                             $data["refund_fee"]=$order["refund_fee"]/100;
                             $data["refund_id"]=$order["refund_id"];
                             Order_refund::create($data);
+                            $order["state"]=-3;//修改订单状态
+                            $order->save();
                             return "退款申请成功";
                         }
                         else
