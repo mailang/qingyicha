@@ -96,7 +96,7 @@ class PayController extends Controller
     });
     $response->send(); // return $response;
       */
-      return "<xml><return_code><![CDATA[SUCCESS]]></return_code><return_msg><![CDATA[OK]]></return_msg></xml> ";
+      return "<xml><return_code><![CDATA[SUCCESS]]></return_code><return_msg><![CDATA[OK]]></return_msg></xml>";
     }
 
     /*微信退款*/
