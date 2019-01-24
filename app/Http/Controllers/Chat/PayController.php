@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Chat;
 
 use App\Models\Order;
+use EasyWeChat\Factory;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Src\base;
@@ -34,9 +35,11 @@ class PayController extends Controller
             'out_trade_no' => $order_No,
             'total_fee' => $product->price*100,
             'spbill_create_ip' =>'123.206.254.31', // 可选，如不传该参数，SDK 将会自动获取相应 IP 地址
+            'notify_url' => 'http://www.qingyicha.com/chat/pay/notify',
             'trade_type' => 'JSAPI', // 请对应换成你的支付方式对应的值类型
             'openid' => $openid,
         ]);
+
         if (strtolower($result["return_code"])=='success')
         {
              $config = $jssdk->sdkConfig($result["prepay_id"]); // 返回数组
@@ -61,7 +64,7 @@ class PayController extends Controller
         $data1["result"]="进入到了回调地址里";
         $data1["created_at"]=date('Y-m-d H:i:s');
         \DB::table('record')->insert($data1);
-        $app = app('wechat.payment');
+         $app = app('wechat.payment');
         $response = $app->handlePaidNotify(function($message, $fail){
             $data2['openid']="notify";
             $data2["result"]="进入到了PaidNotify";
