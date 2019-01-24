@@ -92,9 +92,10 @@ class PayController extends Controller
             } else {
                 return $fail('通信失败，请稍后再通知我');
             }
+            Order_result::create($data);
               return true;
     });
-        Order_result::create($data);
+
     $response->send(); // return $response;
 
     }
