@@ -27,7 +27,7 @@ class CreditController extends Controller
   {
       /*查看用户是否已经购买，购买后看是否已认证*/
       $id=$_GET["proid"];
-      $openid=$_SESSION['wechat_user']['id'];//'offTY1fb81WxhV84LWciHzn4qwqU';
+      $openid='offTY1fb81WxhV84LWciHzn4qwqU';//$_SESSION['wechat_user']['id'];
       $order=Order::where('pro_id',$id)->where('state','>','0')->orderByDesc('id')->limit(1)->get(['id','state']);
       if ($order->first())
       {

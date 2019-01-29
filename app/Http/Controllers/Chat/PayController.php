@@ -53,12 +53,34 @@ class PayController extends Controller
              $data["time_start"]=date('Y-m-d H:i:s');
              $data["time_expire"]=date('Y-m-d H:i:s',strtotime('+ 1 h'));
              $data["pro_id"]=$id;
-             Order::create($data);
+             $order_id=DB::table('authorization')->insertGetId($data);
+             $config["order_id"]=$order_id;
             return  \GuzzleHttp\json_encode($config);
         }
         else return '{result_code:success}';
     }
-
+    /*未付款订单重新支付*/
+    function re_create($order_id)
+    {
+        $app = app('wechat.payment');
+        $jssdk = $app->jssdk;
+        $order=Order::find($order_id);
+        $product=Product::find($order["pro_id"]);
+        $result = $app->order->unify([
+            'body' => '普信天下'.$product->pro_name,
+            'out_trade_no' => $order["out_trade_no"],
+            'total_fee' => $product->price*100,
+            'spbill_create_ip' =>'123.206.254.31', // 可选，如不传该参数，SDK 将会自动获取相应 IP 地址
+            'trade_type' => 'JSAPI', // 请对应换成你的支付方式对应的值类型
+            'openid' => $order["openid"],
+        ]);
+        if (strtolower($result["return_code"])=='success') {
+            $config = $jssdk->sdkConfig($result["prepay_id"]); // 返回数组
+            $config["order_id"] = $order_id;
+            return \GuzzleHttp\json_encode($config);
+        }
+        else return '{result_code:success}';
+    }
     /* 支付回调 */
     function pay_notify()
     {

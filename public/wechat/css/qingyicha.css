@@ -38,3 +38,8 @@ body{height: 100%;overflow-y: auto;  background: #eee;font-family: Helvetica Neu
 .rp_person{background-color:#f0eff4;position:inherit;border-top:0.01em solid #a2a4a8;}
 .report{margin-top: 0.01em;}
 .rp_head{line-height:42px;background-color:#ccced2;position:inherit;border-top:0.01em solid #b1b4b9;color: #333333; }
+/*orderlist*/
+.order_zhifu{clear:both;float: right;margin-top: 0.2em;font-size: 12px;}
+.order_list{height:3.5em;line-height: 3.5em; vertical-align: middle; background-color: #eee}
+.font_red{color:red}
+.font12{display: block; font-size: 12px;}

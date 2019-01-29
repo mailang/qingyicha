@@ -55,8 +55,7 @@
     $(function () {
         wx.config(<?php echo app('wechat.official_account')->jssdk->buildConfig(array('chooseWXPay'), true) ?>);
         wx.ready(function(){
-            // config信息验证后会执行ready方法，所有接口调用都必须在config接口获得结果之后，config是一个客户端的异步操作，所以如果需要在页面加载时就调用相关接口，则须把相关接口放在ready函数中调用来确保正确执行。对于用户触发时才调用的接口，则可以直接调用，不需要放在ready函数中。
-            $("#SubmitBtn").click(function () {
+           $("#SubmitBtn").click(function () {
                 $.ajax({
                     url: '{{route('order.create',$product->id)}}',
                     type: 'get',
@@ -72,7 +71,17 @@
                             success: function (res) {
                                 //支付成功后的回调函数
                                 //支付成功后生成征信报告
-                                weui.toast('支付回调');
+                                // 支付成功后的回调函数
+                                if (res.errMsg == "chooseWXPay:ok") {
+                                    //支付成功
+                                     window.location.href='{{route('order.info',$re["order_id"])}}';
+                                } else {
+                                    weui.toast(res.errMsg);
+                                }
+                            },
+                            cancel: function(res) {
+                            //支付取消
+                                weui.toast('支付取消');
                             }
                         });
                     },

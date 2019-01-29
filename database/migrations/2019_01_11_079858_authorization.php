@@ -17,11 +17,11 @@ class  Authorization extends Migration
         Schema::create('authorization', function (Blueprint $table) {
             $table->increments('id');
             $table->string('openid');
-            $table->string('order_id');
             $table->string('name');//姓名
             $table->string('phone');//手机号
             $table->string('cardNo');//身份证号
             $table->string('authorizedPhoto')->nullable();//人工授权照片
+            $table->integer('state')->default(0);//人工授权照片
             $table->timestamps();
         });
     }

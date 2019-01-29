@@ -15,6 +15,10 @@ Route::get("/test/apply",['uses'=>"CreditController@testapply",'as'=>'test.apply
 
 /*订单支付配置*/
 Route::get("/get/pay/{id}",['uses'=>"PayController@order_create",'as'=>'order.create']);//统一下单
+Route::get("/get/repay/{order_id}",['uses'=>"PayController@re_create",'as'=>'order.recreate']);//重新下单
 Route::get("/credit/report",['uses'=>"ReportController@report",'as'=>'credit.report']);//信用报告
 Route::get("/get/signature",['uses'=>"PayController@configSignature",'as'=>'get.signature']);//
 Route::get("/order/refund/{id}",['uses'=>"PayController@refund",'as'=>'order.refund']);//退款
+/*订单管理*/
+Route::get("/order/list",['uses'=>"OrderController@list",'as'=>'order.list']);
+Route::get("/order/info/{id}",['uses'=>"OrderController@order_info",'as'=>'order.info']);//退款
