@@ -3,6 +3,7 @@
 <form id="form1">
     <section class="qyc_container">
     <div class="weui-tab__panel"> <input type="hidden" name="_token" value="{{csrf_token()}}">
+        <input id="auth_id" type="hidden" value="{{$oauth->id}}" name="auth_id">
         <input id="order_id" type="hidden" value="{{$order_id}}" name="order_id">
         <div class="weui-cells__title"><img src="{{asset('wechat/images/arrow.png')}}" width="30px" alt=""><font style="color:#484646; font-weight: bold;">&nbsp;基本信息</font></div>
         <div class="weui-cell white-bgcolor">
@@ -49,6 +50,7 @@
                 <input class="weui-input" id="creditCode" name="creditCode" type="text" placeholder="企业信用代码">
             </div>
         </div>
+        <!--
         <div class="weui-cells__title"><img src="{{asset('wechat/images/arrow.png')}}" width="30px" alt=""><font style="color:#484646; font-weight: bold;">&nbsp;车辆</font></div>
 
         <div class="weui-cell white-bgcolor">
@@ -108,7 +110,7 @@
             <div class="weui-cell__bd">
                 <input id="engineNo" name="engineNo" class="weui-input" type="text" placeholder="发动机号">
             </div>
-        </div>
+        </div>-->
         <div class="weui-cell">
             <input type="submit" value="提交" id="btnsubmit"  class="weui-btn weui-btn_primary" /></div>
     </div></section>

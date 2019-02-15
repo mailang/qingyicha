@@ -20,6 +20,7 @@ class UserInterface extends Migration
             $table->integer('auth_id');
             $table->string('openid');
             $table->string('result_code');
+            $table->string('url');
             /*查询结果进行系统判断是否有效；1：有效；0无效，用户可以重新查询此接口*/
             $table->integer('state')->default(1);
             $table->timestamps();

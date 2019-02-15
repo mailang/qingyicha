@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Chat;
 
 use App\Models\Interfaces;
+use App\Models\Person_attach;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Wxuser;
@@ -28,12 +29,12 @@ class CreditController extends Controller
       /*查看用户是否已经购买，购买后看是否已认证*/
       $id=$_GET["proid"];
       $openid='offTY1fb81WxhV84LWciHzn4qwqU';//$_SESSION['wechat_user']['id'];
-      $order=Order::where('pro_id',$id)->where('state','>','0')->orderByDesc('id')->limit(1)->get(['id','state']);
-      if ($order->first())
-      {
-          $user=Wxuser::where('openid',$openid)->first();
-          if ($user["auth_id"]!=null&&$user["auth_id"]>0)
+      $user=Wxuser::where('openid',$openid)->first();
+      if ($user["auth_id"]!=null&&$user["auth_id"]>0)
           {
+              $order=Order::where('pro_id',$id)->where('state','>','0')->orderByDesc('id')->limit(1)->get(['id','state']);
+              if ($order->first())
+              {
               /*已认证*/
               $odata=$order->first();
               //订单状态 0:未支付1：已付款，2：征信接口已成功查询；3.接口已查询存在异常接口-1：超时未支付的无效订单
@@ -49,19 +50,20 @@ class CreditController extends Controller
                   default:/*不存在查询失败的接口，可以重新支付查询最新的接口*/
                       return view('wechat.credit.xieyi'); break;
               }
+              }
+              else
+              {
+                  /*不存在支付完成的订单，弹出协议让用户下单支付,将产品id传过去*/
+                  $product=Product::find($id);
+                  return view('wechat.credit.xieyi',compact('product'));
+              }
           }
           else
           {
               /*未认证用户*/
               return view('wechat.credit.validate');
           }
-      }
-      else
-      {
-          /*不存在支付完成的订单，弹出协议让用户下单支付,将产品id传过去*/
-            $product=Product::find($id);
-          return view('wechat.credit.xieyi',compact('product'));
-      }
+
   }
   /*征信接口查询并生成征信报告，一次性查询多个接口
    从订单中取出state=1的订单type,确定用户购买的产品类型，根据
@@ -69,70 +71,111 @@ class CreditController extends Controller
   function apply_store(Request $request)
   {
       $req=$request->all();
-      $bankcard=$req["bankcard"]==null?"":$req["bankcard"];
-      $entname=$req["entname"]==null?"":$req["entname"];
-      $creditCode=$req["creditCode"]==null?"":$req["creditCode"];
-      $licensePlate=$req["licensePlate"]==null?"":$req["licensePlate"];
-      $carType=$req["carType"]==null?"":$req["carType"];
-      $vin=$req["vin"]==null?"":$req["vin"];
-      $engineNo=$req["engineNo"]==null?"":$req["engineNo"];
+      $openid='offTY1fb81WxhV84LWciHzn4qwqU';//$_SESSION['wechat_user']['id'];
+      $user['bankcard']=$req["bankcard"]==null?"":$req["bankcard"];
+      $user['entname']=$req["entname"]==null?"":$req["entname"];
+      $user['creditCode']=$req["creditCode"]==null?"":$req["creditCode"];
+     /*$user['licensePlate']=$req["licensePlate"]==null?"":$req["licensePlate"];
+      $user['carType']=$req["carType"]==null?"":$req["carType"];
+      $use['vin']=$req["vin"]==null?"":$req["vin"];
+      $user['engineNo']=$req["engineNo"]==null?"":$req["engineNo"];*/
       $order=Order::find($req["order_id"]);//获取用户购买的订单
-      $auth=Authorization::find($order["auth_id"]);
+      $auth=Authorization::find($req["auth_id"]);//取出实名认证
       //订单状态 0:未支付1：已付款，2：征信接口已成功查询；3.接口已查询存在异常接口-1：超时未支付的无效订单
       if (!in_array($order["state"],array(1,3))) return "暂无有效接口";
+      $attach["openid"]=$openid;
+      $attach["order_id"]=$req["order_id"];
+      $attach["name"]=$auth["name"];
+      $attach["phone"]=$auth["phone"];
+      $attach["cardNo"]=$auth["cardNo"];
+      $attach["entname"]= $user['entname'];
+      $attach["creditCode"]= $user['creditCode'];
+      /*$attach["licensePlate"]=$user['licensePlate'];
+      $attach["carType"]=$user['carType'];
+      $attach["vin"]=$use['vin'];
+      $attach["engineNo"]=$user['engineNo'];*/
+      $attach["bankcard"]=$user['bankcard'];
+      Person_attach::create($attach);
       if ($order["state"]==1)
       {
           //已付款未查询状态，获取查询的接口
           $interfaces=Interfaces::where('pro_id',$order["pro_id"])->where('isenable',1)->get();
       }
       else
-          $interfaces=User_interface::where('order_id',$req["order_id"])->where('state',2)->get();
-
-
-      $chArr=[];
-      //创建多个cURL资源
-      for($i=0; $i<1; $i++){
-          $chArr[$i]=curl_init();
-          curl_setopt($chArr[$i], CURLOPT_URL, "https://rip.linrico.com/personSubjectToEnforcementHJ/result?username=shbd&accessToken=40db8b4b95ac91ed6e905c80d45ebac5&name=".urlencode('北京百度网讯科技有限公司')."&pageNum=1");
-          curl_setopt($chArr[$i], CURLOPT_RETURNTRANSFER, 1);
-          curl_setopt($chArr[$i], CURLOPT_HTTPHEADER, array("Content-type: application/json;charset='utf-8'"));
-          curl_setopt($chArr[$i], CURLOPT_SSL_VERIFYPEER, FALSE); // https请求 不验证证书和hosts
-          curl_setopt($chArr[$i], CURLOPT_SSL_VERIFYHOST, FALSE);
-          curl_setopt($chArr[$i], CURLOPT_TIMEOUT, 1);
-      }
-      $mh = curl_multi_init(); //1 创建批处理cURL句柄
-      foreach($chArr as $k => $ch){
-          curl_multi_add_handle($mh, $ch); //2 增加句柄
-      }
-      $active = null;
-      do {
-          while (($mrc = curl_multi_exec($mh, $active)) == CURLM_CALL_MULTI_PERFORM) ;
-
-          if ($mrc != CURLM_OK) { break; }
-
-          // a request was just completed -- find out which one
-          while ($done = curl_multi_info_read($mh)) {
-
-              // get the info and content returned on the request
-              $info = curl_getinfo($done['handle']);
-              $error = curl_error($done['handle']);
-              $result= curl_multi_getcontent($done['handle']);//链接返回值；
-
-             // {"result":"","total":"","code":"200","data":{"total":2,"items":[{"caseCode":"(2019)冀02执224号","partyCardNum":"91110000802****433B","pname":"北京百度网讯科技有限公司","caseCreateTime":1546531200000,"execCourtName":"唐山市中级人民法院","id":19397334,"execMoney":"6755","cid":22822},{"caseCode":"(2018)京0108执11361号","partyCardNum":"80210043-3","pname":"北京百度网讯科技有限公司","caseCreateTime":1530633600000,"execCourtName":"北京市海淀区人民法院","id":7169664,"execMoney":"17300","cid":22822}]},"tradeNo":"1547779358538WQAO","param":"","start":"","pageSize":"","end":"","message":"请求成功","pageNum":""}
-                  dd($result);
-
-
-              // remove the curl handle that just completed
-              curl_multi_remove_handle($mh, $done['handle']);
-              curl_close($done['handle']);
-          }
-          // Block for data in / output; error handling is done by curl_multi_exec
-          if ($active > 0) {
-              curl_multi_select($mh);
-          }
-      } while ($active);
-      curl_multi_close($mh); //7 关闭全部句柄
-
+          $interfaces=DB::table('interfaces')->leftJoin('user_interface','interfaces.id','=','user_interface.interface_id')
+              ->where('order_id',$req["order_id"])->where('user_interface.state',0)
+              ->get(['interfaces.id','interfaces.api_name','user_interface.state']);//异常接口
+          $num=count($interfaces);
+        if($order["pro_id"]==1&&$num>0)
+        {
+            $chArr=[];
+            //创建多个cURL资源
+                for($i=0; $i<$num; $i++){
+                    //$this->init_url($user,$auth,$interfaces[$i]->api_name);
+                $url="https://rip.linrico.com/bankCardFourElements/result?username=shbd&accessToken=40db8b4b95ac91ed6e905c80d45ebac5&name=%E5%BC%A0%E6%89%BF%E6%9E%97&idNumber=340825198908154735&bankCard=6222620250005095174&mobile=15675515689";
+                if ($url!='')
+                {
+                    if (isset($interfaces[$i]->state))DB::table('user_interface')->where('interface_id',$interfaces[$i]->id)->where('order_id',$req["order_id"])->where('state',0)->update(["state"=>2]);
+                    $chArr[$i]=curl_init();
+                    curl_setopt($chArr[$i], CURLOPT_URL, $url);//"https://rip.linrico.com/personSubjectToEnforcementHJ/result?username=shbd&accessToken=40db8b4b95ac91ed6e905c80d45ebac5&name=".urlencode('北京百度网讯科技有限公司')."&pageNum=1"
+                    curl_setopt($chArr[$i], CURLOPT_RETURNTRANSFER, 1);
+                    curl_setopt($chArr[$i], CURLOPT_HEADER, 1);
+                    curl_setopt($chArr[$i], CURLOPT_HTTPHEADER, array("Content-type: application/json;charset='utf-8'"));
+                    curl_setopt($chArr[$i], CURLOPT_SSL_VERIFYPEER, FALSE); // https请求 不验证证书和hosts
+                    curl_setopt($chArr[$i], CURLOPT_SSL_VERIFYHOST, FALSE);
+                    curl_setopt($chArr[$i], CURLOPT_TIMEOUT, 1);
+                }
+            }
+            $mh = curl_multi_init(); //1 创建批处理cURL句柄
+            foreach($chArr as $k => $ch){
+                curl_multi_add_handle($mh, $ch); //2 增加句柄
+            }
+            $active = null;
+            $order["state"]=2;
+            do {
+                while (($mrc = curl_multi_exec($mh, $active)) == CURLM_CALL_MULTI_PERFORM) ;
+                if ($mrc != CURLM_OK) { break; }
+                // a request was just completed -- find out which one
+                while ($done = curl_multi_info_read($mh)) {
+                    // get the info and content returned on the request
+                    $info = curl_getinfo($done['handle']);
+                    $error = curl_error($done['handle']);
+                    $result= curl_multi_getcontent($done['handle']);//链接返回值；
+                    $arrurl=explode('/',$info['url']);
+                    $api_name=$arrurl[3];
+                    $api=$interfaces->where('api_name',$api_name)->first();
+                    $inter["interface_id"]=$api->id;
+                    $inter["order_id"]=$order['id'];
+                    $inter["auth_id"]=$auth['id'];
+                    $inter["openid"]=$openid;
+                    // {"result":"","total":"","code":"200","data":{"total":2,"items":[{"caseCode":"(2019)冀02执224号","partyCardNum":"91110000802****433B","pname":"北京百度网讯科技有限公司","caseCreateTime":1546531200000,"execCourtName":"唐山市中级人民法院","id":19397334,"execMoney":"6755","cid":22822},{"caseCode":"(2018)京0108执11361号","partyCardNum":"80210043-3","pname":"北京百度网讯科技有限公司","caseCreateTime":1530633600000,"execCourtName":"北京市海淀区人民法院","id":7169664,"execMoney":"17300","cid":22822}]},"tradeNo":"1547779358538WQAO","param":"","start":"","pageSize":"","end":"","message":"请求成功","pageNum":""}
+                    $inter["result_code"]=$result;
+                    $inter["url"]=$info['url'];
+                    if ($result!="")
+                    {
+                        $jsson=json_decode($result);
+                        if (isset($jsson->success)&&$jsson->success==false&&$jsson->code=='100000002')
+                        {
+                            $inter["state"]=0;//余额不足
+                            $order["state"]=3;
+                        }
+                        else {$inter["state"]=1;}
+                    }else { //返回数据为空，请求出现异常
+                        $inter["state"]=0;$order["state"]=3; }
+                        dd($inter);
+                    User_interface::create($inter);
+                    //remove the curl handle that just completed
+                    curl_multi_remove_handle($mh, $done['handle']);
+                    curl_close($done['handle']);
+                }
+                // Block for data in / output; error handling is done by curl_multi_exec
+                if ($active > 0) {
+                    curl_multi_select($mh);
+                }
+            } while ($active);
+            curl_multi_close($mh); //7 关闭全部句柄
+            $order->save();//订单状态值改变
+        }
       //$end_time = microtime(TRUE);
      // echo sprintf("use time:%.3f s", $end_time - $srart_time);
   }
@@ -169,7 +212,7 @@ class CreditController extends Controller
       $output=$base->get_curl($url);
       if ($output!=null&&$output!='')
       {
-          $msg=\GuzzleHttp\json_decode($output);
+          $msg=json_decode($output);
           if ($msg->code=='1001'&&$msg->success)
           {
               //用户验证成功
@@ -194,6 +237,34 @@ class CreditController extends Controller
       }
       return "服务出错";
   }
-
+  /*
+   * 初始化基础查询的接口链接
+   */
+   function  init_url($user,$auth,$api_name)
+   {
+       $url="";
+       $pram="?username=shbd&accessToken=40db8b4b95ac91ed6e905c80d45ebac5";
+       $name=urlencode($auth["name"]);
+       $idCard=urlencode($auth["cardNo"]);
+       $phone=urlencode($auth["phone"]);
+      switch ($api_name)
+      {
+         case "multipleLoanQuery";$url="https://rip.linrico.com/multipleLoanQuery/result".$pram."&mobile=".$phone;break;
+          case "personalComplaintInquiry";$url="https://rip.linrico.com/personalComplaintInquiry/result".$pram."&name=".$name."&idCard=".$idCard.'&pageIndex=1'; break;
+          case "personalEnterprise";$url="https://rip.linrico.com/personalEnterprise/result".$pram."&key=".$idCard; break;
+          case "businessData";if ($user['creditCode']!="")$url="https://rip.linrico.com/businessData/result".$pram."&key=".urlencode($user['creditCode'])."&keyType=2";else {if ($user['entname']!="")$url="https://rip.linrico.com/businessData/result".$pram."&key=".urlencode($user['entname'])."&keyType=1";} break;
+          case "enterpriseLitigationInquiry";if ($user['entname']!="") $url="https://rip.linrico.com/enterpriseLitigationInquiry/result".$pram."&name=".urlencode($user['entname']).'&pageIndex=1';break;
+          case "thePhoneIsOnTheInternet"; $url="https://rip.linrico.com/thePhoneIsOnTheInternet/result".$pram."&phone=".$phone;break;
+          case "mobileConsumptionLevel";$url="https://rip.linrico.com/mobileConsumptionLevel/result".$pram."&phone=".$phone;break;
+          case "bankCardFourElements";if ($user['bankcard']!="")$url="https://rip.linrico.com/bankCardFourElements/result".$pram."&name=".$name."&idNumber=".$idCard."&bankCard=".urlencode($user['bankcard'])."&mobile=".$phone; break;
+          case  "personSubjectToEnforcementHJ":if($user['entname']!="")$url="https://rip.linrico.com/personSubjectToEnforcementHJ/result".$pram."&name=".urlencode($user['entname'])."&pageNum=1";break;
+          case  "administrativePenaltyInformationHJ":if($user['entname']!="")$url="https://rip.linrico.com/administrativePenaltyInformationHJ/result".$pram."&name=".urlencode($user['entname'])."&pageNum=1";break;
+          case  "abnormalBusinessOperationHJ":if($user['entname']!="")$url="https://rip.linrico.com/abnormalBusinessOperationHJ/result".$pram."&name=".urlencode($user['entname'])."&pageNum=1";break;
+          case  "businessBrokenPromisesHJ":$url="https://rip.linrico.com/businessBrokenPromisesHJ/result".$pram."&name=".urlencode($user['entname'])."&pageNum=1";break;
+          case  "corporateLawHJ":$url="https://rip.linrico.com/corporateLawHJ/result".$pram."&name=".urlencode($user['entname'])."&pageNum=1";break;
+          default :break;
+      }
+    return $url;
+   }
 
 }
