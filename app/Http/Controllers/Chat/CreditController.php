@@ -23,6 +23,37 @@ class CreditController extends Controller
         $order_id=1;
         return view('wechat.credit.apply',compact('oauth','order_id'));
     }
+    function testvalidate()
+    {
+        return view('wechat.credit.validate');
+    }
+    function post()
+    {
+        $msg=json_decode($output);
+        if ($msg->code=='1001'&&$msg->success)
+        {
+            //用户验证成功
+            $openid=$_SESSION['wechat_user']['id'];
+            DB::table('record')->insert([$openid,$output]);
+            $data["openid"]=$openid;
+            $data["name"]=$name;
+            $data["cardNo"]=$idCard;
+            $data["phone"]=$phone;
+            $id=DB::table('authorization')->insertGetId($data);
+            if ($id)
+            {
+                $user=Wxuser::where('openid',$openid)->first();
+                $user["auth_id"]=$id;
+                $user->save();
+                return "认证成功";
+            }
+            else return "服务出错";
+        }
+        else
+            return $msg->message;
+    }
+
+
     /*征信查询*/
   function  apply()
   {
@@ -184,23 +215,24 @@ class CreditController extends Controller
   function validate_store()
   {
       $path='https://rip.linrico.com/userAuthorization/input?';
-      $name=urlencode($_POST["name"]);
-      $idCard=urlencode($_POST["cardNo"]);
-      $phone=urlencode($_POST["phone"]);
-      $telcode=urlencode($_POST["telcode"]);
+      $name=$_POST["name"];
+      $idCard=$_POST["cardNo"];
+      $phone=$_POST["phone"];
+      $telcode=$_POST["telcode"];
       //用户验证成功
-      $prams='username=shbd&accessToken=40db8b4b95ac91ed6e905c80d45ebac5'."&name=".$name.'&idCard='.$idCard."&phone=".$phone."&securityCode=".$telcode;
+      $prams='username=shbd&accessToken=40db8b4b95ac91ed6e905c80d45ebac5'."&name=".urlencode($name).'&idCard='.urlencode($idCard)."&phone=".urlencode($phone)."&securityCode=".urlencode($telcode);
       $url=$path.$prams;
       $base=new base();
       $output=$base->get_curl($url);
       if ($output!=null&&$output!='')
       {
+          //用户验证成功
+          $openid=$_SESSION['wechat_user']['id'];
+          $time=date('Y-m-d h:i:s');
+          DB::insert('insert into user_validate(result_code,openid,url,created_at) values(?,?,?,?)',[$output, $openid,$url,$time]);
           $msg=json_decode($output);
-          if ($msg->code=='1001'&&$msg->success)
+          if ($msg->code=='0'&&$msg->success)
           {
-              //用户验证成功
-              $openid=$_SESSION['wechat_user']['id'];
-              DB::table('record')->insert([$openid,$output]);
               $data["openid"]=$openid;
               $data["name"]=$name;
               $data["cardNo"]=$idCard;
