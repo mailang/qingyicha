@@ -39,7 +39,7 @@
                 <label class="weui-label">企业名称</label>
             </div>
             <div class="weui-cell__bd">
-                <input class="weui-input" id="entname" name="entname" type="text" placeholder="企业名称" required>
+                <input class="weui-input" id="entname" name="entname" type="text" placeholder="企业名称" required emptytips="请输入企业名称">
             </div>
         </div>
         <div class="weui-cell white-bgcolor">
