@@ -44,18 +44,18 @@
     $(function () {
         wx.config(<?php echo app('wechat.official_account')->jssdk->buildConfig(array('chooseWXPay'), false) ?>);
         wx.ready(function(){
-//            $("#reader").change(function () {
-//                if ($(this).prop("checked"))
-//                {
-//                    $("#SubmitBtn").addClass('weui-btn_primary').removeClass('radio_disable');
-//                    $("#SubmitBtn").prop('disable',false);
-//                }
-//                else
-//                {
-//                    $("#SubmitBtn").addClass('radio_disable').removeClass('weui-btn_primary');
-//                    $("#SubmitBtn").prop('disable',true);
-//                }
-//            });
+            $(".weui-cell__hd").click(function () {
+                if ($("#reader").prop("checked"))
+                {
+                    $("#SubmitBtn").addClass('weui-btn_primary').removeClass('radio_disable');
+                    $("#SubmitBtn").prop('disable',false);
+                }
+                else
+                {
+                    $("#SubmitBtn").addClass('radio_disable').removeClass('weui-btn_primary');
+                    $("#SubmitBtn").prop('disable',true);
+                }
+            });
            $("#SubmitBtn").click(function () {
                 $.ajax({
                     url: '{{route('order.create',$product->id)}}',
