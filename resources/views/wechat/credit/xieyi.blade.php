@@ -31,7 +31,7 @@
             </div>
         </div>
         <div class="weui-cells weui-cells_checkbox" style="margin-top: 0;">
-            <label class="weui-cell weui-check__label" for="c1"> <div class="weui-cell__hd"> <input onclick="javascript:chk(this)" pattern="{1}" type="checkbox" class="weui-check" name="assistance" id="c1"> <i class="weui-icon-checked"></i> </div> <div class="weui-cell__bd" style="font-size: 12px">本人已阅读协议内容并接受协议各条款</div> </label>
+            <label class="weui-cell weui-check__label" for="c1"> <div class="weui-cell__hd"> <input pattern="{1}" type="checkbox" class="weui-check" name="assistance" id="reader"> <i class="weui-icon-checked"></i> </div> <div class="weui-cell__bd" style="font-size: 12px">本人已阅读协议内容并接受协议各条款</div> </label>
         </div>
         <input type="hidden" value="{{$product->id}}" id="proid">
         <div class="weui-btn-area"> <a id="SubmitBtn" href="javascript:" class="weui-btn radio_disable" disable="false">支付{{$product->price}}元进行查询</a> </div>
@@ -40,21 +40,22 @@
 <script src="//res.wx.qq.com/open/js/jweixin-1.4.0.js"></script>
 <script src="http://res2.wx.qq.com/open/js/jweixin-1.4.0.js"></script>
 <script>
-    function chk(obj) {
-        if ($(obj).prop("checked"))
-        {
-            $("#SubmitBtn").addClass('weui-btn_primary').removeClass('radio_disable');
-            $("#SubmitBtn").prop('disable',false);
-        }
-        else
-        {
-            $("#SubmitBtn").addClass('radio_disable').removeClass('weui-btn_primary');
-            $("#SubmitBtn").prop('disable',true);
-        }
-    }
+
     $(function () {
         wx.config(<?php echo app('wechat.official_account')->jssdk->buildConfig(array('chooseWXPay'), true) ?>);
         wx.ready(function(){
+            $("#reader").click(function () {
+                if ($(this).prop("checked"))
+                {
+                    $("#SubmitBtn").addClass('weui-btn_primary').removeClass('radio_disable');
+                    $("#SubmitBtn").prop('disable',false);
+                }
+                else
+                {
+                    $("#SubmitBtn").addClass('radio_disable').removeClass('weui-btn_primary');
+                    $("#SubmitBtn").prop('disable',true);
+                }
+            });
            $("#SubmitBtn").click(function () {
                 $.ajax({
                     url: '{{route('order.create',$product->id)}}',
