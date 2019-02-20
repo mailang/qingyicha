@@ -39,7 +39,7 @@
                 <label class="weui-label">企业名称</label>
             </div>
             <div class="weui-cell__bd">
-                <input class="weui-input" id="entname" name="entname" type="text" placeholder="企业名称">
+                <input class="weui-input" id="entname" name="entname" type="text" placeholder="企业名称" required>
             </div>
         </div>
         <div class="weui-cell white-bgcolor">
@@ -136,7 +136,7 @@
                          datatype:'text',
                          success:function (data) {
                              loading.hide();
-                            // location.href="/weixin/apply/success/"+$("#order_id").val();
+                             location.href="/weixin/apply/success/"+$("#order_id").val();
                              //weui.toast('提交成功', 3000);
                          },
                          error:function () {
