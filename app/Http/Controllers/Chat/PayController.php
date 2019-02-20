@@ -13,6 +13,7 @@ use  App\Models\Wxuser;
 use App\Models\Product;
 use Illuminate\Support\Facades\Log;
 use Monolog\Handler\ElasticSearchHandler;
+use Illuminate\Support\Facades\DB;
 
 class PayController extends Controller
 {
