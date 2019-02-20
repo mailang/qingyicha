@@ -32,10 +32,9 @@ class CreditController extends Controller
       $user=Wxuser::where('openid',$openid)->first();
       if ($user["auth_id"]!=null&&$user["auth_id"]>0)
           {
-              $order=Order::where('pro_id',$id)->where('state','>','0')->where('state','!=','2')->orderByDesc('id')->limit(1)->get(['id','state']);
+              $order=Order::where('pro_id',$id)->where('openid',$openid)->where('state','>','0')->where('state','!=','2')->orderByDesc('id')->limit(1)->get(['id','state']);
               if ($order->first())
               {
-              /*已认证*/
               $odata=$order->first();
               //订单状态 0:未支付1：已付款，2：征信接口已成功查询；3.接口已查询存在异常接口-1：超时未支付的无效订单
               switch ($odata['state'])
