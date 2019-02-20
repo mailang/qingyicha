@@ -18,8 +18,8 @@ class ReportController extends Controller
         $list=DB::table('user_interface')->leftJoin('interfaces','user_interface.interface_id','=','interfaces.id')
             ->where('user_interface.state',1)
             ->where('openid',$openid)
-           // ->where('order_id',$id)
-           ->whereIn('user_interface.id',[17,19,22,27,28])//test
+            ->where('order_id',$id)
+           //->whereIn('user_interface.id',[17,19,22,27,28])//test
             ->get(['interfaces.api_name','user_interface.id','user_interface.state','interface_id','order_id','auth_id','result_code','user_interface.created_at']);
             if(count($list)>0){
             $auth_id=$list[0]->auth_id;
