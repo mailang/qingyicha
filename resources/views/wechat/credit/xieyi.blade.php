@@ -42,7 +42,7 @@
 <script>
 
     $(function () {
-        wx.config(<?php echo app('wechat.official_account')->jssdk->buildConfig(array('chooseWXPay'), true) ?>);
+        wx.config(<?php echo app('wechat.official_account')->jssdk->buildConfig(array('chooseWXPay'), false) ?>);
         wx.ready(function(){
             $("#reader").click(function () {
                 if ($(this).prop("checked"))
