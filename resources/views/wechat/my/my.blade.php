@@ -13,7 +13,7 @@
                 <div class="weui-cell__bd">
                     <p class="choose-text"><img src="{{asset('wechat/images/home-1.svg')}}" alt=""> 查询记录</p>
                 </div>
-                <div class="weui-cell__ft"><a class="tips" href="{{route('order.list','all')}}}">查看所有记录</a></div>
+                <div class="weui-cell__ft"><a class="tips" href="{{route('order.list','all')}}">查看所有记录</a></div>
             </div>
         </div>
         <div class="weui-flex home-order white-bgcolor mb-625">
