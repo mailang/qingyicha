@@ -14,7 +14,9 @@ class ReportController extends Controller
 {
     function report($id)
     {
-        $openid='offTY1fb81WxhV84LWciHzn4qwqU';//$_SESSION['wechat_user']['id']
+        //$openid='offTY1fb81WxhV84LWciHzn4qwqU';
+        $openid = $_SESSION['wechat_user']['id'];
+
         $list=DB::table('user_interface')->leftJoin('interfaces','user_interface.interface_id','=','interfaces.id')
             ->where('user_interface.state',1)
             ->where('openid',$openid)
