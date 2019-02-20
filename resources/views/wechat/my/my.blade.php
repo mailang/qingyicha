@@ -13,10 +13,11 @@
                 <div class="weui-cell__bd">
                     <p class="choose-text"><img src="{{asset('wechat/images/home-1.svg')}}" alt=""> 查询记录</p>
                 </div>
-                <div class="weui-cell__ft"><a class="tips" href="orderlist.html">查看所有记录</a></div>
+                <div class="weui-cell__ft"><a class="tips" href="{{route('order.list','all')}}}">查看所有记录</a></div>
             </div>
         </div>
         <div class="weui-flex home-order white-bgcolor mb-625">
+           <!--
             <a href="orderlist.html" class="weui-flex__item">
                 <div class="weui-flex__icon">
                     <img src="{{asset('wechat/images/home-4.svg')}}" alt="">
@@ -29,7 +30,8 @@
                 </div>
                 <p class="weui-flex__label">近一周</p>
             </a>
-            <a href="orderlist.html" class="weui-flex__item">
+            -->
+            <a href="{{route('order.list','month')}}" class="weui-flex__item">
                 <div class="weui-flex__icon">
                     <img src="{{asset('wechat/images/home-4.svg')}}" alt="">
                 </div>

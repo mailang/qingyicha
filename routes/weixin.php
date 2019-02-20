@@ -23,5 +23,5 @@ Route::get("/order/report/{id}",['uses'=>"ReportController@report",'as'=>'order.
 Route::get("/get/signature",['uses'=>"PayController@configSignature",'as'=>'get.signature']);
 Route::get("/order/refund/{id}",['uses'=>"PayController@refund",'as'=>'order.refund']);
 /*订单管理*/
-Route::get("/order/list",['uses'=>"OrderController@list",'as'=>'order.list']);
 Route::get("/order/info/{id}",['uses'=>"OrderController@order_info",'as'=>'order.info']);
+Route::get("/order/list/{time}",['uses'=>"OrderController@orderlist",'as'=>'order.list']);
