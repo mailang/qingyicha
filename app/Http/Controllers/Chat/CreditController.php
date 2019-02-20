@@ -23,37 +23,6 @@ class CreditController extends Controller
         $order_id=1;
         return view('wechat.credit.apply',compact('oauth','order_id'));
     }
-    function testvalidate()
-    {
-        return view('wechat.credit.validate');
-    }
-    function post()
-    {
-        $msg=json_decode($output);
-        if ($msg->code=='1001'&&$msg->success)
-        {
-            //用户验证成功
-            $openid=$_SESSION['wechat_user']['id'];
-            DB::table('record')->insert([$openid,$output]);
-            $data["openid"]=$openid;
-            $data["name"]=$name;
-            $data["cardNo"]=$idCard;
-            $data["phone"]=$phone;
-            $id=DB::table('authorization')->insertGetId($data);
-            if ($id)
-            {
-                $user=Wxuser::where('openid',$openid)->first();
-                $user["auth_id"]=$id;
-                $user->save();
-                return "认证成功";
-            }
-            else return "服务出错";
-        }
-        else
-            return $msg->message;
-    }
-
-
     /*征信查询*/
   function  apply()
   {
