@@ -54,7 +54,7 @@ class PayController extends Controller
              $data["time_start"]=date('Y-m-d H:i:s');
              $data["time_expire"]=date('Y-m-d H:i:s',strtotime('+ 1 h'));
              $data["pro_id"]=$id;
-             $order_id=DB::table('authorization')->insertGetId($data);
+             $order_id=DB::table('order')->insertGetId($data);
              $config["order_id"]=$order_id;
             return  \GuzzleHttp\json_encode($config);
         }
