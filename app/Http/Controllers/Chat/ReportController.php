@@ -14,30 +14,31 @@ class ReportController extends Controller
 {
     function report($id)
     {
-        $openid=$_SESSION['wechat_user']['id'];//;'offTY1fb81WxhV84LWciHzn4qwqU'
+        $openid='offTY1fb81WxhV84LWciHzn4qwqU';//$_SESSION['wechat_user']['id']
         $list=DB::table('user_interface')->leftJoin('interfaces','user_interface.interface_id','=','interfaces.id')
             ->where('user_interface.state',1)
             ->where('openid',$openid)
-            ->where('order_id',$id)
-           // ->whereIn('user_interface.id',[17,19,22,27])//test
+           // ->where('order_id',$id)
+           ->whereIn('user_interface.id',[17,19,22,27,28])//test
             ->get(['interfaces.api_name','user_interface.id','user_interface.state','interface_id','order_id','auth_id','result_code','user_interface.created_at']);
-        if(count($list)>0){
-        $auth_id=$list[0]->auth_id;
-        $report=array();
-        foreach ($list as $key=>$item) {
+            if(count($list)>0){
+            $auth_id=$list[0]->auth_id;
+            $report=array();
+            foreach ($list as $key=>$item) {
             $result = $item->result_code;
             $api_name = $item->api_name;
             switch ($api_name) {
                 /*个人名下企业*/
-                case "personalEnterprise";$personalEnterprise = new Src\personalEnterprise();$data = $personalEnterprise->handle_data($item->id,$item->order_id,$result);$report['company']=$data;break;
+                case "personalEnterprise":$personalEnterprise = new Src\personalEnterprise();$data = $personalEnterprise->handle_data($item->id,$item->order_id,$result);$report['company']=$data;break;
                 /*个人涉诉查询*/
-                case "personalComplaintInquiry";$personalComplaintInquiry = new Src\personalComplaintInquiry();$data = $personalComplaintInquiry->handle_data($item->id,$item->order_id,$result);$report['personInquiry']=$data;break;
+                case "personalComplaintInquiry":$personalComplaintInquiry = new Src\personalComplaintInquiry();$data = $personalComplaintInquiry->handle_data($item->id,$item->order_id,$result);$report['personInquiry']=$data;break;
                 /*企业涉诉*/
-               // case "enterpriseLitigationInquiry";;$enterpriseLitigationInquiry = new Src\personalComplaintInquiry();$data = $enterpriseLitigationInquiry->handle_data($item->id,$item->order_id,$result);$report['personInquiry']=$data;break;break;
+                case "enterpriseLitigationInquiry":$enterpriseLitigationInquiry = new Src\personalComplaintInquiry();$data = $enterpriseLitigationInquiry->handle_data($item->id,$item->order_id,$result);$report['enterpriseInquiry']=$data;break;
                 /*手机在网状态*/
-                case "thePhoneIsOnTheInternet"; $thePhoneIsOnTheInternet= new Src\thePhoneIsOnTheInternet();$data = $thePhoneIsOnTheInternet->handle_data($item->id,$item->order_id,$result);$report['phone']=$data;break;
+                case "thePhoneIsOnTheInternet":$thePhoneIsOnTheInternet= new Src\thePhoneIsOnTheInternet();$data = $thePhoneIsOnTheInternet->handle_data($item->id,$item->order_id,$result);$report['phone']=$data;break;
+                /*多重借贷*/
+                case "multipleLoanQuery":$multipleLoanQuery= new Src\multipleLoanQuery();$data = $multipleLoanQuery->handle_data($item->id,$item->order_id,$result);$report['multipleLoan']=$data;break;
                 /*
-                case "multipleLoanQuery";$url="https://rip.linrico.com/multipleLoanQuery/result".$pram."&mobile=".$phone;break;
                 case "businessData";if ($user['creditCode']!="")$url="https://rip.linrico.com/businessData/result".$pram."&key=".urlencode($user['creditCode'])."&keyType=2";else {if ($user['entname']!="")$url="https://rip.linrico.com/businessData/result".$pram."&key=".urlencode($user['entname'])."&keyType=1";} break;
                 case "mobileConsumptionLevel";$url="https://rip.linrico.com/mobileConsumptionLevel/result".$pram."&phone=".$phone;break;
                 case "bankCardFourElements";if ($user['bankcard']!="")$url="https://rip.linrico.com/bankCardFourElements/result".$pram."&name=".$name."&idNumber=".$idCard."&bankCard=".urlencode($user['bankcard'])."&mobile=".$phone; break;

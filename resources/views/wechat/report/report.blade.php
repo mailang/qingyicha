@@ -47,12 +47,65 @@
                 @endif
         </div>
         @endif
+        @if(isset($report["multipleLoan"]))
+            <div class="report white-bgcolor">
+                <div class="weui-cells__title rp_head" ><img src="{{asset('wechat/images/icon1.png')}}" alt="" style="vertical-align:middle;"><span style="font-size: 14px;">&nbsp;个人多重借贷</span></div>
+                @if($report["multipleLoan"]["state"]==0)
+                    <div class="weui-cell" style="color: #666666;" >
+                        <div class="weui-cell__hd">{{$report["multipleLoan"]["msg"]}}</div>
+                    </div>
+                @else
+                    <div class="weui-cell" style="color: #666666;" >
+                        <div class="weui-cell__hd"><label>信贷平台注册数：</label></div>
+                        <div class="weui-cell__bd">
+                            {{ count($report["multipleLoan"]["creditPlatformRegistrationDetails"])}}
+                        </div>
+                    </div>
+                    <div class="weui-cell" style="color: #666666;" >
+                        <div class="weui-cell__hd"><label class="weui-label">贷款申请次数：</label></div>
+                        <div class="weui-cell__bd">
+                            {{count($report["multipleLoan"]["loanApplicationDetails"])}}
+                        </div>
+                    </div>
+                    <div class="weui-cell" style="color: #666666;" >
+                        <div class="weui-cell__hd"><label class="weui-label">贷款放款次数：</label></div>
+                        <div class="weui-cell__bd">
+                            {{ count($report["multipleLoan"]["loanDetails"])}}
+                        </div>
+                    </div>
+                    <div class="weui-cell" style="color: #666666;" >
+                        <div class="weui-cell__hd"><label class="weui-label">贷款驳回次数：</label></div>
+                        <div class="weui-cell__bd">
+                            {{ count($report["multipleLoan"]["loanRejectDetails"])}}
+                        </div>
+                    </div>
+                    <div class="weui-cell" style="color: #666666;" >
+                        <div class="weui-cell__hd"><label class="weui-label">贷款逾期次数：</label></div>
+                        <div class="weui-cell__bd">
+                            <?php $i=0;?>
+                            @if(count($report["multipleLoan"]["overduePlatformDetails"])>0)
+                                    @foreach($report["multipleLoan"]["overduePlatformDetails"] as $item)
+                                        <?php $i=$i+$item->counts?>
+                                    @endforeach
+                            @endif
+                                {{$i}}
+                        </div>
+                    </div>
+                    <div class="weui-cell" style="color: #666666;" >
+                        <div class="weui-cell__hd"><label class="weui-label">欠款次数：</label></div>
+                        <div class="weui-cell__bd">
+                            {{ count($report["multipleLoan"]["arrearsInquiry"])}}
+                        </div>
+                    </div>
+                @endif
+            </div>
+        @endif
         @if(isset($report["personInquiry"]))
             <div class="report white-bgcolor">
                 <div class="weui-cells__title rp_head" ><img src="{{asset('wechat/images/icon1.png')}}" alt="" style="vertical-align:middle;"><span style="font-size: 14px;">&nbsp;个人涉诉</span></div>
                 @if($report["personInquiry"]["state"]==0)
                     <div class="weui-cell" style="color: #666666;" >
-                        <div class="weui-cell__hd">{{$report["phone"]["msg"]}}</div>
+                        <div class="weui-cell__hd">{{$report["personInquiry"]["msg"]}}</div>
                     </div>
                 @else
                     <div class="weui-cell" style="color: #666666;" >
@@ -104,6 +157,70 @@
                             <div class="weui-cell__bd">
                                 {{$report["personInquiry"]["pagination"]->totalPage}}
                             </div>
+                    </div>
+                    <div class="weui-cell" style="color: #666666;" >
+                        <div style="float: right;font-size: 10px;color: #0f9ae0;"><a href="javascript:void(0)">查看详情</a></div>
+                    </div>
+                @endif
+            </div>
+        @endif
+        @if(isset($report["personInquiry"]))
+            <div class="report white-bgcolor">
+                <div class="weui-cells__title rp_head" ><img src="{{asset('wechat/images/icon1.png')}}" alt="" style="vertical-align:middle;"><span style="font-size: 14px;">&nbsp;企业涉诉</span></div>
+                @if($report["personInquiry"]["state"]==0)
+                    <div class="weui-cell" style="color: #666666;" >
+                        <div class="weui-cell__hd">{{$report["enterpriseInquiry"]["msg"]}}</div>
+                    </div>
+                @else
+                    <div class="weui-cell" style="color: #666666;" >
+                        <div class="weui-cell__hd"><label class="weui-label">开庭公告数：</label></div>
+                        <div class="weui-cell__bd">
+                            {{$report["enterpriseInquiry"]["statistic"]->ktggResultSize}}
+                        </div>
+                        <div class="weui-cell__hd"><label class="weui-label">裁判文书数：</label></div>
+                        <div class="weui-cell__bd">
+                            {{$report["enterpriseInquiry"]["statistic"]->cpwsResultSize}}
+                        </div>
+                    </div>
+                    <div class="weui-cell" style="color: #666666;" >
+                        <div class="weui-cell__hd"><label class="weui-label">执行公告数：</label></div>
+                        <div class="weui-cell__bd">
+                            {{$report["enterpriseInquiry"]["statistic"]->zxggResultSize}}
+                        </div>
+                        <div class="weui-cell__hd"><label class="weui-label">失信公告数：</label></div>
+                        <div class="weui-cell__bd">
+                            {{$report["enterpriseInquiry"]["statistic"]->sxggResultSize}}
+                        </div>
+                    </div>
+                    <div class="weui-cell" style="color: #666666;" >
+                        <div class="weui-cell__hd"><label class="weui-label">法院公告数：</label></div>
+                        <div class="weui-cell__bd">
+                            {{$report["enterpriseInquiry"]["statistic"]->fyggResultSize}}
+                        </div>
+                        <div class="weui-cell__hd"><label class="weui-label">网贷黑名单数：</label></div>
+                        <div class="weui-cell__bd">
+                            {{$report["enterpriseInquiry"]["statistic"]->wdhmdResultSize}}
+                        </div>
+                    </div>
+                    <div class="weui-cell" style="color: #666666;" >
+                        <div class="weui-cell__hd"><label class="weui-label">案件流程：</label></div>
+                        <div class="weui-cell__bd">
+                            {{$report["enterpriseInquiry"]["statistic"]->ajlcResultSize}}
+                        </div>
+                        <div class="weui-cell__hd"><label class="weui-label">曝光台：</label></div>
+                        <div class="weui-cell__bd">
+                            {{$report["enterpriseInquiry"]["statistic"]->bgtResultSize}}
+                        </div>
+                    </div>
+                    <div class="weui-cell" style="color: #666666;" >
+                        <div class="weui-cell__hd"><label class="weui-label">涉诉记录数：</label></div>
+                        <div class="weui-cell__bd">
+                            {{$report["enterpriseInquiry"]["pagination"]->resultSize}}
+                        </div>
+                        <div class="weui-cell__hd"><label class="weui-label">总页数：</label></div>
+                        <div class="weui-cell__bd">
+                            {{$report["enterpriseInquiry"]["pagination"]->totalPage}}
+                        </div>
                     </div>
                     <div class="weui-cell" style="color: #666666;" >
                         <div style="float: right;font-size: 10px;color: #0f9ae0;"><a href="javascript:void(0)">查看详情</a></div>
