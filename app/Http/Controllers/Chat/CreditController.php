@@ -28,11 +28,11 @@ class CreditController extends Controller
   {
       /*查看用户是否已经购买，购买后看是否已认证*/
       $id=$_GET["proid"];
-      $openid='offTY1fb81WxhV84LWciHzn4qwqU';//$_SESSION['wechat_user']['id'];
+      $openid=$_SESSION['wechat_user']['id'];//'offTY1fb81WxhV84LWciHzn4qwqU';
       $user=Wxuser::where('openid',$openid)->first();
       if ($user["auth_id"]!=null&&$user["auth_id"]>0)
           {
-              $order=Order::where('pro_id',$id)->where('state','>','0')->orderByDesc('id')->limit(1)->get(['id','state']);
+              $order=Order::where('pro_id',$id)->where('state','>','0')->where('state','!=','2')->orderByDesc('id')->limit(1)->get(['id','state']);
               if ($order->first())
               {
               /*已认证*/
@@ -48,7 +48,7 @@ class CreditController extends Controller
                       $order_id=$odata['id'];
                       return view('wechat.credit.apply',compact('oauth','order_id')); break;
                   default:/*不存在查询失败的接口，可以重新支付查询最新的接口*/
-                      return view('wechat.credit.xieyi'); break;
+                      $product=Product::find($id);   return view('wechat.credit.xieyi',compact('product')); break;
               }
               }
               else
@@ -63,7 +63,6 @@ class CreditController extends Controller
               /*未认证用户*/
               return view('wechat.credit.validate');
           }
-
   }
   /*征信接口查询并生成征信报告，一次性查询多个接口
    从订单中取出state=1的订单type,确定用户购买的产品类型，根据
@@ -71,7 +70,7 @@ class CreditController extends Controller
   function apply_store(Request $request)
   {
       $req=$request->all();
-      $openid='offTY1fb81WxhV84LWciHzn4qwqU';//$_SESSION['wechat_user']['id'];
+      $openid=$_SESSION['wechat_user']['id'];//'offTY1fb81WxhV84LWciHzn4qwqU';
       $user['bankcard']=$req["bankcard"]==null?"":$req["bankcard"];
       $user['entname']=$req["entname"]==null?"":$req["entname"];
       $user['creditCode']=$req["creditCode"]==null?"":$req["creditCode"];
@@ -106,24 +105,21 @@ class CreditController extends Controller
               ->where('order_id',$req["order_id"])->where('user_interface.state',0)
               ->get(['interfaces.id','interfaces.api_name','user_interface.state']);//异常接口
           $num=count($interfaces);
-        if($order["pro_id"]==1&&$num>0)
-        {
-            $chArr=[];
-            //创建多个cURL资源
-                for($i=0; $i<$num; $i++){
-                    //$this->init_url($user,$auth,$interfaces[$i]->api_name);
-                $url="https://rip.linrico.com/bankCardFourElements/result?username=shbd&accessToken=40db8b4b95ac91ed6e905c80d45ebac5&name=%E5%BC%A0%E6%89%BF%E6%9E%97&idNumber=340825198908154735&bankCard=6222620250005095174&mobile=15675515689";
-                if ($url!='')
-                {
-                    if (isset($interfaces[$i]->state))DB::table('user_interface')->where('interface_id',$interfaces[$i]->id)->where('order_id',$req["order_id"])->where('state',0)->update(["state"=>2]);
-                    $chArr[$i]=curl_init();
-                    curl_setopt($chArr[$i], CURLOPT_URL, $url);//"https://rip.linrico.com/personSubjectToEnforcementHJ/result?username=shbd&accessToken=40db8b4b95ac91ed6e905c80d45ebac5&name=".urlencode('北京百度网讯科技有限公司')."&pageNum=1"
-                    curl_setopt($chArr[$i], CURLOPT_RETURNTRANSFER, 1);
-                    curl_setopt($chArr[$i], CURLOPT_HEADER, 1);
-                    curl_setopt($chArr[$i], CURLOPT_HTTPHEADER, array("Content-type: application/json;charset='utf-8'"));
-                    curl_setopt($chArr[$i], CURLOPT_SSL_VERIFYPEER, FALSE); // https请求 不验证证书和hosts
-                    curl_setopt($chArr[$i], CURLOPT_SSL_VERIFYHOST, FALSE);
-                    curl_setopt($chArr[$i], CURLOPT_TIMEOUT, 1);
+        if($order["pro_id"]==1&&$num>0) {
+            $chArr = [];//创建多个cURL资源
+            for ($i = 0; $i < $num; $i++)
+            {
+                $url =  $this->init_url($user,$auth,$interfaces[$i]->api_name);
+                if ($url != '') {
+                $chArr[$i] = curl_init();
+                curl_setopt($chArr[$i], CURLOPT_URL, $url);
+                curl_setopt($chArr[$i], CURLOPT_RETURNTRANSFER, 1);
+               //curl_setopt($chArr[$i], CURLOPT_HEADER, 1);
+                curl_setopt($chArr[$i], CURLOPT_HTTPHEADER, array("Content-type: application/json;charset='utf-8'"));
+                curl_setopt($chArr[$i], CURLOPT_SSL_VERIFYPEER, FALSE); // https请求 不验证证书和hosts
+                curl_setopt($chArr[$i], CURLOPT_SSL_VERIFYHOST, FALSE);
+                curl_setopt($chArr[$i], CURLOPT_TIMEOUT, 5);
+                //curl_setopt($chArr[$i], CURLOPT_USERAGENT, $_SERVER["HTTP_USER_AGENT"]);
                 }
             }
             $mh = curl_multi_init(); //1 创建批处理cURL句柄
@@ -144,31 +140,17 @@ class CreditController extends Controller
                     $arrurl=explode('/',$info['url']);
                     $api_name=$arrurl[3];
                     $api=$interfaces->where('api_name',$api_name)->first();
-                    $inter["interface_id"]=$api->id;
+                    if ($api)$inter["interface_id"]=$api->id;
                     $inter["order_id"]=$order['id'];
                     $inter["auth_id"]=$auth['id'];
                     $inter["openid"]=$openid;
-                    // {"result":"","total":"","code":"200","data":{"total":2,"items":[{"caseCode":"(2019)冀02执224号","partyCardNum":"91110000802****433B","pname":"北京百度网讯科技有限公司","caseCreateTime":1546531200000,"execCourtName":"唐山市中级人民法院","id":19397334,"execMoney":"6755","cid":22822},{"caseCode":"(2018)京0108执11361号","partyCardNum":"80210043-3","pname":"北京百度网讯科技有限公司","caseCreateTime":1530633600000,"execCourtName":"北京市海淀区人民法院","id":7169664,"execMoney":"17300","cid":22822}]},"tradeNo":"1547779358538WQAO","param":"","start":"","pageSize":"","end":"","message":"请求成功","pageNum":""}
                     $inter["result_code"]=$result;
                     $inter["url"]=$info['url'];
-                    if ($result!="")
-                    {
-                        $jsson=json_decode($result);
-                        if (isset($jsson->success)&&$jsson->success==false&&$jsson->code=='100000002')
-                        {
-                            $inter["state"]=0;//余额不足
-                            $order["state"]=3;
-                        }
-                        else {$inter["state"]=1;}
-                    }else { //返回数据为空，请求出现异常
-                        $inter["state"]=0;$order["state"]=3; }
-                        dd($inter);
                     User_interface::create($inter);
                     //remove the curl handle that just completed
                     curl_multi_remove_handle($mh, $done['handle']);
                     curl_close($done['handle']);
                 }
-                // Block for data in / output; error handling is done by curl_multi_exec
                 if ($active > 0) {
                     curl_multi_select($mh);
                 }
@@ -176,6 +158,7 @@ class CreditController extends Controller
             curl_multi_close($mh); //7 关闭全部句柄
             $order->save();//订单状态值改变
         }
+        return "1";
       //$end_time = microtime(TRUE);
      // echo sprintf("use time:%.3f s", $end_time - $srart_time);
   }
@@ -265,6 +248,13 @@ class CreditController extends Controller
           default :break;
       }
     return $url;
+   }
+    /*
+     * 接口查询成功跳转页
+     */
+   function success($id)
+   {
+      return view('wechat.credit.success',compact('id'));
    }
 
 }

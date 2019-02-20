@@ -61,29 +61,31 @@
                     type: 'get',
                     datatype: 'json',
                     success: function (data) {
-                        $re=$.parseJSON(data);
-                        wx.chooseWXPay({
-                            timestamp:$re["timestamp"],
-                            nonceStr: $re["nonceStr"],
-                            package: $re["package"],
-                            signType:$re["signType"],
-                            paySign: $re["paySign"], // 支付签名
-                            success: function (res) {
-                                //支付成功后的回调函数
-                                //支付成功后生成征信报告
-                                // 支付成功后的回调函数
-                                if (res.errMsg == "chooseWXPay:ok") {
-                                    //支付成功
-                                     window.location.href='{{route('order.info',$re["order_id"])}}';
-                                } else {
-                                    weui.toast(res.errMsg);
+                        if(data!="") {
+                            $re = $.parseJSON(data);
+                            wx.chooseWXPay({
+                                timestamp: $re["timestamp"],
+                                nonceStr: $re["nonceStr"],
+                                package: $re["package"],
+                                signType: $re["signType"],
+                                paySign: $re["paySign"], // 支付签名
+                                success: function (res) {
+                                    //支付成功后的回调函数
+                                    //支付成功后生成征信报告
+                                    // 支付成功后的回调函数
+                                    if (res.errMsg == "chooseWXPay:ok") {
+                                        //支付成功
+                                        window.location.href ="/weixin/order/info/"+$re["order_id"];
+                                    } else {
+                                        weui.toast(res.errMsg);
+                                    }
+                                },
+                                cancel: function (res) {
+                                    //支付取消
+                                    weui.toast('支付取消');
                                 }
-                            },
-                            cancel: function(res) {
-                            //支付取消
-                                weui.toast('支付取消');
-                            }
-                        });
+                            });
+                        }
                     },
                     error: function () {
                         weui.toast('系统故障');

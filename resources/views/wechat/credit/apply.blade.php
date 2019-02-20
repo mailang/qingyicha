@@ -136,8 +136,8 @@
                          datatype:'text',
                          success:function (data) {
                              loading.hide();
-                             weui.toast('提交成功', 3000);
-
+                            // location.href="/weixin/apply/success/"+$("#order_id").val();
+                             //weui.toast('提交成功', 3000);
                          },
                          error:function () {
                              weui.toast('服务出错', 3000);
@@ -146,7 +146,6 @@
 
                 }},regexp);
         });
-    ;
     });
 </script>
  </body>

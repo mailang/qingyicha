@@ -85,7 +85,6 @@ class PayController extends Controller
     function pay_notify()
     {
         $app = app('wechat.payment');
-
         $response = $app->handlePaidNotify(function($message, $fail){
             $data["result"]=file_get_contents("php://input");
             $data["openid"]=$message["openid"];
@@ -123,7 +122,6 @@ class PayController extends Controller
 
     }
 
-    /*微信退款*/
     /*   "return_code" => "SUCCESS"
   "return_msg" => "OK"
   "appid" => "wxaffee917b46f14d8"
@@ -146,6 +144,7 @@ class PayController extends Controller
   "trade_state_desc" => "支付成功"
          */
 
+    /*微信退款*/
     function  refund($order_id)
     {
         $app = app('wechat.payment');
@@ -156,7 +155,12 @@ class PayController extends Controller
             $result= $app->order->queryByOutTradeNumber($out_trade_no);
             if ($result["return_code"]=="SUCCESS") {
                 if ($result["result_code"] == 'SUCCESS') {
+                  if (isset($result["transaction_id"]))
                     $data["transaction_id"] = $result["transaction_id"];
+                  else
+                  {
+                      if (isset($result["trade_state"])&&$result["trade_state"]=='NOTPAY')return $result["trade_state_desc"];
+                  }
                     $base = new base();
                     $data["refundNumber"] = $base->No_create($order_id);//获取订单号
                     $data["totalFee"] = $order["total_fee"] * 100;//单位转化

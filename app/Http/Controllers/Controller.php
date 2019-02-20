@@ -39,4 +39,10 @@ class Controller extends BaseController
             else return "服务出错";
         }
     }
+
+    function api()
+    {
+
+        return "https://www.baidu.com";
+    }
 }
