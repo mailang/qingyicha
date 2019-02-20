@@ -44,7 +44,8 @@
     $(function () {
         wx.config(<?php echo app('wechat.official_account')->jssdk->buildConfig(array('chooseWXPay'), false) ?>);
         wx.ready(function(){
-            $("#reader").click(function () {
+            $(".weui-cells_checkbox").click(function () {
+                $("#reader").click();
                 if ($("#reader").prop("checked"))
                 {
                     $("#SubmitBtn").addClass('weui-btn_primary').removeClass('radio_disable');
