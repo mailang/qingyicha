@@ -16,11 +16,13 @@ class OrderController extends Controller
          {
              $orderlist=DB::table('product')->leftJoin('order','product.id','=','order.pro_id')
                  ->where('order.openid',$openid)
+                 ->orderByDesc("order.created_at")
                  ->get(['order.id','order.state','order.out_trade_no','order.total_fee','cash_fee','time_start','product.pro_name','product.icon']);
          }else
              $orderlist=DB::table('product')->leftJoin('order','product.id','=','order.pro_id')
                  ->where('order.openid',$openid)
                  ->whereDate('order.created_at','>',date('Y-m-d h:i:s',strtotime('-1 month')))
+                 ->orderByDesc("order.created_at")
                  ->get(['order.id','order.state','order.out_trade_no','order.total_fee','cash_fee','time_start','product.pro_name','product.icon']);
 
          return view('wechat.order.list',compact('orderlist'));

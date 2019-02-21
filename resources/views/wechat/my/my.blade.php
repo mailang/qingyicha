@@ -31,7 +31,7 @@
                 <p class="weui-flex__label">近一周</p>
             </a>
             -->
-            <a href="{{route('order.list','month')}}" class="weui-flex__item">
+            <a href="{{route('order.list','month')}}" style="float: left;padding-left: 15px;">
                 <div class="weui-flex__icon">
                     <img src="{{asset('wechat/images/home-4.svg')}}" alt="">
                 </div>
