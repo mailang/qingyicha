@@ -164,7 +164,7 @@
                 @endif
             </div>
         @endif
-        @if(isset($report["personInquiry"]))
+        @if(isset($report["enterpriseInquiry"]))
             <div class="report white-bgcolor">
                 <div class="weui-cells__title rp_head" ><img src="{{asset('wechat/images/icon1.png')}}" alt="" style="vertical-align:middle;"><span style="font-size: 14px;">&nbsp;企业涉诉</span></div>
                 @if($report["personInquiry"]["state"]==0)
