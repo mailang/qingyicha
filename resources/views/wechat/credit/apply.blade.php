@@ -120,12 +120,11 @@
 <script src="//res.wx.qq.com/open/js/jweixin-1.4.0.js"></script>
 <script src="http://res2.wx.qq.com/open/js/jweixin-1.4.0.js"></script>
 <script>
-
+    var loading = weui.loading('');
     $(function () {
-        //var loading = weui.loading('...');
         wx.config(<?php echo app('wechat.official_account')->jssdk->buildConfig(array('chooseWXPay'), false) ?>);
         wx.ready(function(){
-            //loading.hide();
+            loading.hide();
             $("#btnsubmit").click(function () {
                 $.ajax({
                     url: '{{route('order.create',$product->id)}}',
