@@ -1,5 +1,6 @@
 @include('wechat.layouts.header')
 <body class="white-bgcolor">
+@include('wechat.layouts.footer')
 <script>
     $(function () {
         var loading = weui.loading('查询中...');
@@ -19,6 +20,5 @@
         });
     });
 </script>
-@include('wechat.layouts.footer')
 </body>
 </html>
