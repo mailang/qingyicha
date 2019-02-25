@@ -35,6 +35,7 @@ class enterpriseLitigationInquiry
                     //"statistic":{"ktggResultSize":0,"cpwsResultSize":0,"zxggResultSize":2,"sxggResultSize":0,"fyggResultSize":0,"wdhmdResultSize":0,"ajlcResultSize":0,"bgtResultSize":0},"checkStatus":"EXIST"}}
                     $data=$jsson->data;
                     $re["state"]=1;
+                    $re["name"]=$data->name;
                     $re["pagination"]=$data->pagination;
                     $re["statistic"]=$data->statistic;
                 }
