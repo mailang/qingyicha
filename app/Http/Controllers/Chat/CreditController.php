@@ -150,7 +150,10 @@ class CreditController extends Controller
                 if ($interfaces[$i]->api_name=='enterpriseLitigationInquiry')//企业涉诉
                 {
                     if ($attach["entname"]!=null&&$attach["entname"]!='') {
-                        foreach (json_decode($attach["entname"]) as $company) {
+                        $ent = json_decode($attach["entname"]);
+                        $entcount = count($ent);
+                        $num += $entcount - 1;
+                        foreach ($ent as $company) {
                             $user["entname"]=$company->entname;
                             $url = $this->init_url($user, $auth, $interfaces[$i]->api_name);
                             if ($url != '') {
