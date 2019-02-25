@@ -167,65 +167,67 @@
         @if(isset($report["enterpriseInquiry"]))
             <div class="report white-bgcolor">
                 <div class="weui-cells__title rp_head" ><img src="{{asset('wechat/images/icon1.png')}}" alt="" style="vertical-align:middle;"><span style="font-size: 14px;">&nbsp;企业涉诉</span></div>
-                @if($report["personInquiry"]["state"]==0)
+                @foreach($report["enterpriseInquiry"] as $enterpriseInquiry)
+                @if($enterpriseInquiry["state"]==0)
                     <div class="weui-cell" style="color: #666666;" >
-                        <div class="weui-cell__hd">{{$report["enterpriseInquiry"]["msg"]}}</div>
+                        <div class="weui-cell__hd">{{$enterpriseInquiry["msg"]}}</div>
                     </div>
                 @else
+                        <div class="weui-cell" style="color: #666666;" >
+                            <div class="weui-cell__hd" style="color: red">企业名：</div>
+                            <div class="weui-cell__bd">{{$enterpriseInquiry["name"]}}</div>
+                        </div>
                     <div class="weui-cell" style="color: #666666;" >
                         <div class="weui-cell__hd"><label class="weui-label">开庭公告数：</label></div>
                         <div class="weui-cell__bd">
-                            {{$report["enterpriseInquiry"]["statistic"]->ktggResultSize}}
+                            {{$enterpriseInquiry["statistic"]->ktggResultSize}}
                         </div>
                         <div class="weui-cell__hd"><label class="weui-label">裁判文书数：</label></div>
                         <div class="weui-cell__bd">
-                            {{$report["enterpriseInquiry"]["statistic"]->cpwsResultSize}}
+                            {{$enterpriseInquiry["statistic"]->cpwsResultSize}}
                         </div>
                     </div>
                     <div class="weui-cell" style="color: #666666;" >
                         <div class="weui-cell__hd"><label class="weui-label">执行公告数：</label></div>
                         <div class="weui-cell__bd">
-                            {{$report["enterpriseInquiry"]["statistic"]->zxggResultSize}}
+                            {{$enterpriseInquiry["statistic"]->zxggResultSize}}
                         </div>
                         <div class="weui-cell__hd"><label class="weui-label">失信公告数：</label></div>
                         <div class="weui-cell__bd">
-                            {{$report["enterpriseInquiry"]["statistic"]->sxggResultSize}}
+                            {{$enterpriseInquiry["statistic"]->sxggResultSize}}
                         </div>
                     </div>
                     <div class="weui-cell" style="color: #666666;" >
                         <div class="weui-cell__hd"><label class="weui-label">法院公告数：</label></div>
                         <div class="weui-cell__bd">
-                            {{$report["enterpriseInquiry"]["statistic"]->fyggResultSize}}
+                            {{$enterpriseInquiry["statistic"]->fyggResultSize}}
                         </div>
                         <div class="weui-cell__hd"><label class="weui-label">网贷黑名单数：</label></div>
                         <div class="weui-cell__bd">
-                            {{$report["enterpriseInquiry"]["statistic"]->wdhmdResultSize}}
+                            {{$enterpriseInquiry["statistic"]->wdhmdResultSize}}
                         </div>
                     </div>
                     <div class="weui-cell" style="color: #666666;" >
                         <div class="weui-cell__hd"><label class="weui-label">案件流程：</label></div>
                         <div class="weui-cell__bd">
-                            {{$report["enterpriseInquiry"]["statistic"]->ajlcResultSize}}
+                            {{$enterpriseInquiry["statistic"]->ajlcResultSize}}
                         </div>
                         <div class="weui-cell__hd"><label class="weui-label">曝光台：</label></div>
                         <div class="weui-cell__bd">
-                            {{$report["enterpriseInquiry"]["statistic"]->bgtResultSize}}
+                            {{$enterpriseInquiry["statistic"]->bgtResultSize}}
                         </div>
                     </div>
                     <div class="weui-cell" style="color: #666666;" >
                         <div class="weui-cell__hd"><label class="weui-label">涉诉记录数：</label></div>
                         <div class="weui-cell__bd">
-                            {{$report["enterpriseInquiry"]["pagination"]->resultSize}}
-                        </div>
-                        <div class="weui-cell__hd"><label class="weui-label">总页数：</label></div>
-                        <div class="weui-cell__bd">
-                            {{$report["enterpriseInquiry"]["pagination"]->totalPage}}
+                            {{$enterpriseInquiry["pagination"]->resultSize}}
                         </div>
                     </div>
                     <div class="weui-cell" style="color: #666666;" >
                         <div style="float: right;font-size: 10px;color: #0f9ae0;"><a href="javascript:void(0)">查看详情</a></div>
                     </div>
                 @endif
+                @endforeach
             </div>
         @endif
         @if(isset($report["company"]))

@@ -65,8 +65,7 @@ class CreditController extends Controller
                       $oauth=Authorization::find($user['auth_id']);
                       $order_id=$odata['id'];
                       return view('wechat.credit.apply',compact('oauth','order_id')); break;
-                  case 3: $oauth=Authorization::find($user['auth_id']);
-                      $order_id=$odata['id'];
+                  case 3: $oauth=Authorization::find($user['auth_id']);$order_id=$odata['id'];
                       return view('wechat.credit.apply',compact('oauth','order_id')); break;
                   default:/*不存在查询失败的接口，可以重新支付查询最新的接口*/
                       $product=Product::find($id);   return view('wechat.credit.xieyi',compact('product')); break;
@@ -91,14 +90,7 @@ class CreditController extends Controller
   function apply_store(Request $request)
   {
       $req=$request->all();
-      $openid=$_SESSION['wechat_user']['id'];//'offTY1fb81WxhV84LWciHzn4qwqU';
-      $user['bankcard']=$req["bankcard"]==null?"":$req["bankcard"];
-      $user['entname']=$req["entname"]==null?"":$req["entname"];
-      $user['creditCode']=$req["creditCode"]==null?"":$req["creditCode"];
-     /*$user['licensePlate']=$req["licensePlate"]==null?"":$req["licensePlate"];
-      $user['carType']=$req["carType"]==null?"":$req["carType"];
-      $use['vin']=$req["vin"]==null?"":$req["vin"];
-      $user['engineNo']=$req["engineNo"]==null?"":$req["engineNo"];*/
+      $openid=$_SESSION['wechat_user']['id'];
       $order=Order::find($req["order_id"]);//获取用户购买的订单
       $auth=Authorization::find($req["auth_id"]);//取出实名认证
       //订单状态 0:未支付1：已付款，2：征信接口已成功查询；3.接口已查询存在异常接口-1：超时未支付的无效订单
@@ -108,40 +100,82 @@ class CreditController extends Controller
       $attach["name"]=$auth["name"];
       $attach["phone"]=$auth["phone"];
       $attach["cardNo"]=$auth["cardNo"];
-      $attach["entname"]= $user['entname'];
-      $attach["creditCode"]= $user['creditCode'];
+      /*查询个人名下接口是否有权限，将名下参股企业记录下来*/
+      $enterprise=Interfaces::where('api_name','personalEnterprise')->where('isenable',1)->first();
+      if($enterprise){
+          $base=new base();
+          $url=$this->init_url(null,$auth,'personalEnterprise');
+          $output=$base->get_curl($url);
+          $inter["interface_id"]=$enterprise->id;
+          $inter["order_id"]=$order['id'];
+          $inter["auth_id"]=$auth['id'];
+          $inter["openid"]=$openid;
+          $inter["result_code"]=$output;
+          $inter["url"]=$url;
+          User_interface::create($inter);
+          $attach["entname"]=json_encode($this->getentname($output),JSON_UNESCAPED_UNICODE);//数组形式
+      }
+      else $attach["entname"]=null;
+      //$attach["entname"]= $user['entname'];
+      //$attach["creditCode"]= $user['creditCode'];
       /*$attach["licensePlate"]=$user['licensePlate'];
       $attach["carType"]=$user['carType'];
       $attach["vin"]=$use['vin'];
       $attach["engineNo"]=$user['engineNo'];*/
-      $attach["bankcard"]=$user['bankcard'];
+      //$attach["bankcard"]=$user['bankcard'];
       Person_attach::create($attach);
       if ($order["state"]==1)
       {
+          if ($enterprise)
           //已付款未查询状态，获取查询的接口
-          $interfaces=Interfaces::where('pro_id',$order["pro_id"])->where('isenable',1)->get();
+          $interfaces=Interfaces::where('pro_id',$order["pro_id"])->where('isenable',1)->where('id','!=',$enterprise->id)->get();
+          else $interfaces=Interfaces::where('pro_id',$order["pro_id"])->where('isenable',1)->get();
       }
       else
           $interfaces=DB::table('interfaces')->leftJoin('user_interface','interfaces.id','=','user_interface.interface_id')
               ->where('order_id',$req["order_id"])->where('user_interface.state',0)
               ->get(['interfaces.id','interfaces.api_name','user_interface.state']);//异常接口
           $num=count($interfaces);
-        if($order["pro_id"]==1&&$num>0) {
+          if($order["pro_id"]==1&&$num>0) {
             $chArr = [];//创建多个cURL资源
             for ($i = 0; $i < $num; $i++)
             {
-                $url =  $this->init_url($user,$auth,$interfaces[$i]->api_name);
-                if ($url != '') {
-                $chArr[$i] = curl_init();
-                curl_setopt($chArr[$i], CURLOPT_URL, $url);
-                curl_setopt($chArr[$i], CURLOPT_RETURNTRANSFER, 1);
-               //curl_setopt($chArr[$i], CURLOPT_HEADER, 1);
-                curl_setopt($chArr[$i], CURLOPT_HTTPHEADER, array("Content-type: application/json;charset='utf-8'"));
-                curl_setopt($chArr[$i], CURLOPT_SSL_VERIFYPEER, FALSE); // https请求 不验证证书和hosts
-                curl_setopt($chArr[$i], CURLOPT_SSL_VERIFYHOST, FALSE);
-                curl_setopt($chArr[$i], CURLOPT_TIMEOUT, 5);
-                //curl_setopt($chArr[$i], CURLOPT_USERAGENT, $_SERVER["HTTP_USER_AGENT"]);
+                if ($interfaces[$i]->api_name=='enterpriseLitigationInquiry')//企业涉诉
+                {
+                    if ($attach["entname"]!=null&&$attach["entname"]!='') {
+                        foreach (json_decode($attach["entname"]) as $company) {
+                            $user["entname"]=$company->entname;
+                            $url = $this->init_url($user, $auth, $interfaces[$i]->api_name);
+                            if ($url != '') {
+                                $chArr[$i] = curl_init();
+                                curl_setopt($chArr[$i], CURLOPT_URL, $url);
+                                curl_setopt($chArr[$i], CURLOPT_RETURNTRANSFER, 1);
+                                //curl_setopt($chArr[$i], CURLOPT_HEADER, 1);
+                                curl_setopt($chArr[$i], CURLOPT_HTTPHEADER, array("Content-type: application/json;charset='utf-8'"));
+                                curl_setopt($chArr[$i], CURLOPT_SSL_VERIFYPEER, FALSE); // https请求 不验证证书和hosts
+                                curl_setopt($chArr[$i], CURLOPT_SSL_VERIFYHOST, FALSE);
+                                curl_setopt($chArr[$i], CURLOPT_TIMEOUT, 5);
+                                //curl_setopt($chArr[$i], CURLOPT_USERAGENT, $_SERVER["HTTP_USER_AGENT"]);
+                            }
+                        }
+                    }
                 }
+                else
+                {
+                    $url =  $this->init_url(null,$auth,$interfaces[$i]->api_name);
+                    if ($url != '') {
+                        $chArr[$i] = curl_init();
+                        curl_setopt($chArr[$i], CURLOPT_URL, $url);
+                        curl_setopt($chArr[$i], CURLOPT_RETURNTRANSFER, 1);
+                        //curl_setopt($chArr[$i], CURLOPT_HEADER, 1);
+                        curl_setopt($chArr[$i], CURLOPT_HTTPHEADER, array("Content-type: application/json;charset='utf-8'"));
+                        curl_setopt($chArr[$i], CURLOPT_SSL_VERIFYPEER, FALSE); // https请求 不验证证书和hosts
+                        curl_setopt($chArr[$i], CURLOPT_SSL_VERIFYHOST, FALSE);
+                        curl_setopt($chArr[$i], CURLOPT_TIMEOUT, 5);
+                        //curl_setopt($chArr[$i], CURLOPT_USERAGENT, $_SERVER["HTTP_USER_AGENT"]);
+                    }
+                }
+
             }
             $mh = curl_multi_init(); //1 创建批处理cURL句柄
             foreach($chArr as $k => $ch){
@@ -278,5 +312,67 @@ class CreditController extends Controller
    {
       return view('wechat.credit.success',compact('id'));
    }
+   function getentname($output)
+   {
+       $result=array();
+       $jsson=json_decode($output);
+       if (isset($jsson->success)&&$jsson->success==true)   {
+           //{"success":true,"requestOrder":"6416a694d2634fdfa5a5832197183794","data":{"key":"340825198908154735","status":"NO_DATA"}}
+           $data=$jsson->data;
+           if ($data->status=="EXIST"){
+               /*有企业*/
+               //{"success":true,"requestOrder":"f365d39e61b04e3397ca15ceed31c3f6","data":
+               //{"key":"342626198711040811","status":"EXIST","punishBreaks":[],"punished":[],"caseInfos":[],
+               //"corporates":[{"ryName":"洪守志","entName":"安徽麦浪信息技术有限公司","regNo":"340200000179811","entType":"有限责任公司(自然人投资或控股)","regCap":"100.000000","regCapCur":"人民币元","entStatus":"在营（开业）","creditNo":"913402070803213725"}],
+               //"corporateManagers":[{"ryName":"洪守志","entName":"芜湖市志昊财务咨询有限公司","regNo":"340200000159329","entType":"有限责任公司(自然人投资或控股)","regCap":"3.000000","regCapCur":"人民币元","entStatus":"在营（开业）","position":"监事","creditNo":"913402070597143152"},{"ryName":"洪守志","entName":"安徽麦浪信息技术有限公司","regNo":"340200000179811","entType":"有限责任公司(自然人投资或控股)","regCap":"100.000000","regCapCur":"人民币元","entStatus":"在营（开业）","position":"执行董事兼总经理","creditNo":"913402070803213725"}],
+               //"corporateShareholders":[{"ryName":"洪守志","entName":"芜湖市志昊财务咨询有限公司","regNo":"340200000159329","entType":"有限责任公司(自然人投资或控股)","regCap":"3.000000","regCapCur":"人民币元","entStatus":"在营（开业）","subConam":"1.500000","currency":"人民币元","fundedRatio":"50.00%","creditNo":"913402070597143152"},{"ryName":"洪守志","entName":"安徽麦浪信息技术有限公司","regNo":"340200000179811","entType":"有限责任公司(自然人投资或控股)","regCap":"100.000000","regCapCur":"人民币元","entStatus":"在营（开业）","subConam":"60.000000","currency":"人民币元","fundedRatio":"60.00%","creditNo":"913402070803213725"}]}}
+               $entname=array();
+               $re["corporates"]=$data->corporates;
+               if (count($re["corporates"])>0)
+               {
+                 foreach ($re["corporates"] as $corporate)
+                 {
+                     $company["entname"]=$corporate->entName;
+                     $company["creditNo"]=$corporate->creditNo;
+                     if (!in_array( $company["entname"],$entname))
+                     {
+                         array_push($entname, $company["entname"]);
+                         array_push($result,$company);
+                     }
+                 }
+               }
 
+               $re["corporateManagers"]=$data->corporateManagers;
+               if (count($re["corporateManagers"])>0)
+               {
+                   foreach ($re["corporateManagers"] as $manager)
+                   {
+                       $company["entname"]=$manager->entName;
+                       $company["creditNo"]=$manager->creditNo;
+                       if (!in_array( $company["entname"],$entname))
+                       {
+                           array_push($entname, $company["entname"]);
+                           array_push($result,$company);
+                       }
+                   }
+               }
+               $re["corporateShareholders"]=$data->corporateShareholders;
+               if (count($re["corporateShareholders"])>0)
+               {
+                   foreach ($re["corporateShareholders"] as $holder)
+                   {
+                       $company["entname"]=$holder->entName;
+                       $company["creditNo"]=$holder->creditNo;
+                       if (!in_array( $company["entname"],$entname))
+                       {
+                           array_push($entname, $company["entname"]);
+                           array_push($result,$company);
+                       }
+                   }
+               }
+
+            }
+       }
+       return $result;
+   }
 }
