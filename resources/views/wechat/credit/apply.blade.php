@@ -1,10 +1,9 @@
 @include('wechat.layouts.header')
 <body ontouchstart>
-<form id="form1">
+
     <section class="qyc_container">
     <div class="weui-tab__panel"> <input type="hidden" name="_token" value="{{csrf_token()}}">
         <input id="auth_id" type="hidden" value="{{$oauth->id}}" name="auth_id">
-        <input id="order_id" type="hidden" value="{{$order_id}}" name="order_id">
         <div class="weui-cells__title"><img src="{{asset('wechat/images/arrow.png')}}" width="30px" alt=""><font style="color:#484646; font-weight: bold;">&nbsp;基本信息</font></div>
         <div class="weui-cell white-bgcolor">
             <div class="weui-cell__hd"><label class="weui-label">真实姓名</label></div>
@@ -24,6 +23,7 @@
             <div class="weui-cell__bd">
                 <input id="phone" name="phone" class="weui-input" type="tel" disabled="disabled" value="{{$oauth->phone}}"  placeholder="输入你现在的手机号">            </div>
         </div>
+    <!--
         <div class="weui-cells__title"><img src="{{asset('wechat/images/arrow.png')}}" width="30px" alt=""><font style="color:#484646; font-weight: bold;">&nbsp;银行卡</font></div>
         <div class="weui-cell white-bgcolor">
             <div class="weui-cell__hd">
@@ -50,7 +50,7 @@
                 <input class="weui-input" id="creditCode" name="creditCode" type="text" placeholder="企业信用代码">
             </div>
         </div>
-        <!--
+
         <div class="weui-cells__title"><img src="{{asset('wechat/images/arrow.png')}}" width="30px" alt=""><font style="color:#484646; font-weight: bold;">&nbsp;车辆</font></div>
 
         <div class="weui-cell white-bgcolor">
@@ -112,41 +112,65 @@
             </div>
         </div>-->
         <div class="weui-cell">
-            <input type="submit" value="提交" id="btnsubmit"  class="weui-btn weui-btn_primary" /></div>
+            <input type="submit" value="支付（{{$product->price}}元）" id="btnsubmit"  class="weui-btn weui-btn_primary" /></div>
     </div></section>
-</form>
+
 @include('wechat.layouts.footer')
 <script src="{{asset('wechat/js/jquery.form.js')}}"></script>
+<script src="//res.wx.qq.com/open/js/jweixin-1.4.0.js"></script>
+<script src="http://res2.wx.qq.com/open/js/jweixin-1.4.0.js"></script>
 <script>
 
     $(function () {
-        var regexp = {
-            regexp: {
-                IDNUM: /(?:^\d{15}$)|(?:^\d{18}$)|^\d{17}[\dXx]$/
-            }
-        }
-        $("#btnsubmit").click(function ()
-        {
-            weui.form.validate('#form1', function(error){
-                if (!error) {
-                    var loading = weui.loading('提交中...');
-                     $("#form1").ajaxForm({
-                         url:'{{route('apply.store')}}',
-                         type:"post",
-                         datatype:'text',
-                         success:function (data) {
-                             loading.hide();
-                             location.href="/weixin/apply/success/"+$("#order_id").val();
-                             //weui.toast('提交成功', 3000);
-                         },
-                         error:function () {
-                             weui.toast('服务出错', 3000);
-                         }
-                     });
+        wx.config(<?php echo app('wechat.official_account')->jssdk->buildConfig(array('chooseWXPay'), false) ?>);
+        wx.ready(function(){
+            $("#btnsubmit").click(function () {
+                $.ajax({
+                    url: '{{route('order.create',$product->id)}}',
+                    type: 'get',
+                    datatype: 'json',
+                    success: function (data) {
+                        if(data!="") {
+                            var re = $.parseJSON(data);
+                            wx.chooseWXPay({
+                                timestamp: re["timestamp"],
+                                nonceStr: re["nonceStr"],
+                                package: re["package"],
+                                signType: re["signType"],
+                                paySign: re["paySign"], // 支付签名
+                                success: function (res) {
+                                    //支付成功后的回调函数
+                                    //支付成功后生成征信报告
+                                    // 支付成功后的回调函数
+                                    if (res.errMsg == "chooseWXPay:ok") {
+                                        //支付成功
+                                        window.location.href = "{{route('order.payback')}}" + "/" + re["order_id"];
+                                    } else {
+                                        weui.toast(res.errMsg);
+                                    }
+                                },
+                                cancel: function (res) {
+                                    //支付取消
+                                    weui.toast('支付取消');
+                                }
+                            });
+                        }
+                    },
+                    error: function () {
+                        weui.toast('系统故障');
+                    }
+                });
+            });
 
-                }},regexp);
         });
+        wx.error(function(res){
+            // config信息验证失败会执行error函数，如签名过期导致验证失败，具体错误信息可以打开config的debug模式查看，也可以在返回的res参数中查看，对于SPA可以在这里更新签名。
+            alert(res);
+        });
+
     });
+
 </script>
+
  </body>
 </html>

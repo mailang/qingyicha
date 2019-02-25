@@ -2,7 +2,7 @@
 <body class="white-bgcolor">
 <section class="qyc_container">
     <div class="headTop">
-        <a href="javascript:history.go(-1)" class="back"><i class="iconBack"></i></a><span>{{$product->pro_name}}</span>
+        <a href="javascript:history.go(-1)" class="back"><i class="weui-icon-back" style="font-size: 40px;color: #FFF"></i></a>
     </div>
     <div class="weui-tab__panel">
         <div class="bgfff form ov">
@@ -30,78 +30,7 @@
                 </p>
             </div>
         </div>
-        <div class="weui-cells weui-cells_checkbox" style="margin-top: 0;">
-            <label class="weui-cell weui-check__label" for="c1"> <div class="weui-cell__hd"> <input pattern="{1}" type="checkbox" class="weui-check" name="assistance" id="reader"> <i class="weui-icon-checked"></i> </div> <div class="weui-cell__bd" style="font-size: 12px">本人已阅读协议内容并接受协议各条款</div> </label>
-        </div>
-        <input type="hidden" value="{{$product->id}}" id="proid">
-        <div class="weui-btn-area"> <a id="SubmitBtn" href="javascript:" class="weui-btn radio_disable" disable="false">支付{{$product->price}}元进行查询</a> </div>
     </div></section>
 @include('wechat.layouts.footer')
-<script src="//res.wx.qq.com/open/js/jweixin-1.4.0.js"></script>
-<script src="http://res2.wx.qq.com/open/js/jweixin-1.4.0.js"></script>
-<script>
-
-    $(function () {
-        wx.config(<?php echo app('wechat.official_account')->jssdk->buildConfig(array('chooseWXPay'), false) ?>);
-        wx.ready(function(){
-            $(".weui-cells_checkbox").click(function () {
-                $("#reader").click();
-                if ($("#reader").prop("checked"))
-                {
-                    $("#SubmitBtn").addClass('weui-btn_primary').removeClass('radio_disable');
-                    $("#SubmitBtn").prop('disable',false);
-                }
-                else
-                {
-                    $("#SubmitBtn").addClass('radio_disable').removeClass('weui-btn_primary');
-                    $("#SubmitBtn").prop('disable',true);
-                }
-            });
-           $("#SubmitBtn").click(function () {
-                $.ajax({
-                    url: '{{route('order.create',$product->id)}}',
-                    type: 'get',
-                    datatype: 'json',
-                    success: function (data) {
-                        if(data!="") {
-                            $re = $.parseJSON(data);
-                            wx.chooseWXPay({
-                                timestamp: $re["timestamp"],
-                                nonceStr: $re["nonceStr"],
-                                package: $re["package"],
-                                signType: $re["signType"],
-                                paySign: $re["paySign"], // 支付签名
-                                success: function (res) {
-                                    //支付成功后的回调函数
-                                    //支付成功后生成征信报告
-                                    // 支付成功后的回调函数
-                                    if (res.errMsg == "chooseWXPay:ok") {
-                                        //支付成功
-                                        window.location.href ="/weixin/order/info/"+$re["order_id"];
-                                    } else {
-                                        weui.toast(res.errMsg);
-                                    }
-                                },
-                                cancel: function (res) {
-                                    //支付取消
-                                    weui.toast('支付取消');
-                                }
-                            });
-                        }
-                    },
-                    error: function () {
-                        weui.toast('系统故障');
-                    }
-                });
-            });
-        });
-        wx.error(function(res){
-            // config信息验证失败会执行error函数，如签名过期导致验证失败，具体错误信息可以打开config的debug模式查看，也可以在返回的res参数中查看，对于SPA可以在这里更新签名。
-        alert(res);
-        });
-
-    });
-
-</script>
 </body>
 </html>

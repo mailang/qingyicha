@@ -12,6 +12,7 @@ use App\Src\base;
 use  App\Models\Wxuser;
 use App\Models\Product;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\URL;
 use Monolog\Handler\ElasticSearchHandler;
 use Illuminate\Support\Facades\DB;
 
@@ -55,7 +56,7 @@ class PayController extends Controller
              $data["time_expire"]=date('Y-m-d H:i:s',strtotime('+ 1 h'));
              $data["pro_id"]=$id;
              $data["created_at"]=date('Y-m-d H:i:s');
-             $data["updated_at"]=date('Y-m-d H:i:s');
+            $data["updated_at"]=date('Y-m-d H:i:s');
              $order_id=DB::table('order')->insertGetId($data);
              $config["order_id"]=$order_id;
             return  \GuzzleHttp\json_encode($config);
@@ -106,6 +107,7 @@ class PayController extends Controller
                         $order["time_pay"]=$message["time_end"];
                         $order["transaction_id"]=$message["transaction_id"];
                         $order["cash_fee"]=$message["cash_fee"];
+
                         // 用户支付失败
                     } elseif (array_get($message, 'result_code') === 'FAIL') {
                         $order["state"]=-2;
@@ -200,6 +202,10 @@ class PayController extends Controller
         else
             return "订单不存在";
 
+    }
+
+    function payback($order_id){
+        echo URL::current();
     }
     /*
      *  [▼

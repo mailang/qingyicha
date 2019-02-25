@@ -9,14 +9,17 @@ Route::get("/apply",['uses'=>"CreditController@apply",'as'=>'credit.apply']);
 Route::post("/apply/store",['uses'=>"CreditController@apply_store",'as'=>'apply.store']);
 Route::get("/apply/success/{id}",['uses'=>"CreditController@success",'as'=>'credit.success']);
 /*认证*/
+Route::get("/credit/authpage",['uses'=>"CreditController@validate_auth",'as'=>'validate.auth']);//实名认证页面
 Route::get("/credit/code",['uses'=>"CreditController@validate_code",'as'=>'validate.code']);//获取验证码
 Route::post("/credit/authorization",['uses'=>"CreditController@validate_store",'as'=>'authorization.store']);//认证保存
 /*协议*/
-Route::get("/credit/xieyi",function(){return view('wechat.credit.xieyi');});
+Route::get("/credit/xieyi",function(){return view('wechat.credit.xieyi');})->name('wechat.xieyi');
 Route::get("/test/apply",['uses'=>"CreditController@testapply",'as'=>'test.apply']);
 /*订单支付配置*/
 Route::get("/get/pay/{id}",['uses'=>"PayController@order_create",'as'=>'order.create']);//统一下单
 Route::get("/get/repay/{order_id}",['uses'=>"PayController@re_create",'as'=>'order.recreate']);//重新下单
+Route::get("/order/payback/{orderid}",['uses'=>"PayController@order_payback",'as'=>'order.payback']);//订单回调
+
 /*信用报告*/
 Route::get("/order/report/{id}",['uses'=>"ReportController@report",'as'=>'order.report']);
 /*退款*/
