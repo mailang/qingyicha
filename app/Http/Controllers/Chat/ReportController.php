@@ -14,14 +14,13 @@ class ReportController extends Controller
 {
     function report($id)
     {
-        //$openid='offTY1fb81WxhV84LWciHzn4qwqU';
         $openid = $_SESSION['wechat_user']['id'];
 
         $list=DB::table('user_interface')->leftJoin('interfaces','user_interface.interface_id','=','interfaces.id')
             ->where('user_interface.state',1)
             ->where('openid',$openid)
-            //->where('order_id',$id)
-            ->whereIn('user_interface.id',[18,22])//test
+            ->where('order_id',$id)
+           // ->whereIn('user_interface.id',[18,22])//test
             ->get(['interfaces.api_name','user_interface.id','user_interface.state','interface_id','order_id','auth_id','result_code','user_interface.created_at']);
             if(count($list)>0){
             $auth_id=$list[0]->auth_id;
