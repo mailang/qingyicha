@@ -144,7 +144,7 @@
                                     // 支付成功后的回调函数
                                     if (res.errMsg == "chooseWXPay:ok") {
                                         //支付成功
-                                        window.location.href = "{{route('order.payback')}}" + "/" + re["order_id"];
+                                        window.location.href = "/weixin/order/payback/" + re["order_id"];
                                     } else {
                                         weui.toast(res.errMsg);
                                     }
