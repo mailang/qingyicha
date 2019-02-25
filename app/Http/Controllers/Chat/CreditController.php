@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 use App\Src\base;
 use App\Models\Product;
+use Illuminate\Support\Facades\URL;
 
 class CreditController extends Controller
 {
@@ -23,6 +24,27 @@ class CreditController extends Controller
         $order_id=1;
         return view('wechat.credit.apply',compact('oauth','order_id'));
     }
+
+    function validate_auth()
+    {
+
+        $reurl = route("weixin.index");
+        if (session("reurl"))
+        {
+            $reurl = session("reurl");
+        }
+        $openid=$_SESSION['wechat_user']['id'];//'offTY1fb81WxhV84LWciHzn4qwqU';
+        $user=Wxuser::where('openid',$openid)->first();
+        if ($user["auth_id"]!=null&&$user["auth_id"]>0)
+        {
+            return redirect(route("weixin.index"));
+        }
+        else
+        {
+            return view("wechat.credit.validate")->with('reurl');
+        }
+    }
+
     /*征信查询*/
   function  apply()
   {
