@@ -205,7 +205,7 @@ class PayController extends Controller
     }
 
     function order_payback($order_id){
-        echo URL::current();
+        return view("wechat.credit.payback",compact("order_id"));
     }
     /*
      *  [▼

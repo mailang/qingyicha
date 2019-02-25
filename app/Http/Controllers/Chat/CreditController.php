@@ -98,7 +98,8 @@ class CreditController extends Controller
       $req=$request->all();
       $openid=$_SESSION['wechat_user']['id'];
       $order=Order::find($req["order_id"]);//获取用户购买的订单
-      $auth=Authorization::find($req["auth_id"]);//取出实名认证
+      $wxuser = Wxuser::find($order["wxuser_id"]);
+      $auth=Authorization::find($wxuser["auth_id"]);//取出实名认证
       //订单状态 0:未支付1：已付款，2：征信接口已成功查询；3.接口已查询存在异常接口-1：超时未支付的无效订单
       if (!in_array($order["state"],array(1,3))) return "暂无有效接口";
       $attach["openid"]=$openid;
