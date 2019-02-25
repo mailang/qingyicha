@@ -144,18 +144,17 @@ class CreditController extends Controller
               ->get(['interfaces.id','interfaces.api_name','user_interface.state']);//异常接口
           $num=count($interfaces);
           if($order["pro_id"]==1&&$num>0) {
+              $i = 0;
             $chArr = [];//创建多个cURL资源
-            for ($i = 0; $i < $num; $i++)
+            foreach ($interfaces as $interface)
             {
-                if ($interfaces[$i]->api_name=='enterpriseLitigationInquiry')//企业涉诉
+                if ($interface->api_name=='enterpriseLitigationInquiry')//企业涉诉
                 {
                     if ($attach["entname"]!=null&&$attach["entname"]!='') {
                         $ent = json_decode($attach["entname"]);
-                        $entcount = count($ent);
-                        $num += $entcount - 1;
                         foreach ($ent as $company) {
                             $user["entname"]=$company->entname;
-                            $url = $this->init_url($user, $auth, $interfaces[$i]->api_name);
+                            $url = $this->init_url($user, $auth, $interface->api_name);
                             if ($url != '') {
                                 $chArr[$i] = curl_init();
                                 curl_setopt($chArr[$i], CURLOPT_URL, $url);
@@ -166,13 +165,15 @@ class CreditController extends Controller
                                 curl_setopt($chArr[$i], CURLOPT_SSL_VERIFYHOST, FALSE);
                                 curl_setopt($chArr[$i], CURLOPT_TIMEOUT, 5);
                                 //curl_setopt($chArr[$i], CURLOPT_USERAGENT, $_SERVER["HTTP_USER_AGENT"]);
+                                $i++;
                             }
+
                         }
                     }
                 }
                 else
                 {
-                    $url =  $this->init_url(null,$auth,$interfaces[$i]->api_name);
+                    $url =  $this->init_url(null,$auth,$interface->api_name);
                     if ($url != '') {
                         $chArr[$i] = curl_init();
                         curl_setopt($chArr[$i], CURLOPT_URL, $url);
@@ -183,9 +184,9 @@ class CreditController extends Controller
                         curl_setopt($chArr[$i], CURLOPT_SSL_VERIFYHOST, FALSE);
                         curl_setopt($chArr[$i], CURLOPT_TIMEOUT, 5);
                         //curl_setopt($chArr[$i], CURLOPT_USERAGENT, $_SERVER["HTTP_USER_AGENT"]);
+                        $i++;
                     }
                 }
-
             }
             $mh = curl_multi_init(); //1 创建批处理cURL句柄
             foreach($chArr as $k => $ch){
