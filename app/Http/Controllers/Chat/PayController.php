@@ -204,7 +204,7 @@ class PayController extends Controller
 
     }
 
-    function payback($order_id){
+    function order_payback($order_id){
         echo URL::current();
     }
     /*
