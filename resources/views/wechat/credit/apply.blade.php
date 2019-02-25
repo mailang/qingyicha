@@ -122,8 +122,10 @@
 <script>
 
     $(function () {
+        //var loading = weui.loading('...');
         wx.config(<?php echo app('wechat.official_account')->jssdk->buildConfig(array('chooseWXPay'), false) ?>);
         wx.ready(function(){
+            //loading.hide();
             $("#btnsubmit").click(function () {
                 $.ajax({
                     url: '{{route('order.create',$product->id)}}',
