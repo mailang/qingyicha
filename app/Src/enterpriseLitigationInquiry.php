@@ -39,7 +39,9 @@ class enterpriseLitigationInquiry
                     $re["pagination"]=$data->pagination;
                     $re["statistic"]=$data->statistic;
                 }
-                else {$re["state"]=0;$re["msg"]="接口请求失败";}
+                else {
+                    //{"success":false,"code":80001001,"error":"LAW_ENTERPRISE_LAWSUIT_EXCEPTION","errorDesc":"企业风控数据源信息异常"}
+                    $re["state"]=0; if (isset($jsson->errorDesc)) $re["msg"]=$jsson->errorDesc; else $re["msg"]="数据存在异常";}
             }
         }
         else { //返回数据为空，请求出现异常
