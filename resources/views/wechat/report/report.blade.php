@@ -26,10 +26,10 @@
                 </div>
             </div>
         </div>
-        @if(isset($report["phone"]))
+
         <div class="report white-bgcolor">
             <div class="weui-cells__title rp_head" ><img src="{{asset('wechat/images/icon1.png')}}" alt="" style="vertical-align:middle;"><span style="font-size: 14px;">&nbsp;手机检测</span></div>
-               @if($report["phone"]["state"]==0)
+            @if(isset($report["phone"]))@if($report["phone"]["state"]==0)
                 <div class="weui-cell" style="color: #666666;" >
                     <div class="weui-cell__hd">{{$report["phone"]["msg"]}}</div>
                 </div>
@@ -45,8 +45,17 @@
                 </div>
                 </div>
                 @endif
+            @endif
+            @if(isset($report["inTheNetworkTime"]))@if($report["inTheNetworkTime"]["state"]==1)
+            <div class="weui-cell" style="color: #666666;" >
+                <div class="weui-cell__hd"><label class="weui-label">手机在网时长：</label></div>
+                <div class="weui-cell__bd">
+                    {{$report["inTheNetworkTime"]["OUTPUT1"]}}
+                </div>
+            </div>   @endif
+            @endif
         </div>
-        @endif
+
         @if(isset($report["multipleLoan"]))
             <div class="report white-bgcolor">
                 <div class="weui-cells__title rp_head" ><img src="{{asset('wechat/images/icon1.png')}}" alt="" style="vertical-align:middle;"><span style="font-size: 14px;">&nbsp;个人多重借贷</span></div>
@@ -255,10 +264,10 @@
                 </div>
             @else
                 <div class="weui-cells__title rp_head"><img src="{{asset('wechat/images/icon1.png')}}" alt="" style="vertical-align:middle;"><span style="font-size: 14px;">&nbsp;名下企业</span></div>
-            @if ($report["company"]["corporates"][0]!=null)
-                    <?php $corporate=$report["company"]["corporates"][0]?>
+            @if ($report["company"]["corporates"]!=null)
+                @foreach($report["company"]["corporates"] as$key=>$corporate)
                         <div class="weui-cell" style="color: #666666;" >
-                            <div class="weui-cell__hd">企业名:</div>
+                            <div class="weui-cell__hd" style="color: red">企业名{{++$key}}:</div>
                             <div class="weui-cell__bd">
                                 {{$corporate->entName}}
                             </div>
@@ -276,7 +285,7 @@
                             </div>
                             <div class="weui-cell__hd">币种:</div>
                             <div class="weui-cell__bd">
-                                {{$corporate->regCapCur}}
+                                {{$corporate->regCapCur==""?"人民币元":$corporate->regCapCur}}
                             </div>
                         </div>
                         <div class="weui-cell" style="color: #666666;" >
@@ -297,7 +306,7 @@
                                 {{$corporate->entType}}
                             </div>
                         </div>
-
+                   @endforeach
                 @endif
                        <div class="weui-cells__title rp_head"><img src="{{asset('wechat/images/icon1.png')}}" alt="" style="vertical-align:middle;"><span style="font-size: 14px;">&nbsp;股份企业</span></div>
                        @if (count($report["company"]["corporateShareholders"])>0)   @foreach($report["company"]["corporateShareholders"] as $key=>$holder)

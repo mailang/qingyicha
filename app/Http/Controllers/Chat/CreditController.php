@@ -302,7 +302,7 @@ class CreditController extends Controller
        $phone=urlencode($auth["phone"]);
       switch ($api_name)
       {
-         case "multipleLoanQuery";$url="https://rip.linrico.com/multipleLoanQuery/result".$pram."&mobile=".$phone;break;
+          case "multipleLoanQuery";$url="https://rip.linrico.com/multipleLoanQuery/result".$pram."&mobile=".$phone;break;
           case "personalComplaintInquiry";$url="https://rip.linrico.com/personalComplaintInquiry/result".$pram."&name=".$name."&idCard=".$idCard.'&pageIndex=1'; break;
           case "personalEnterprise";$url="https://rip.linrico.com/personalEnterprise/result".$pram."&key=".$idCard; break;
           case "businessData";if ($user['creditCode']!="")$url="https://rip.linrico.com/businessData/result".$pram."&key=".urlencode($user['creditCode'])."&keyType=2";else {if ($user['entname']!="")$url="https://rip.linrico.com/businessData/result".$pram."&key=".urlencode($user['entname'])."&keyType=1";} break;
@@ -315,6 +315,7 @@ class CreditController extends Controller
           case  "abnormalBusinessOperationHJ":if($user['entname']!="")$url="https://rip.linrico.com/abnormalBusinessOperationHJ/result".$pram."&name=".urlencode($user['entname'])."&pageNum=1";break;
           case  "businessBrokenPromisesHJ":$url="https://rip.linrico.com/businessBrokenPromisesHJ/result".$pram."&name=".urlencode($user['entname'])."&pageNum=1";break;
           case  "corporateLawHJ":$url="https://rip.linrico.com/corporateLawHJ/result".$pram."&name=".urlencode($user['entname'])."&pageNum=1";break;
+          case  "inTheNetworkTime":$url="https://rip.linrico.com/inTheNetworkTime/result".$pram."&mobile=".$phone; break;
           default :break;
       }
     return $url;

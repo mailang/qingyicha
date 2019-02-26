@@ -44,7 +44,6 @@ class personalEnterprise
                              $re["corporateManagers"]=$data->corporateManagers;
                              $re["corporateShareholders"]=$data->corporateShareholders;
                              $re["caseInfos"]=$data->caseInfos;
-
                             }
                         }
                     }
