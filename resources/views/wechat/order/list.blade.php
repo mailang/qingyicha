@@ -39,7 +39,7 @@
                                     } ?>
                                 </div>
                             </div>
-                            <div class="order_zhifu">付款时间:{{$order->created_at  }}</div>
+                            <div class="order_zhifu">付款时间:{{$order->created_at}}</div>
                         </div>
                 </div>
                   @endforeach
