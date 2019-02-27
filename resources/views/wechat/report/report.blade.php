@@ -162,10 +162,6 @@
                             <div class="weui-cell__bd">
                                 {{$report["personInquiry"]["pagination"]->resultSize}}
                             </div>
-                            <div class="weui-cell__hd"><label class="weui-label">总页数：</label></div>
-                            <div class="weui-cell__bd">
-                                {{$report["personInquiry"]["pagination"]->totalPage}}
-                            </div>
                     </div>
                     <div class="weui-cell" style="color: #666666;" >
                         <div style="float: right;font-size: 10px;color: #0f9ae0;"><a href="javascript:void(0)">查看详情</a></div>

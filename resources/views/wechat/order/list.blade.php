@@ -30,13 +30,13 @@
                                        -1：超时未支付的无效订单-2:支付失败;-3:订单已退款-->
                                     <?php switch ($order->state){
                                         case 0: echo '<span> <a href="'.route('order.recreate',$order->id).'" style="vertical-align:middle" class="weui-btn weui-btn_mini weui-btn_warn">去付款</a></span>';break;
-                                        case 1: echo  "<span style=\"font-size:12px;\">已支付</span>";break;
+                                        case 1: echo '<a href="'.route('credit.reapply',$order->id).'" style="font-size:12px;" >征信查询</a>';break;
                                         case 2: echo  '<a href="'.route('order.report',$order->id).'" style="font-size:12px;" >查看报告</a>';break;
                                         case 3: echo   '<a href="'.route('order.report',$order->id).'">查看报告</a>';break;
                                         case -1: echo "<span style=\"font-size:12px;\">已失效</span>";break;
                                         case -2: echo "<span style=\"font-size:12px;\">支付失败</span>";break;
                                         case -3: echo "<span style=\"font-size:12px;\">已退款</span>";break;
-                                    } ?>
+                                    } ?>{{$order->state}}
                                 </div>
                             </div>
                             <div class="order_zhifu">付款时间:{{$order->created_at}}</div>

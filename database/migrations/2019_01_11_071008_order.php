@@ -17,6 +17,7 @@ class Order extends Migration
             $table->increments('id');
             $table->integer('wxuser_id');
             $table->string('openid');
+            $table->integer('auth_id')->nullable();;
             $table->string('out_trade_no')->nullable();//订单号
             $table->string('transaction_id')->nullable();//微信订单号
             $table->string('body')->nullable();//商品简单描述

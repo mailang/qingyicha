@@ -22,7 +22,7 @@ class PersonAttach extends Migration
             $table->string('phone');//手机号
             $table->string('cardNo');//身份证号
             $table->string('authorizedPhoto')->nullable();//人工授权照片
-            $table->string('entname')->nullable();//企业名称
+            $table->text('entname')->nullable();//企业名称
             $table->string('creditCode')->nullable();//统一的信用代码
             $table->string('licensePlate')->nullable();//车牌号
             $table->integer('carType')->nullable();//车型,值参考文档

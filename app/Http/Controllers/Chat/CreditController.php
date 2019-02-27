@@ -18,16 +18,22 @@ use Illuminate\Support\Facades\URL;
 
 class CreditController extends Controller
 {
-    function testapply()
+    function reapply($order_id)
     {
-        $oauth=Authorization::find(4);
-        $order_id=1;
-        return view('wechat.credit.apply',compact('oauth','order_id'));
+        $order=Order::find($order_id);//获取用户购买的订单
+        if ($order["state"]==1||$order["state"]==3)
+        {
+            $list=DB::table("wxuser")->leftJoin('authorization','wxuser.auth_id','=','authorization.id')
+                ->where('wxuser.id',$order["wxuser_id"])->get(['authorization.id','authorization.name','authorization.phone','authorization.cardNo']);
+            $oauth=$list->first();
+            return view('wechat.credit.reapply',compact('oauth','order_id'));
+        }
+        else
+             return "非法查询";
     }
 
     function validate_auth()
     {
-
         $reurl = route("weixin.index");
         if (session("reurl"))
         {
@@ -98,50 +104,61 @@ class CreditController extends Controller
       $req=$request->all();
       $openid=$_SESSION['wechat_user']['id'];
       $order=Order::find($req["order_id"]);//获取用户购买的订单
-      $wxuser = Wxuser::find($order["wxuser_id"]);
-      $auth=Authorization::find($wxuser["auth_id"]);//取出实名认证
+      if (isset($order["auth_id"])&&$order["auth_id"]!=null) $auth_id=$order["auth_id"];
+      else {$wxuser = Wxuser::find($order["wxuser_id"]);$auth_id=$wxuser["auth_id"];}
+      $auth=Authorization::find($auth_id);//取出实名认证
+      $interfaces_list=DB::table('user_interface')->leftJoin('interfaces','user_interface.interface_id','=','interfaces.id')
+          ->where('order_id',$req["order_id"])->where('state',1)
+          ->get(['user_interface.interface_id','result_code']);//已经查询的接口取出
       //订单状态 0:未支付1：已付款，2：征信接口已成功查询；3.接口已查询存在异常接口-1：超时未支付的无效订单
       if (!in_array($order["state"],array(1,3))) return "暂无有效接口";
+      $interfaces_count=count($interfaces_list);
       $attach["openid"]=$openid;
       $attach["order_id"]=$req["order_id"];
       $attach["name"]=$auth["name"];
       $attach["phone"]=$auth["phone"];
       $attach["cardNo"]=$auth["cardNo"];
-      /*查询个人名下接口是否有权限，将名下参股企业记录下来*/
+      $person_attach=Person_attach::where('order_id',$req["order_id"])->get();
+      /*查询个人名下企业接口是否有权限，将名下参股企业记录下来*/
       $enterprise=Interfaces::where('api_name','personalEnterprise')->where('isenable',1)->first();
       if($enterprise){
-          $base=new base();
-          $url=$this->init_url(null,$auth,'personalEnterprise');
-          $output=$base->get_curl($url);
-          $inter["interface_id"]=$enterprise->id;
-          $inter["order_id"]=$order['id'];
-          $inter["auth_id"]=$auth['id'];
-          $inter["openid"]=$openid;
-          $inter["result_code"]=$output;
-          $inter["url"]=$url;
-          User_interface::create($inter);
-          $attach["entname"]=json_encode($this->getentname($output),JSON_UNESCAPED_UNICODE);//数组形式
+          $bool=false;
+          if($interfaces_count>0) {$isenterprise=$interfaces_list->where('interface_id',$enterprise->id)->first();if($isenterprise)$bool=true;}
+          if ($bool){
+              //存在已经查询的企业接口
+              if (count($person_attach)==0&&isset($isenterprise))
+                  $attach["entname"]=json_encode($this->getentname($isenterprise->result_code),JSON_UNESCAPED_UNICODE);//数组形式
+          }
+          else
+          {  //不存在已经查询的企业接口
+              $base=new base();
+              $url=$this->init_url(null,$auth,'personalEnterprise');
+              $output=$base->get_curl($url);
+              $inter["interface_id"]=$enterprise->id;
+              $inter["order_id"]=$order['id'];
+              $inter["auth_id"]=$auth['id'];
+              $inter["openid"]=$openid;
+              $inter["result_code"]=$output;
+              $inter["url"]=$url;
+              User_interface::create($inter);
+              $attach["entname"]=json_encode($this->getentname($output),JSON_UNESCAPED_UNICODE);//数组形式
+          }
       }
-      else $attach["entname"]=null;
-      //$attach["entname"]= $user['entname'];
-      //$attach["creditCode"]= $user['creditCode'];
-      /*$attach["licensePlate"]=$user['licensePlate'];
-      $attach["carType"]=$user['carType'];
-      $attach["vin"]=$use['vin'];
-      $attach["engineNo"]=$user['engineNo'];*/
-      //$attach["bankcard"]=$user['bankcard'];
-      Person_attach::create($attach);
-      if ($order["state"]==1)
-      {
+       else $attach["entname"]=null;
+       if (count($person_attach)==0)Person_attach::create($attach);
+        $arrids=array();
           if ($enterprise)
-          //已付款未查询状态，获取查询的接口
-          $interfaces=Interfaces::where('pro_id',$order["pro_id"])->where('isenable',1)->where('id','!=',$enterprise->id)->get();
-          else $interfaces=Interfaces::where('pro_id',$order["pro_id"])->where('isenable',1)->get();
-      }
-      else
-          $interfaces=DB::table('interfaces')->leftJoin('user_interface','interfaces.id','=','user_interface.interface_id')
-              ->where('order_id',$req["order_id"])->where('user_interface.state',0)
-              ->get(['interfaces.id','interfaces.api_name','user_interface.state']);//异常接口
+          {   //取出已经成功查询的接口
+             $array1=array($enterprise->id);
+              if($interfaces_count>0){
+                  $array2=array_column($interfaces_list->toArray(),"interface_id");
+                  $arrids=array_merge($array1,$array2);
+              }else $arrids=$array1;}
+          else if($interfaces_count>0) $arrids=array_column($interfaces_list->toArray(),"interface_id");
+          if ($arrids!=null)
+              $interfaces=Interfaces::where('pro_id',$order["pro_id"])->where('isenable',1)->whereNotIn("id",$arrids)->get();
+           else
+               $interfaces=Interfaces::where('pro_id',$order["pro_id"])->where('isenable',1)->whereNotIn("id",$arrids)->get();
           $num=count($interfaces);
           if($order["pro_id"]==1&&$num>0) {
               $i = 0;
@@ -225,8 +242,6 @@ class CreditController extends Controller
             $order->save();//订单状态值改变
         }
         return "1";
-      //$end_time = microtime(TRUE);
-     // echo sprintf("use time:%.3f s", $end_time - $srart_time);
   }
   /*获取短信认证的验证码*/
   function  validate_code()

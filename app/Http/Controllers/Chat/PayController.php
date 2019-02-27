@@ -43,12 +43,12 @@ class PayController extends Controller
             'trade_type' => 'JSAPI', // 请对应换成你的支付方式对应的值类型
             'openid' => $openid,
         ]);
-
         if (strtolower($result["return_code"])=='success')
         {
              $config = $jssdk->sdkConfig($result["prepay_id"]); // 返回数组
              $data["openid"]=$openid;
              $data["wxuser_id"]=$user["id"];
+             $data["auth_id"]=$user["auth_id"];
              $data["out_trade_no"]=$order_No;
              $data["body"]='普信天下'.$product->pro_name;
              $data["total_fee"]=$product->price;
@@ -59,7 +59,7 @@ class PayController extends Controller
             $data["updated_at"]=date('Y-m-d H:i:s');
              $order_id=DB::table('order')->insertGetId($data);
              $config["order_id"]=$order_id;
-            return  \GuzzleHttp\json_encode($config);
+            return json_encode($config);
         }
         else return '{result_code:success}';
     }
