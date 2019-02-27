@@ -4,8 +4,9 @@ Route::get("/chat/my",['uses'=>"MyController@mine",'as'=>'weixin.my']);
 /*首页*/
 Route::get("/chat/index",['uses'=>"IndexController@index",'as'=>'weixin.index']);
 Route::get("/product/info/{id}",['uses'=>"IndexController@product",'as'=>'weixin.product']);
-/*基础查询接口*/
+/*征信查询接口*/
 Route::get("/apply",['uses'=>"CreditController@apply",'as'=>'credit.apply']);
+Route::get("/reapply/{order_id}",['uses'=>"CreditController@reapply",'as'=>'credit.reapply']);
 Route::post("/apply/store",['uses'=>"CreditController@apply_store",'as'=>'apply.store']);
 Route::get("/apply/success/{id}",['uses'=>"CreditController@success",'as'=>'credit.success']);
 /*认证*/
