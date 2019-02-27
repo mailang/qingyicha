@@ -36,7 +36,7 @@
                                         case -1: echo "<span style=\"font-size:12px;\">已失效</span>";break;
                                         case -2: echo "<span style=\"font-size:12px;\">支付失败</span>";break;
                                         case -3: echo "<span style=\"font-size:12px;\">已退款</span>";break;
-                                    } ?>{{$order->state}}
+                                    } ?>
                                 </div>
                             </div>
                             <div class="order_zhifu">付款时间:{{$order->created_at}}</div>
