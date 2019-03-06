@@ -12,14 +12,15 @@ use Monolog\Handler\IFTTTHandler;
 
 class ReportController extends Controller
 {
+    /*生成信用报告*/
     function report($id)
     {
-        $openid = $_SESSION['wechat_user']['id'];
+       // $openid = $_SESSION['wechat_user']['id'];
 
         $list=DB::table('user_interface')->leftJoin('interfaces','user_interface.interface_id','=','interfaces.id')
             ->where('user_interface.state',1)
-            ->where('openid',$openid)
             ->where('order_id',$id)
+            ->where('pagesize',0)
            // ->whereIn('user_interface.id',[35,37])//test
             ->get(['interfaces.api_name','user_interface.id','user_interface.state','interface_id','order_id','auth_id','result_code','user_interface.created_at']);
             if(count($list)>0){
@@ -42,6 +43,10 @@ class ReportController extends Controller
                 case "multipleLoanQuery":$multipleLoanQuery= new Src\multipleLoanQuery();$data = $multipleLoanQuery->handle_data($item->id,$item->order_id,$result);$report['multipleLoan']=$data;break;
                 /*在网时长*/
                 case "inTheNetworkTime":$inTheNetworkTime= new Src\inTheNetworkTime();$data = $inTheNetworkTime->handle_data($item->id,$item->order_id,$result);$report['inTheNetworkTime']=$data;break;
+                /*企业基本信息*/
+                case "basicInformationOfTheEnterpriseHJ":$basicInformationOfTheEnterpriseHJ= new Src\basicInformationOfTheEnterpriseHJ();$data = $basicInformationOfTheEnterpriseHJ->handle_data($item->id,$item->order_id,$result);$report['basicInformationOfTheEnterpriseHJ']=$data;break;
+                /*企业异常*/
+                case "abnormalBusinessOperationHJ":$abnormalBusinessOperationHJ= new Src\abnormalBusinessOperationHJ();$data = $abnormalBusinessOperationHJ->handle_data($item->id,$item->order_id,$result);$report['abnormalBusinessOperationHJ']=$data;break;
 
                 /*
                 case "businessData";if ($user['creditCode']!="")$url="https://rip.linrico.com/businessData/result".$pram."&key=".urlencode($user['creditCode'])."&keyType=2";else {if ($user['entname']!="")$url="https://rip.linrico.com/businessData/result".$pram."&key=".urlencode($user['entname'])."&keyType=1";} break;
@@ -62,7 +67,34 @@ class ReportController extends Controller
         //dd($report['enterpriseInquiry']);
         $auth=Authorization::find($auth_id);
         $auth["time"]=Date('Y-m-d',strtotime($list[0]->created_at));
+        $report["order_id"]=$id;
         return view('wechat.report.report',compact('auth','report'));
     }
 
+    /*取出企业的详细信息
+     * $id 表user_interface order_id
+     * $name 要查询的企业名
+     */
+    function enterprise($id,$name)
+    {
+        $openid=$_SESSION['wechat_user']['id'];
+        $list=DB::table('user_interface')->leftJoin('interfaces','interfaces.id','=','user_interface.interface_id')
+            ->where('order_id',$id)
+            ->where('openid',$openid)
+            ->where('name',$name)
+            ->where('interfaces.api_name','basicInformationOfTheEnterpriseHJ')
+            ->get(['user_interface.id',"interface_id","order_id","auth_id","openid","result_code","url",'state','pagesize']);
+        $enterprise=array();
+        if (count($list)>0)
+        {
+            $interface=$list->first();
+            $basicInformationOfTheEnterpriseHJ= new Src\basicInformationOfTheEnterpriseHJ();
+            $enterprise['enterpriseHJ'] = $basicInformationOfTheEnterpriseHJ->handle_data($interface->id,$interface->order_id,$interface->result_code);
+        }
+        else
+        {
+            $enterprise["msg"]="未查询到详细的企业信息";
+        }
+        return view('wechat.report.enterprise',compact('enterprise'));
+    }
 }

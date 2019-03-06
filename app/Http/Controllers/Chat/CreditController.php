@@ -162,10 +162,12 @@ class CreditController extends Controller
           $num=count($interfaces);
           if($order["pro_id"]==1&&$num>0) {
               $i = 0;
-            $chArr = [];//创建多个cURL资源
+              $chArr = [];//创建多个cURL资源
+              $apis=array('enterpriseLitigationInquiry','abnormalBusinessOperationHJ','basicInformationOfTheEnterpriseHJ');
             foreach ($interfaces as $interface)
             {
-                if ($interface->api_name=='enterpriseLitigationInquiry')//企业涉诉
+
+                if (in_array($interface->api_name,$apis))//企业涉诉
                 {
                     if ($attach["entname"]!=null&&$attach["entname"]!='') {
                         $ent = json_decode($attach["entname"]);
@@ -216,12 +218,18 @@ class CreditController extends Controller
                 if ($mrc != CURLM_OK) { break; }
                 // a request was just completed -- find out which one
                 while ($done = curl_multi_info_read($mh)) {
-                    // get the info and content returned on the request
+                    //get the info and content returned on the request
                     $info = curl_getinfo($done['handle']);
                     $error = curl_error($done['handle']);
                     $result= curl_multi_getcontent($done['handle']);//链接返回值；
-                    $arrurl=explode('/',$info['url']);
-                    $api_name=$arrurl[3];
+                    $parse=parse_url($info['url']);
+                    $api_name=explode('/',$parse["path"])[1];
+                    if (in_array($api_name,$apis))
+                    {
+                        $params=$this->convertUrlQuery($parse["query"]);
+                        $inter["name"]=urldecode($params["name"]);
+                        $inter["pagesize"]=isset($params["pageNum"])?$params["pageNum"]:$params["pageIndex"];
+                    }
                     $api=$interfaces->where('api_name',$api_name)->first();
                     if ($api)$inter["interface_id"]=$api->id;
                     $inter["order_id"]=$order['id'];
@@ -331,6 +339,7 @@ class CreditController extends Controller
           case  "businessBrokenPromisesHJ":$url="https://rip.linrico.com/businessBrokenPromisesHJ/result".$pram."&name=".urlencode($user['entname'])."&pageNum=1";break;
           case  "corporateLawHJ":$url="https://rip.linrico.com/corporateLawHJ/result".$pram."&name=".urlencode($user['entname'])."&pageNum=1";break;
           case  "inTheNetworkTime":$url="https://rip.linrico.com/inTheNetworkTime/result".$pram."&mobile=".$phone; break;
+          case "basicInformationOfTheEnterpriseHJ": if($user['entname']!="")$url="https://rip.linrico.com/basicInformationOfTheEnterpriseHJ/result".$pram."&name=".urlencode($user['entname']);break;
           default :break;
       }
     return $url;
@@ -342,6 +351,7 @@ class CreditController extends Controller
    {
       return view('wechat.credit.success',compact('id'));
    }
+   /*解析获取名下企业*/
    function getentname($output)
    {
        $result=array();
@@ -405,4 +415,19 @@ class CreditController extends Controller
        }
        return $result;
    }
+
+   /*url解析参数并将参数放到数组里面*/
+    function convertUrlQuery($query)
+    {
+        $queryParts = explode('&', $query);
+
+        $params = array();
+        foreach ($queryParts as $param)
+        {
+            $item = explode('=', $param);
+            $params[$item[0]] = $item[1];
+        }
+
+        return $params;
+    }
 }

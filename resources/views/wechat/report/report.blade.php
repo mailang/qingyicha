@@ -164,7 +164,7 @@
                             </div>
                     </div>
                     <div class="weui-cell" style="color: #666666;" >
-                        <div style="float: right;font-size: 10px;color: #0f9ae0;"><a href="javascript:void(0)">查看详情</a></div>
+                        <div style="float: right;font-size: 10px;color: #0f9ae0;"><a href="{{route('person.inquiry',array('id'=>$report["order_id"],'name'=>$auth->name,'pagesize'=>0))}}">查看详情</a></div>
                     </div>
                 @endif
             </div>
@@ -224,12 +224,13 @@
                     </div>
                     <div class="weui-cell" style="color: #666666;" >
                         <div class="weui-cell__hd"><label class="weui-label">涉诉记录数：</label></div>
-                        <div class="weui-cell__bd">
-                            {{$enterpriseInquiry["pagination"]->resultSize}}
+                        <div class="weui-cell__bd">{{$enterpriseInquiry["pagination"]->resultSize}}
                         </div>
                     </div>
                     <div class="weui-cell" style="color: #666666;" >
-                        <div style="float: right;font-size: 10px;color: #0f9ae0;"><a href="javascript:void(0)">查看详情</a></div>
+                        <div style="float: right;font-size: 10px;color: #0f9ae0;">
+                            <a href="{{route('enterprise.inquiry',array('id'=>$report["order_id"],'name'=>$enterpriseInquiry["name"],'pagesize'=>0))}}">查看详情</a>
+                        </div>
                     </div>
                 @endif
                 @endforeach
@@ -265,7 +266,7 @@
                         <div class="weui-cell" style="color: #666666;" >
                             <div class="weui-cell__hd" style="color: red">企业名{{++$key}}:</div>
                             <div class="weui-cell__bd">
-                                {{$corporate->entName}}
+                                <a href="{{route('enterprise.info',array('id'=>$report["order_id"],'name'=>$corporate->entName))}}">  {{$corporate->entName}} </a>
                             </div>
                         </div>
                         <div class="weui-cell" style="color: #666666;" >

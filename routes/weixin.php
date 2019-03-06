@@ -20,12 +20,16 @@ Route::get("/test/apply",['uses'=>"CreditController@testapply",'as'=>'test.apply
 Route::get("/get/pay/{id}",['uses'=>"PayController@order_create",'as'=>'order.create']);//统一下单
 Route::get("/get/repay/{order_id}",['uses'=>"PayController@re_create",'as'=>'order.recreate']);//重新下单
 Route::get("/order/payback/{orderid}",['uses'=>"PayController@order_payback",'as'=>'order.payback']);//订单回调
-
 /*信用报告*/
 Route::get("/order/report/{id}",['uses'=>"ReportController@report",'as'=>'order.report']);
+Route::get("/enterprise/{id}/{name}/{page?}",['uses'=>"InquiryController@enterprise",'as'=>'enterprise.inquiry']);
+Route::get("/person/{id}/{name}/{page?}",['uses'=>"InquiryController@person",'as'=>'person.inquiry']);
+Route::get("/company/{id}/{name}",['uses'=>"ReportController@enterprise",'as'=>'enterprise.info']);
 /*退款*/
 Route::get("/get/signature",['uses'=>"PayController@configSignature",'as'=>'get.signature']);
 Route::get("/order/refund/{id}",['uses'=>"PayController@refund",'as'=>'order.refund']);
 /*订单管理*/
 Route::get("/order/info/{id}",['uses'=>"OrderController@order_info",'as'=>'order.info']);
 Route::get("/order/list/{time}",['uses'=>"OrderController@orderlist",'as'=>'order.list']);
+
+
