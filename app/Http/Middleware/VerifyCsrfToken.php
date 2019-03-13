@@ -8,12 +8,11 @@ class VerifyCsrfToken extends Middleware
 {
     /**
      * The URIs that should be excluded from CSRF verification.
-     *
+     *  'weixin/apply/store'
      * @var array
      */
     protected $except = [
         '/chat/wechat',
         '/chat/notify',
-        'weixin/apply/store'
     ];
 }

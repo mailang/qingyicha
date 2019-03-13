@@ -18,9 +18,9 @@ class WechatOauth
      */
     public function handle($request, Closure $next)
     {
-        Session_start();
-        $_SESSION['wechat_user']['id']='offTY1fb81WxhV84LWciHzn4qwqU';
-     /*   $app = app('wechat.official_account');
+        //Session_start();
+       // $_SESSION['wechat_user']['id']='offTY1fb81WxhV84LWciHzn4qwqU';
+       $app = app('wechat.official_account');
         $oauth = $app->oauth;
         Session_start();
         // 未登录
@@ -31,7 +31,7 @@ class WechatOauth
             return $oauth->redirect();
             // 这里不一定是return，如果你的框架action不是返回内容的话你就得使用
             //$oauth->redirect()->send();
-        }*/
+        }
         return $next($request);
     }
 }
