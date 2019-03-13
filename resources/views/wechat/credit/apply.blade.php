@@ -165,7 +165,7 @@
                 if (!error) {
                     settime(that);
                     $.ajax({
-                        url: "{{route('Qcode.sms')}}",
+                        url: "/weixin/Qcode/sms/"+$.trim($tel),
                         type: 'get',
                         datatype: "text",
                         data: {'phone': $tel},
