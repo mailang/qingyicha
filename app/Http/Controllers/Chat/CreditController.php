@@ -31,7 +31,7 @@ class CreditController extends Controller
         else
              return "非法查询";
     }
-
+    /*进入短信验证界面*/
     function validate_auth()
     {
         $reurl = route("weixin.index");
@@ -56,10 +56,10 @@ class CreditController extends Controller
   {
       $id=$_GET["proid"];
       $product=Product::find($id);
-      $openid=$_SESSION['wechat_user']['id'];//'offTY1fb81WxhV84LWciHzn4qwqU';
-      $user=Wxuser::where('openid',$openid)->first();
-      $oauth=Authorization::find($user['auth_id']);
-      return view('wechat.credit.apply',compact('oauth','product'));
+      //$openid=$_SESSION['wechat_user']['id'];//'offTY1fb81WxhV84LWciHzn4qwqU';
+      //$user=Wxuser::where('openid',$openid)->first();
+      //$oauth=Authorization::find($user['auth_id']);
+      return view('wechat.credit.apply',compact('product'));
 //      /*查看用户是否已经购买，购买后看是否已认证*/
 //      $id=$_GET["proid"];
 //      $openid=$_SESSION['wechat_user']['id'];//'offTY1fb81WxhV84LWciHzn4qwqU';
@@ -104,21 +104,14 @@ class CreditController extends Controller
       $req=$request->all();
       $openid=$_SESSION['wechat_user']['id'];
       $order=Order::find($req["order_id"]);//获取用户购买的订单
-      if (isset($order["auth_id"])&&$order["auth_id"]!=null) $auth_id=$order["auth_id"];
-      else {$wxuser = Wxuser::find($order["wxuser_id"]);$auth_id=$wxuser["auth_id"];}
-      $auth=Authorization::find($auth_id);//取出实名认证
+      $attach=Person_attach::where('order_id',$req["order_id"])->first();
+      //已经查询的接口取出
       $interfaces_list=DB::table('user_interface')->leftJoin('interfaces','user_interface.interface_id','=','interfaces.id')
           ->where('order_id',$req["order_id"])->where('state',1)
-          ->get(['user_interface.interface_id','result_code']);//已经查询的接口取出
+          ->get(['user_interface.interface_id','result_code']);
       //订单状态 0:未支付1：已付款，2：征信接口已成功查询；3.接口已查询存在异常接口-1：超时未支付的无效订单
       if (!in_array($order["state"],array(1,3))) return "暂无有效接口";
       $interfaces_count=count($interfaces_list);
-      $attach["openid"]=$openid;
-      $attach["order_id"]=$req["order_id"];
-      $attach["name"]=$auth["name"];
-      $attach["phone"]=$auth["phone"];
-      $attach["cardNo"]=$auth["cardNo"];
-      $person_attach=Person_attach::where('order_id',$req["order_id"])->get();
       /*查询个人名下企业接口是否有权限，将名下参股企业记录下来*/
       $enterprise=Interfaces::where('api_name','personalEnterprise')->where('isenable',1)->first();
       if($enterprise){
@@ -126,17 +119,16 @@ class CreditController extends Controller
           if($interfaces_count>0) {$isenterprise=$interfaces_list->where('interface_id',$enterprise->id)->first();if($isenterprise)$bool=true;}
           if ($bool){
               //存在已经查询的企业接口
-              if (count($person_attach)==0&&isset($isenterprise))
+              if (isset($isenterprise))
                   $attach["entname"]=json_encode($this->getentname($isenterprise->result_code),JSON_UNESCAPED_UNICODE);//数组形式
           }
           else
           {  //不存在已经查询的企业接口
               $base=new base();
-              $url=$this->init_url(null,$auth,'personalEnterprise');
+              $url=$this->init_url(null,$attach,'personalEnterprise');
               $output=$base->get_curl($url);
               $inter["interface_id"]=$enterprise->id;
               $inter["order_id"]=$order['id'];
-              $inter["auth_id"]=$auth['id'];
               $inter["openid"]=$openid;
               $inter["result_code"]=$output;
               $inter["url"]=$url;
@@ -145,8 +137,8 @@ class CreditController extends Controller
           }
       }
        else $attach["entname"]=null;
-       if (count($person_attach)==0)Person_attach::create($attach);
-        $arrids=array();
+       if ($attach["entname"]!=null&&$attach["entname"]!='')$attach->save();
+          $arrids=array();
           if ($enterprise)
           {   //取出已经成功查询的接口
              $array1=array($enterprise->id);
@@ -163,17 +155,16 @@ class CreditController extends Controller
           if($order["pro_id"]==1&&$num>0) {
               $i = 0;
               $chArr = [];//创建多个cURL资源
-              $apis=array('enterpriseLitigationInquiry','abnormalBusinessOperationHJ','basicInformationOfTheEnterpriseHJ');
+              $apis=array('enterpriseLitigationInquiry','abnormalBusinessOperationHJ','basicInformationOfTheEnterpriseHJ','businessData');
             foreach ($interfaces as $interface)
             {
-
                 if (in_array($interface->api_name,$apis))//企业涉诉
                 {
                     if ($attach["entname"]!=null&&$attach["entname"]!='') {
                         $ent = json_decode($attach["entname"]);
                         foreach ($ent as $company) {
                             $user["entname"]=$company->entname;
-                            $url = $this->init_url($user, $auth, $interface->api_name);
+                            $url = $this->init_url($user,$attach,$interface->api_name);
                             if ($url != '') {
                                 $chArr[$i] = curl_init();
                                 curl_setopt($chArr[$i], CURLOPT_URL, $url);
@@ -186,13 +177,12 @@ class CreditController extends Controller
                                 //curl_setopt($chArr[$i], CURLOPT_USERAGENT, $_SERVER["HTTP_USER_AGENT"]);
                                 $i++;
                             }
-
                         }
                     }
                 }
                 else
                 {
-                    $url =  $this->init_url(null,$auth,$interface->api_name);
+                    $url =  $this->init_url(null,$attach,$interface->api_name);
                     if ($url != '') {
                         $chArr[$i] = curl_init();
                         curl_setopt($chArr[$i], CURLOPT_URL, $url);
@@ -227,13 +217,13 @@ class CreditController extends Controller
                     if (in_array($api_name,$apis))
                     {
                         $params=$this->convertUrlQuery($parse["query"]);
-                        $inter["name"]=urldecode($params["name"]);
+                        $inter["name"]=isset($params["name"])?urldecode($params["name"]):urldecode($params["key"]);
                         $inter["pagesize"]=isset($params["pageNum"])?$params["pageNum"]:$params["pageIndex"];
                     }
                     $api=$interfaces->where('api_name',$api_name)->first();
                     if ($api)$inter["interface_id"]=$api->id;
                     $inter["order_id"]=$order['id'];
-                    $inter["auth_id"]=$auth['id'];
+                    //$inter["auth_id"]=$auth['id'];
                     $inter["openid"]=$openid;
                     $inter["result_code"]=$result;
                     $inter["url"]=$info['url'];
@@ -264,6 +254,7 @@ class CreditController extends Controller
         $output=$base->get_curl($url);
          if ($output!=null&&$output!='')
          {
+             //{"success": true,"message": "该用户已经授权","code": 0,"timestamp": 1551942308648 }
              $msg=\GuzzleHttp\json_decode($output);
              return $msg->message;
          }
@@ -281,9 +272,9 @@ class CreditController extends Controller
       $prams='username=shbd&accessToken=40db8b4b95ac91ed6e905c80d45ebac5'."&name=".urlencode($name).'&idCard='.urlencode($idCard)."&phone=".urlencode($phone)."&securityCode=".urlencode($telcode);
       $url=$path.$prams;
       $base=new base();
-      //$output=$base->get_curl($url);
+      $output=$base->get_curl($url);
 
-      $output ="{\"success\":true,\"message\":\"短信认证通过，已完成授权\",\"code\":0,\"timestamp\":1550640489731}";
+      //$output ="{\"success\":true,\"message\":\"短信认证通过，已完成授权\",\"code\":0,\"timestamp\":1550640489731}";
       if ($output!=null&&$output!='')
       {
           //用户验证成功
@@ -328,7 +319,7 @@ class CreditController extends Controller
           case "multipleLoanQuery";$url="https://rip.linrico.com/multipleLoanQuery/result".$pram."&mobile=".$phone;break;
           case "personalComplaintInquiry";$url="https://rip.linrico.com/personalComplaintInquiry/result".$pram."&name=".$name."&idCard=".$idCard.'&pageIndex=1'; break;
           case "personalEnterprise";$url="https://rip.linrico.com/personalEnterprise/result".$pram."&key=".$idCard; break;
-          case "businessData";if ($user['creditCode']!="")$url="https://rip.linrico.com/businessData/result".$pram."&key=".urlencode($user['creditCode'])."&keyType=2";else {if ($user['entname']!="")$url="https://rip.linrico.com/businessData/result".$pram."&key=".urlencode($user['entname'])."&keyType=1";} break;
+          case "businessData";if ($user['entname']!="")$url="https://rip.linrico.com/businessData/result".$pram."&key=".urlencode($user['entname'])."&keyType=1";else {if ($user['creditCode']!="")$url="https://rip.linrico.com/businessData/result".$pram."&key=".urlencode($user['creditCode'])."&keyType=2";} break;
           case "enterpriseLitigationInquiry";if ($user['entname']!="") $url="https://rip.linrico.com/enterpriseLitigationInquiry/result".$pram."&name=".urlencode($user['entname']).'&pageIndex=1';break;
           case "thePhoneIsOnTheInternet"; $url="https://rip.linrico.com/thePhoneIsOnTheInternet/result".$pram."&phone=".$phone;break;
           case "mobileConsumptionLevel";$url="https://rip.linrico.com/mobileConsumptionLevel/result".$pram."&phone=".$phone;break;
@@ -340,6 +331,7 @@ class CreditController extends Controller
           case  "corporateLawHJ":$url="https://rip.linrico.com/corporateLawHJ/result".$pram."&name=".urlencode($user['entname'])."&pageNum=1";break;
           case  "inTheNetworkTime":$url="https://rip.linrico.com/inTheNetworkTime/result".$pram."&mobile=".$phone; break;
           case "basicInformationOfTheEnterpriseHJ": if($user['entname']!="")$url="https://rip.linrico.com/basicInformationOfTheEnterpriseHJ/result".$pram."&name=".urlencode($user['entname']);break;
+          case  "operatorThreeElements": $url="https://rip.linrico.com/operatorThreeElements/result".$pram."&name=".$name."&mobile=".$phone."&idNumber=".$idCard;break;
           default :break;
       }
     return $url;

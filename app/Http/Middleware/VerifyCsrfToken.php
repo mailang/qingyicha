@@ -14,5 +14,6 @@ class VerifyCsrfToken extends Middleware
     protected $except = [
         '/chat/wechat',
         '/chat/notify',
+        'weixin/apply/store'
     ];
 }

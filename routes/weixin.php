@@ -10,7 +10,7 @@ Route::get("/reapply/{order_id}",['uses'=>"CreditController@reapply",'as'=>'cred
 Route::post("/apply/store",['uses'=>"CreditController@apply_store",'as'=>'apply.store']);
 Route::get("/apply/success/{id}",['uses'=>"CreditController@success",'as'=>'credit.success']);
 /*认证*/
-Route::get("/credit/authpage",['uses'=>"CreditController@validate_auth",'as'=>'validate.auth']);//实名认证页面
+Route::get("/credit/auth/page",['uses'=>"CreditController@validate_auth",'as'=>'validate.auth']);//实名认证页面
 Route::get("/credit/code",['uses'=>"CreditController@validate_code",'as'=>'validate.code']);//获取验证码
 Route::post("/credit/authorization",['uses'=>"CreditController@validate_store",'as'=>'authorization.store']);//认证保存
 /*协议*/
@@ -25,11 +25,13 @@ Route::get("/order/report/{id}",['uses'=>"ReportController@report",'as'=>'order.
 Route::get("/enterprise/{id}/{name}/{page?}",['uses'=>"InquiryController@enterprise",'as'=>'enterprise.inquiry']);
 Route::get("/person/{id}/{name}/{page?}",['uses'=>"InquiryController@person",'as'=>'person.inquiry']);
 Route::get("/company/{id}/{name}",['uses'=>"ReportController@enterprise",'as'=>'enterprise.info']);
+Route::get("/businessdata/{id}/{name}",['uses'=>"ReportController@businessData",'as'=>'business.data']);
 /*退款*/
 Route::get("/get/signature",['uses'=>"PayController@configSignature",'as'=>'get.signature']);
 Route::get("/order/refund/{id}",['uses'=>"PayController@refund",'as'=>'order.refund']);
 /*订单管理*/
 Route::get("/order/info/{id}",['uses'=>"OrderController@order_info",'as'=>'order.info']);
 Route::get("/order/list/{time}",['uses'=>"OrderController@orderlist",'as'=>'order.list']);
-
+//腾讯云发送验证码
+Route::get("/Qcode/sms/{phone}",['uses'=>"PayController@Sendsms",'as'=>'Qcode.sms']);
 

@@ -16,9 +16,14 @@ class IndexController extends Controller
         $products=Product::where('isenable',1)->get();
         return view('wechat.product.index',compact('products'));
     }
-    /*产品的相关介绍*/
+    /*产品的相关介绍
+    *修改为用户不认证
+    */
     function  product($id)
     {
+        $product = Product::find($id);
+        return view('wechat.product.product', compact('product'));
+        /*
         $openid=$_SESSION['wechat_user']['id'];//'offTY1fb81WxhV84LWciHzn4qwqU';
         $user=Wxuser::where('openid',$openid)->first();
         if ($user["auth_id"]!=null&&$user["auth_id"]>0) {
@@ -30,6 +35,6 @@ class IndexController extends Controller
         else
         {
             return redirect(route("validate.auth"))->with('reurl',URL::current());
-        }
+        }*/
     }
 }

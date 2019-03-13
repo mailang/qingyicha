@@ -47,6 +47,8 @@ class ReportController extends Controller
                 case "basicInformationOfTheEnterpriseHJ":$basicInformationOfTheEnterpriseHJ= new Src\basicInformationOfTheEnterpriseHJ();$data = $basicInformationOfTheEnterpriseHJ->handle_data($item->id,$item->order_id,$result);$report['basicInformationOfTheEnterpriseHJ']=$data;break;
                 /*企业异常*/
                 case "abnormalBusinessOperationHJ":$abnormalBusinessOperationHJ= new Src\abnormalBusinessOperationHJ();$data = $abnormalBusinessOperationHJ->handle_data($item->id,$item->order_id,$result);$report['abnormalBusinessOperationHJ']=$data;break;
+                /*运营商三要素*/
+                case "operatorThreeElements":$operatorThreeElements= new Src\operatorThreeElements();$data = $operatorThreeElements->handle_data($item->id,$item->order_id,$result);$report['$operatorThreeElements']=$data;break;
 
                 /*
                 case "businessData";if ($user['creditCode']!="")$url="https://rip.linrico.com/businessData/result".$pram."&key=".urlencode($user['creditCode'])."&keyType=2";else {if ($user['entname']!="")$url="https://rip.linrico.com/businessData/result".$pram."&key=".urlencode($user['entname'])."&keyType=1";} break;
@@ -96,5 +98,33 @@ class ReportController extends Controller
             $enterprise["msg"]="未查询到详细的企业信息";
         }
         return view('wechat.report.enterprise',compact('enterprise'));
+    }
+    /*
+     * 显示企业的工商数据信息
+     *  $id 表user_interface order_id
+     * $name 要查询的企业名
+     * */
+    function  businessData($id,$name)
+    {
+
+        $openid=$_SESSION['wechat_user']['id'];
+        $list=DB::table('user_interface')->leftJoin('interfaces','interfaces.id','=','user_interface.interface_id')
+            ->where('order_id',$id)
+            ->where('openid',$openid)
+            ->where('name',$name)
+            ->where('interfaces.api_name','businessData')
+            ->get(['user_interface.id',"interface_id","order_id","auth_id","openid","result_code","url",'state','pagesize']);
+        $enterprise=array();
+        if (count($list)>0)
+        {
+            $interface=$list->first();
+            $businessData= new Src\businessData();
+            $enterprise['businessData'] = $businessData->get_data($interface->id,$interface->result_code);
+        }
+        else
+        {
+            $enterprise["msg"]="未查询到详细的企业信息";
+        }
+        return view('wechat.report.businessdata',compact('enterprise'));
     }
 }

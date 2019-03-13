@@ -15,6 +15,8 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\URL;
 use Monolog\Handler\ElasticSearchHandler;
 use Illuminate\Support\Facades\DB;
+use Qcloud\Sms\SmsSingleSender;
+use App\Models\Authorization;
 
 class PayController extends Controller
 {
@@ -23,12 +25,71 @@ class PayController extends Controller
         $app = app('wechat.official_account');
         return $app->jssdk->buildConfig(array('chooseWXPay'), true);//$app->configSignature();
     }
-    //
+    /*发送验证码*/
+    function Sendsms($phone)
+    {
+        /*"appid" => 1400190172
+         "appkey" => "2dd4976a14991ecef93ce8844dcfdbbd"
+        "phoneNumbers" => array:2 [▼
+         0 => "18019900707"
+        1 => "15675515689"
+         ]
+         "templateId" => 290236
+        "smsSign" => "普信天下"
+         ]
+         * */
+        $bool=false;
+        $qcode=config('qsms');
+        try {
+            $ssender = new SmsSingleSender($qcode["appid"], $qcode["appkey"]);
+            //$params = ["952700"];//数组具体的元素个数和模板中变量个数必须一致，例如事例中 templateId:5678对应一个变量，参数数组中元素个数也必须是一个
+              $params= mt_rand(100001,999999);
+            $result = $ssender->sendWithParam("86", $phone,$qcode["templateId"],
+                [$params], $qcode["smsSign"], "", "");  // 签名参数未提供或者为空时，会使用默认签名发送短信
+            $rsp = json_decode($result);
+            //{"result":0,"errmsg":"OK","ext":"","sid":"8:OSHaXqBpq57E3b5Fokz20190313","fee":1}
+              if ($rsp->result==0&&$rsp->errmsg=="OK") {
+                  $openid = $_SESSION['wechat_user']['id'];
+                  $time = Date('Y-m-d H:i:s');
+                  $expired = date('Y-m-d H:i:s',strtotime('+ 1 hour'));
+                  DB::insert('insert into user_validate(result_code,openid,url,code,expired,created_at) values(?,?,?,?,?,?)', [$result, $openid, "Qcode", $params,$expired,$time]);
+                  $bool = true;
+              }
+        } catch(\Exception $e) {
+            echo var_dump($e);
+        }
+        return $bool;
+    }
+    /*生成订单前验证码验证
+     return -1：验证码不正确，-2：验证码已过期；1：验证通过
+    */
+    function validate_code($phone,$code)
+    {
+       $list=DB::table('user_validate')
+           ->where('phone',$phone)
+           ->where('code',$code)
+           ->orderByDesc('created_at')->get(["code",'expired']);
+        if (count($list)>0)
+        {
+            $time=Date('Y-m-d H:i:s');
+            $first=$list->first();
+          if ($first->expired>$time) return 1;
+          else return -2;
+        }
+        else return -1;
+    }
     /*生成订单,并发起支付*/
     function  order_create($id)
     {
-    //return '{"appId":"wxaffee917b46f14d8","nonceStr":"5c46d829ee4c6","package":"prepay_id=wx221645424410449e96a87f0b2066641826","signType":"MD5","paySign":"6C4600732B204DA08AEC02283C997BE3","timestamp":"1548146729"}';
-        $app = app('wechat.payment');
+       //return '{"appId":"wxaffee917b46f14d8","nonceStr":"5c46d829ee4c6","package":"prepay_id=wx221645424410449e96a87f0b2066641826","signType":"MD5","paySign":"6C4600732B204DA08AEC02283C997BE3","timestamp":"1548146729"}';
+        $name=$_POST["name"];
+        $idCard=$_POST["cardNo"];
+        $phone=$_POST["phone"];
+        $telcode=$_POST["telcode"];
+        $bool=validate_code($phone,$telcode);//$this->validate_code($name,$idCard,$phone,$telcode);
+        if($bool>0)
+        {
+            $app = app('wechat.payment');
         $jssdk = $app->jssdk;
         $openid=$_SESSION['wechat_user']['id'];//'offTY1fb81WxhV84LWciHzn4qwqU';
         $user=Wxuser::where('openid',$openid)->first();
@@ -53,15 +114,27 @@ class PayController extends Controller
              $data["body"]='普信天下'.$product->pro_name;
              $data["total_fee"]=$product->price;
              $data["time_start"]=date('Y-m-d H:i:s');
-             $data["time_expire"]=date('Y-m-d H:i:s',strtotime('+ 1 h'));
+             $data["time_expire"]=date('Y-m-d H:i:s',strtotime('+ 1 hour'));
              $data["pro_id"]=$id;
              $data["created_at"]=date('Y-m-d H:i:s');
-            $data["updated_at"]=date('Y-m-d H:i:s');
+             $data["updated_at"]=date('Y-m-d H:i:s');
              $order_id=DB::table('order')->insertGetId($data);
              $config["order_id"]=$order_id;
+             $attach["openid"]=$openid;
+             $attach["order_id"]=$order_id;
+             $attach["name"]=$name;
+             $attach["phone"]=$phone;
+             $attach["cardNo"]=$idCard;
+             DB::table('authorization')->insert($attach);
             return json_encode($config);
         }
         else return '{result_code:success}';
+    }
+    else
+    {
+     //   -1：验证码不正确，-2：验证码已过期；
+    return $bool;
+    }
     }
     /*未付款订单重新支付*/
     function re_create($order_id)
