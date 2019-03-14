@@ -3,11 +3,11 @@
 <section class="qyc_container">
     <div class="page__bd">
         <div class="headTop">
-            <a href="javascript:history.go(-1)" class="back"><i class="iconBack"></i></a><span>涉诉详情</span><a class="more"><i class="iconDian"></i><i class="iconDian"></i><i class="iconDian"></i></a>
+            <a href="javascript:history.go(-1)" class="back"><i class="iconBack"></i></a><span>个人涉诉详情</span><a class="more"><i class="iconDian"></i><i class="iconDian"></i><i class="iconDian"></i></a>
         </div>
         <div class="weui-cell" style="border-bottom: 1px solid #eee;">
             <div>
-                <span style="display: block;color: green; font-size: 15px;">企业:{{$report["name"]}}</span>
+                <span style="display: block;color: green; font-size: 15px;">姓名:{{$report["name"]}}</span>
             </div>
         </div>
         @if($report["pageData"]!=null)
@@ -50,6 +50,12 @@
                             <span>裁判文书</span>
                             <span><label>审结时间：</label></span>
                             <span>{{$item->time }}</span>
+                        </div>
+                        <div>
+                            <span><label>案件类型:</label> </span>
+                            <span>{{$item->caseType}}</span>
+                            <span><label>案件号:</label> </span>
+                            <span>{{$item->caseNO}}</span>
                         </div>
                         <div>
                             <span><label>内容：</label></span>
@@ -277,6 +283,10 @@
                     <div class="pager-end"><a class="pager-nav">尾页</a></div>
                 </div>
             </div>
+            @else
+                <div class="weui-cell">
+                    <div>未查询到相关涉诉记录</div>
+                </div>
         @endif
     </div></section>
 @include('wechat.layouts.footer')

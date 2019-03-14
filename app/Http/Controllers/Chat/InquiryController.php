@@ -15,11 +15,9 @@ class InquiryController extends Controller
      */
     function  enterprise($id,$name,$page=0)
     {
-             $openid=$_SESSION['wechat_user']['id'];
              $list=DB::table('user_interface')->leftJoin('interfaces','interfaces.id','=','user_interface.interface_id')
                  ->where('order_id',$id)
                  ->where('user_interface.pagesize',$page)
-                 ->where('openid',$openid)
                  ->where('name',$name)
                  ->where('interfaces.api_name','enterpriseLitigationInquiry')
                  ->get(['user_interface.id',"interface_id","order_id","auth_id","openid","result_code","url",'state','pagesize']);
@@ -36,36 +34,40 @@ class InquiryController extends Controller
              else
              {
                  //没有购买，购买下一页的查询数据
-                 $auth=Person_attach::where('order_id',$id)->get();
-                 return view('wechat.inquiry.apply',compact('auth'));
+                 $api["api_name"]="enterpriseLitigationInquiry";
+                 $api["name"]=$name;
+                 $api["page"]=$page;
+                 $api["pid"]=$id;
+                 return view('wechat.inquiry.apply',compact('api'));
              }
     }
   /*个人涉诉详情查询*/
     function person($id,$name,$page=0)
     {
-        $openid=$_SESSION['wechat_user']['id'];
         $list=DB::table('user_interface')->leftJoin('interfaces','interfaces.id','=','user_interface.interface_id')
             ->where('order_id',$id)
             ->where('user_interface.pagesize',$page)
-            ->where('openid',$openid)
             ->where('name',$name)
-            ->where('interfaces.api_name','enterpriseLitigationInquiry')
+            ->where('interfaces.api_name','personalComplaintInquiry')
             ->get(['user_interface.id',"interface_id","order_id","auth_id","openid","result_code","url",'state','pagesize']);
         if (count($list))
         {
             $interface=$list->first();
-            $enterpriseLitigationInquiry = new Src\enterpriseLitigationInquiry();
-            $report = $enterpriseLitigationInquiry->inquiry_info($interface->id,$interface->result_code);
+            $personalComplaintInquiry = new Src\personalComplaintInquiry();
+            $report = $personalComplaintInquiry->inquiry_info($interface->id,$interface->result_code);
             if ($report!=null)
-                return view('wechat.inquiry.cominquiry',compact('report'));
+                return view('wechat.inquiry.persoinquiry',compact('report'));
             else
                 dd('服务商请求数据异常,请联系服务商');
         }
         else
         {
             //没有购买，购买下一页的查询数据
-            $auth=Person_attach::where('order_id',$id)->get();
-            return view('wechat.inquiry.apply',compact('auth'));
+            $api["api_name"]="personalComplaintInquiry";
+            $api["name"]=$name;
+            $api["page"]=$page;
+            $api["pid"]=$id;
+            return view('wechat.inquiry.apply',compact('api'));
         }
     }
 }

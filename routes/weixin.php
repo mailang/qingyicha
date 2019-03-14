@@ -17,7 +17,7 @@ Route::post("/credit/authorization",['uses'=>"CreditController@validate_store",'
 Route::get("/credit/xieyi",function(){return view('wechat.credit.xieyi');})->name('wechat.xieyi');
 Route::get("/test/apply",['uses'=>"CreditController@testapply",'as'=>'test.apply']);
 /*订单支付配置*/
-Route::post("/get/pay/{id}",['uses'=>"PayController@order_create",'as'=>'order.create']);//统一下单
+Route::post("/post/pay/{id}",['uses'=>"PayController@order_create",'as'=>'order.create']);//统一下单
 Route::get("/get/repay/{order_id}",['uses'=>"PayController@re_create",'as'=>'order.recreate']);//重新下单
 Route::get("/order/payback/{orderid}",['uses'=>"PayController@order_payback",'as'=>'order.payback']);//订单回调
 /*信用报告*/

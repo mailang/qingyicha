@@ -28,16 +28,6 @@ class PayController extends Controller
     /*发送验证码*/
     function Sendsms($phone)
     {
-        /*"appid" => 1400190172
-         "appkey" => "2dd4976a14991ecef93ce8844dcfdbbd"
-        "phoneNumbers" => array:2 [▼
-         0 => "18019900707"
-        1 => "15675515689"
-         ]
-         "templateId" => 290236
-        "smsSign" => "普信天下"
-         ]
-         * */
         $bool=false;
         $qcode=config('qsms');
         try {
@@ -77,7 +67,7 @@ class PayController extends Controller
         }
         else return -1;
     }
-    /*生成订单,并发起支付*/
+    /*基础查询生成订单,并发起支付*/
     function  order_create($id)
     {
        //return '{"appId":"wxaffee917b46f14d8","nonceStr":"5c46d829ee4c6","package":"prepay_id=wx221645424410449e96a87f0b2066641826","signType":"MD5","paySign":"6C4600732B204DA08AEC02283C997BE3","timestamp":"1548146729"}';

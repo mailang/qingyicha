@@ -71,8 +71,9 @@ class personalComplaintInquiry
                     //"statistic":{"ktggResultSize":0,"cpwsResultSize":0,"zxggResultSize":0,"sxggResultSize":0,"fyggResultSize":0,"wdhmdResultSize":0,"ajlcResultSize":0,"bgtResultSize":0},"checkStatus":"NO_DATA"}}
                     $data=$jsson->data;
                     $re["state"]=1;
+                    $re["name"]=$data->name;
                     $re["pagination"]=$data->pagination;
-                    $re["statistic"]=$data->statistic;
+                    $re["pageData"]=$data->pageData;
                 }
                 else {$re["state"]=0;$re["msg"]="接口请求失败";}
             }
