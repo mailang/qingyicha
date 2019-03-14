@@ -124,7 +124,7 @@ class PayController extends Controller
              $attach["name"]=$name;
              $attach["phone"]=$phone;
              $attach["cardNo"]=$idCard;
-             DB::table('authorization')->insert($attach);
+             DB::table('person_attach')->insert($attach);
             return json_encode($config);
         }
         else return -3;
