@@ -74,8 +74,8 @@
         });
         wx.config(<?php echo app('wechat.official_account')->jssdk->buildConfig(array('chooseWXPay'), false) ?>);
         wx.ready(function(){
-            weui.form.validate('#form1', function (error) {
                 $("#btnsubmit").click(function () {
+                    alert("222");
                     $name = $("#name").val();
                     $num = $("#cardNo").val();
                     $tel = $("#phone").val();
@@ -131,7 +131,6 @@
                         });
                     }
                 });
-            }, regexp);
         });
         wx.error(function(res){
             // config信息验证失败会执行error函数，如签名过期导致验证失败，具体错误信息可以打开config的debug模式查看，也可以在返回的res参数中查看，对于SPA可以在这里更新签名。
