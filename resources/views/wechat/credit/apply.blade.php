@@ -75,14 +75,13 @@
         wx.config(<?php echo app('wechat.official_account')->jssdk->buildConfig(array('chooseWXPay'), false) ?>);
         wx.ready(function(){
                 $("#btnsubmit").click(function () {
-                    alert("222");
                     $name = $("#name").val();
                     $num = $("#cardNo").val();
                     $tel = $("#phone").val();
                     $code = $.trim($("#valicode").val());
                     if (!error) {
                         if ($code.trim().equals("")) {
-                            weui.topTips("请输入验证码");
+                            weui.toast("请输入验证码");
                             return;
                         }
                         $.ajax({
