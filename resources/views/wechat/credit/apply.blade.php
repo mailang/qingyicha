@@ -32,7 +32,7 @@
         <div class="weui-cell">
             <div class="weui-cell__hd"><label class="weui-label">短信验证码</label></div>
             <div class="weui-cell__bd">
-                <input id="valicode" name="valicode" class="weui-input" type="text" placeholder="请输入验证码">
+                <input id="valicode" name="valicode" class="weui-input" type="text" required="" placeholder="请输入短信验证码">
             </div>
         </div>
         <label class="weui-cell weui-cells_checkbox" style="margin-top: 0;">
@@ -74,13 +74,14 @@
         });
         wx.config(<?php echo app('wechat.official_account')->jssdk->buildConfig(array('chooseWXPay'), false) ?>);
         wx.ready(function(){
-                $("#btnsubmit").click(function () {
+            $("#btnsubmit").click(function () {
+                weui.form.validate('#form1', function (error) {
                     $name = $("#name").val();
                     $num = $("#cardNo").val();
                     $tel = $("#phone").val();
                     $code = $.trim($("#valicode").val());
                     if (!error) {
-                        if ($code.trim().equals("")) {
+                        if ($code == "") {
                             weui.toast("请输入验证码");
                             return;
                         }
@@ -97,8 +98,9 @@
                             },
                             success: function (data) {
                                 if (data != null) {
-                                    if(data.equals(-1))   weui.toast("验证码不存在");
-                                    if(data.equals(-2))   weui.toast("验证码已失效");
+                                    if (data==-1){weui.toast("验证码不正确");return;}
+                                    if (data==-2) {weui.toast("验证码已过期");return;}
+                                    if (data==-3) {weui.toast("下单失败");return;}
                                     var re = $.parseJSON(data);
                                     wx.chooseWXPay({
                                         timestamp: re["timestamp"],
@@ -129,7 +131,8 @@
                             }
                         });
                     }
-                });
+                }, regexp);
+            });
         });
         wx.error(function(res){
             // config信息验证失败会执行error函数，如签名过期导致验证失败，具体错误信息可以打开config的debug模式查看，也可以在返回的res参数中查看，对于SPA可以在这里更新签名。

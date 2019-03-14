@@ -86,7 +86,7 @@ class PayController extends Controller
         $idCard=$_POST["cardNo"];
         $phone=$_POST["phone"];
         $telcode=$_POST["telcode"];
-        $bool=validate_code($phone,$telcode);//$this->validate_code($name,$idCard,$phone,$telcode);
+        $bool=$this->validate_code($phone,$telcode);//$this->validate_code($name,$idCard,$phone,$telcode);
         if($bool>0)
         {
             $app = app('wechat.payment');
@@ -128,7 +128,7 @@ class PayController extends Controller
              DB::table('authorization')->insert($attach);
             return json_encode($config);
         }
-        else return '{result_code:success}';
+        else return -3;
     }
     else
     {
