@@ -52,7 +52,7 @@ class PayController extends Controller
                   $openid = $_SESSION['wechat_user']['id'];
                   $time = Date('Y-m-d H:i:s');
                   $expired = date('Y-m-d H:i:s',strtotime('+ 1 hour'));
-                  DB::insert('insert into user_validate(result_code,openid,url,code,expired,created_at) values(?,?,?,?,?,?)', [$result, $openid, "Qcode", $params,$expired,$time]);
+                  DB::insert('insert into user_validate(result_code,openid,url,code,phone,expired,created_at) values(?,?,?,?,?,?)', [$result, $openid, "Qcode", $params,$expired,$phone,$time]);
                   $bool = true;
               }
         } catch(\Exception $e) {
@@ -71,9 +71,8 @@ class PayController extends Controller
            ->orderByDesc('created_at')->get(["code",'expired']);
         if (count($list)>0)
         {
-            $time=Date('Y-m-d H:i:s');
             $first=$list->first();
-          if ($first->expired>$time) return 1;
+          if (strtotime($first->expired)>time()) return 1;
           else return -2;
         }
         else return -1;
@@ -89,7 +88,7 @@ class PayController extends Controller
         $bool=$this->validate_code($phone,$telcode);//$this->validate_code($name,$idCard,$phone,$telcode);
         if($bool>0)
         {
-            $app = app('wechat.payment');
+          $app = app('wechat.payment');
         $jssdk = $app->jssdk;
         $openid=$_SESSION['wechat_user']['id'];//'offTY1fb81WxhV84LWciHzn4qwqU';
         $user=Wxuser::where('openid',$openid)->first();

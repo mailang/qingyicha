@@ -139,7 +139,6 @@
             alert(res);
         });
         countdown = 60;
-
         function settime(that) {
             var code = $(that);
             if (countdown == 0) {
