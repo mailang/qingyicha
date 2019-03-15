@@ -8,20 +8,20 @@
         <div class="weui-cell" style="background-color:#616773;position:inherit;border-top:0.01em solid #a2a4a8;color: white;">
             <div class="weui-cell__hd"><label class="weui-label">报告日期：</label></div>
             <div class="weui-cell__bd">
-                {{$auth->time}}
+                {{$person->time}}
             </div>
         </div>
         <div class="rp_person">
             <div class="weui-cell border_none">
                 <div class="weui-cell__hd"><label class="weui-label">姓&nbsp;名&nbsp;：</label></div>
                 <div class="weui-cell__bd">
-                    {{$auth->name}}
+                    {{$person->name}}
                 </div>
             </div>
             <div class="weui-cell border_none">
                 <div class="weui-cell__hd"><label class="weui-label">证件号：</label></div>
                 <div class="weui-cell__bd">
-                    {{strlen($auth->cardNo)==15?substr_replace($auth->cardNo,"****",8,4):substr_replace($auth->cardNo,"****",10,4)}}
+                    {{strlen($person->cardNo)==15?substr_replace($person->cardNo,"****",8,4):substr_replace($person->cardNo,"****",10,4)}}
 
                 </div>
             </div>
@@ -185,7 +185,7 @@
                             </div>
                     </div>
                     <div class="weui-cell" style="color: #666666;" >
-                        <div style="float: right;font-size: 10px;color: #0f9ae0;"><a href="{{route('person.inquiry',array('id'=>$report["order_id"],'name'=>$auth->name,'pagesize'=>0))}}">查看详情</a></div>
+                        <div style="float: right;font-size: 10px;color: #0f9ae0;"><a href="{{route('person.inquiry',array('id'=>$report["order_id"],'name'=>$person->name,'pagesize'=>0))}}">查看详情</a></div>
                     </div>
                 @endif
             </div>

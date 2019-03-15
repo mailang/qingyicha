@@ -5,9 +5,9 @@ namespace App\Http\Controllers\Chat;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
-use  App\Models\Authorization;
+use  App\Models\Person_attach;
 use App\Src;
-use Monolog\Handler\IFTTTHandler;
+
 
 
 class ReportController extends Controller
@@ -24,7 +24,6 @@ class ReportController extends Controller
            // ->whereIn('user_interface.id',[35,37])//test
             ->get(['interfaces.api_name','user_interface.id','user_interface.state','interface_id','order_id','auth_id','result_code','user_interface.created_at']);
             if(count($list)>0){
-            $auth_id=$list[0]->auth_id;
             $report=array();
             $report['enterpriseInquiry']=array();
             foreach ($list as $key=>$item) {
@@ -66,11 +65,10 @@ class ReportController extends Controller
             }
          }
         }
-        //dd($report['enterpriseInquiry']);
-        $auth=Authorization::find($auth_id);
-        $auth["time"]=Date('Y-m-d',strtotime($list[0]->created_at));
+        $person=Person_attach::where('order_id',$id)->first();
+        $person["time"]=Date('Y-m-d',strtotime($person->created_at));
         $report["order_id"]=$id;
-        return view('wechat.report.report',compact('auth','report'));
+        return view('wechat.report.report',compact('person','report'));
     }
 
     /*取出企业的详细信息
