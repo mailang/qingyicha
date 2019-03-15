@@ -64,11 +64,14 @@ class ReportController extends Controller
 
             }
          }
+                $person=Person_attach::where('order_id',$id)->first();
+                $person["time"]=Date('Y-m-d',strtotime($person->created_at));
+                $report["order_id"]=$id;
+                return view('wechat.report.report',compact('person','report'));
         }
-        $person=Person_attach::where('order_id',$id)->first();
-        $person["time"]=Date('Y-m-d',strtotime($person->created_at));
-        $report["order_id"]=$id;
-        return view('wechat.report.report',compact('person','report'));
+        else
+            dd("无该订单的接口查询记录");
+
     }
 
     /*取出企业的详细信息

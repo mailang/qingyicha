@@ -196,7 +196,7 @@
 
             <div class="report white-bgcolor">
                 <div class="weui-cells__title rp_head" ><img src="{{asset('wechat/images/icon1.png')}}" alt="" style="vertical-align:middle;"><span style="font-size: 14px;">&nbsp;企业涉诉</span></div>
-                @if(isset($report["enterpriseInquiry"]))
+                @if(isset($report["enterpriseInquiry"])&&$report["enterpriseInquiry"]!=null)
                     @foreach($report["enterpriseInquiry"] as $enterpriseInquiry)
                 @if($enterpriseInquiry["state"]==0)
                     <div class="weui-cell" style="color: #666666;" >
@@ -263,7 +263,7 @@
                 @endforeach
                 @else
                     <div class="weui-cell" style="color: #666666;" >
-                        <div class="weui-cell__hd">无</div>
+                        <div>无</div>
                     </div>
                 @endif
             </div>
