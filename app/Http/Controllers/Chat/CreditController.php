@@ -110,7 +110,7 @@ class CreditController extends Controller
                   ->leftJoin('pro_interface','interfaces.id','=','pro_interface.interface_id')
                   ->where('pro_id',$order["pro_id"])
                   ->where('pro_interface.isenable',1)
-                  ->whereNotIn("interfaces.id",$arrids)->get();
+                  ->whereNotIn("interfaces.id",$arrids)->get(['interfaces.id','interfaces.api_name']);
            else
                $interfaces=DB::table('interfaces')
                    ->leftJoin('pro_interface','interfaces.id','=','pro_interface.interface_id')
