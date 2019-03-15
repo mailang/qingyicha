@@ -107,13 +107,13 @@ class CreditController extends Controller
           else if($interfaces_count>0) $arrids=array_column($interfaces_list->toArray(),"interface_id");
           if ($arrids!=null)
               $interfaces=DB::table('interfaces')
-                  ->leftJoin('pro_interface','interface.id','=','pro_interface.interface_id')
+                  ->leftJoin('pro_interface','interfaces.id','=','pro_interface.interface_id')
                   ->where('pro_id',$order["pro_id"])
                   ->where('pro_interface.isenable',1)
                   ->whereNotIn("interfaces.id",$arrids)->get();
            else
                $interfaces=DB::table('interfaces')
-                   ->leftJoin('pro_interface','interface.id','=','pro_interface.interface_id')
+                   ->leftJoin('pro_interface','interfaces.id','=','pro_interface.interface_id')
                    ->where('pro_id',$order["pro_id"])
                    ->where('pro_interface.isenable',1)
                    ->get(['interfaces.id','interfaces.api_name']);
