@@ -20,7 +20,7 @@ class ReportController extends Controller
         $list=DB::table('user_interface')->leftJoin('interfaces','user_interface.interface_id','=','interfaces.id')
             ->where('user_interface.state',1)
             ->where('order_id',$id)
-            ->where('pagesize',0)
+            ->where('pagesize','<=1',1)
            // ->whereIn('user_interface.id',[35,37])//test
             ->get(['interfaces.api_name','user_interface.id','user_interface.state','interface_id','order_id','auth_id','result_code','user_interface.created_at']);
             if(count($list)>0){

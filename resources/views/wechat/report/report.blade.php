@@ -130,10 +130,11 @@
                 @endif
             </div>
         @endif
-        @if(isset($report["personInquiry"]))
+
             <div class="report white-bgcolor">
                 <div class="weui-cells__title rp_head" ><img src="{{asset('wechat/images/icon1.png')}}" alt="" style="vertical-align:middle;"><span style="font-size: 14px;">&nbsp;个人涉诉</span></div>
-                @if($report["personInquiry"]["state"]==0)
+                @if(isset($report["personInquiry"]))
+                    @if($report["personInquiry"]["state"]==0)
                     <div class="weui-cell" style="color: #666666;" >
                         <div class="weui-cell__hd">{{$report["personInquiry"]["msg"]}}</div>
                     </div>
@@ -184,9 +185,11 @@
                                 {{$report["personInquiry"]["pagination"]->resultSize}}
                             </div>
                     </div>
+                    @if($report["personInquiry"]["pagination"]->resultSize>0)
                     <div class="weui-cell" style="color: #666666;" >
                         <div style="float: right;font-size: 10px;color: #0f9ae0;"><a href="{{route('person.inquiry',array('id'=>$report["order_id"],'name'=>$person->name,'pagesize'=>1))}}">查看详情</a></div>
                     </div>
+                    @endif
                 @endif
             </div>
         @endif
@@ -248,11 +251,13 @@
                         <div class="weui-cell__bd">{{$enterpriseInquiry["pagination"]->resultSize}}
                         </div>
                     </div>
+                    @if($enterpriseInquiry["pagination"]->resultSize>0)
                     <div class="weui-cell" style="color: #666666;" >
                         <div style="float: right;font-size: 10px;color: #0f9ae0;">
                             <a href="{{route('enterprise.inquiry',array('id'=>$report["order_id"],'name'=>$enterpriseInquiry["name"],'pagesize'=>1))}}">查看详情</a>
                         </div>
                     </div>
+                        @endif
                 @endif
                 @endforeach
             </div>
