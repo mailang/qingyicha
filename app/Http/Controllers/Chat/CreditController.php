@@ -121,7 +121,7 @@ class CreditController extends Controller
           if($order["pro_id"]==1&&$num>0) {
               $i = 0;
               $chArr = [];//创建多个cURL资源
-              $apis=array('enterpriseLitigationInquiry','abnormalBusinessOperationHJ','basicInformationOfTheEnterpriseHJ','businessData');
+              $apis=array('enterpriseLitigationInquiry','abnormalBusinessOperationHJ','businessData');
             foreach ($interfaces as $interface)
             {
                 if (in_array($interface->api_name,$apis))//企业涉诉
@@ -180,12 +180,10 @@ class CreditController extends Controller
                     $result= curl_multi_getcontent($done['handle']);//链接返回值；
                     $parse=parse_url($info['url']);
                     $api_name=explode('/',$parse["path"])[1];
+                    $params=$this->convertUrlQuery($parse["query"]);
                     if (in_array($api_name,$apis))
-                    {
-                        $params=$this->convertUrlQuery($parse["query"]);
-                        $inter["name"]=isset($params["name"])?urldecode($params["name"]):urldecode($params["key"]);
-                        $inter["pagesize"]=isset($params["pageNum"])?$params["pageNum"]:$params["pageIndex"];
-                    }
+                    {$inter["name"]=isset($params["name"])?urldecode($params["name"]):urldecode($params["key"]);}
+                    $inter["pagesize"]=isset($params["pageNum"])?$params["pageNum"]:isset($params["pageIndex"])?$params["pageIndex"]:0;
                     $api=$interfaces->where('api_name',$api_name)->first();
                     if ($api)$inter["interface_id"]=$api->id;
                     $inter["order_id"]=$order['id'];

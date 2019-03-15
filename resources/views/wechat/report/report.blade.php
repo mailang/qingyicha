@@ -185,7 +185,7 @@
                             </div>
                     </div>
                     <div class="weui-cell" style="color: #666666;" >
-                        <div style="float: right;font-size: 10px;color: #0f9ae0;"><a href="{{route('person.inquiry',array('id'=>$report["order_id"],'name'=>$person->name,'pagesize'=>0))}}">查看详情</a></div>
+                        <div style="float: right;font-size: 10px;color: #0f9ae0;"><a href="{{route('person.inquiry',array('id'=>$report["order_id"],'name'=>$person->name,'pagesize'=>1))}}">查看详情</a></div>
                     </div>
                 @endif
             </div>
@@ -250,7 +250,7 @@
                     </div>
                     <div class="weui-cell" style="color: #666666;" >
                         <div style="float: right;font-size: 10px;color: #0f9ae0;">
-                            <a href="{{route('enterprise.inquiry',array('id'=>$report["order_id"],'name'=>$enterpriseInquiry["name"],'pagesize'=>0))}}">查看详情</a>
+                            <a href="{{route('enterprise.inquiry',array('id'=>$report["order_id"],'name'=>$enterpriseInquiry["name"],'pagesize'=>1))}}">查看详情</a>
                         </div>
                     </div>
                 @endif

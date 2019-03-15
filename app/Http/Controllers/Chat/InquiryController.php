@@ -47,7 +47,6 @@ class InquiryController extends Controller
         $list=DB::table('user_interface')->leftJoin('interfaces','interfaces.id','=','user_interface.interface_id')
             ->where('order_id',$id)
             ->where('user_interface.pagesize',$page)
-            ->where('name',$name)
             ->where('interfaces.api_name','personalComplaintInquiry')
             ->get(['user_interface.id',"interface_id","order_id","auth_id","openid","result_code","url",'state','pagesize']);
         if (count($list))
