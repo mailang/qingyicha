@@ -30,18 +30,18 @@ class PayController extends Controller
         $qcode=config('qsms');
         try {
             $ssender = new SmsSingleSender($qcode["appid"], $qcode["appkey"]);
-            //$params = ["952700"];//数组具体的元素个数和模板中变量个数必须一致，例如事例中 templateId:5678对应一个变量，参数数组中元素个数也必须是一个
+              //数组具体的元素个数和模板中变量个数必须一致，例如事例中 templateId:5678对应一个变量，参数数组中元素个数也必须是一个
               $params= mt_rand(100001,999999);
             $result = $ssender->sendWithParam("86", $phone,$qcode["templateId"],
-                [$params], $qcode["smsSign"], "", "");  // 签名参数未提供或者为空时，会使用默认签名发送短信
+              [$params], $qcode["smsSign"], "", "");  // 签名参数未提供或者为空时，会使用默认签名发送短信
             $rsp = json_decode($result);
             //{"result":0,"errmsg":"OK","ext":"","sid":"8:OSHaXqBpq57E3b5Fokz20190313","fee":1}
               if ($rsp->result==0&&$rsp->errmsg=="OK") {
                   $openid = $_SESSION['wechat_user']['id'];
                   $time = Date('Y-m-d H:i:s');
                   $expired = date('Y-m-d H:i:s',strtotime('+ 1 hour'));
-                  DB::insert('insert into user_validate(result_code,openid,url,code,phone,expired,created_at) values(?,?,?,?,?,?.?)', [$result, $openid, "Qcode", $params,$expired,$phone,$time]);
-               $bool="验证码已发送";
+                  DB::insert('insert into user_validate(result_code,openid,url,code,phone,expired,created_at) values(?,?,?,?,?,?,?)', [$result, $openid, "Qcode", $params,$phone,$expired,$time]);
+                  $bool="验证码已发送";
               }
         } catch(\Exception $e) {
             echo var_dump($e);
