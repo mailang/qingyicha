@@ -56,45 +56,7 @@ class CreditController extends Controller
   {
       $id=$_GET["proid"];
       $product=Product::find($id);
-      //$openid=$_SESSION['wechat_user']['id'];//'offTY1fb81WxhV84LWciHzn4qwqU';
-      //$user=Wxuser::where('openid',$openid)->first();
-      //$oauth=Authorization::find($user['auth_id']);
       return view('wechat.credit.apply',compact('product'));
-//      /*查看用户是否已经购买，购买后看是否已认证*/
-//      $id=$_GET["proid"];
-//      $openid=$_SESSION['wechat_user']['id'];//'offTY1fb81WxhV84LWciHzn4qwqU';
-//      $user=Wxuser::where('openid',$openid)->first();
-//      if ($user["auth_id"]!=null&&$user["auth_id"]>0)
-//          {
-//              $order=Order::where('pro_id',$id)->where('openid',$openid)->where('state','>','0')->where('state','!=','2')->orderByDesc('id')->limit(1)->get(['id','state']);
-//              if ($order->first())
-//              {
-//              $odata=$order->first();
-//              //订单状态 0:未支付1：已付款，2：征信接口已成功查询；3.接口已查询存在异常接口-1：超时未支付的无效订单
-//              switch ($odata['state'])
-//              {
-//                  case 1:  /*已付款未查询接口*/
-//                      $oauth=Authorization::find($user['auth_id']);
-//                      $order_id=$odata['id'];
-//                      return view('wechat.credit.apply',compact('oauth','order_id')); break;
-//                  case 3: $oauth=Authorization::find($user['auth_id']);$order_id=$odata['id'];
-//                      return view('wechat.credit.apply',compact('oauth','order_id')); break;
-//                  default:/*不存在查询失败的接口，可以重新支付查询最新的接口*/
-//                      $product=Product::find($id);   return view('wechat.credit.xieyi',compact('product')); break;
-//              }
-//              }
-//              else
-//              {
-//                  /*不存在支付完成的订单，弹出协议让用户下单支付,将产品id传过去*/
-//                  $product=Product::find($id);
-//                  return view('wechat.credit.xieyi',compact('product'));
-//              }
-//          }
-//          else
-//          {
-//              /*未认证用户*/
-//              return view('wechat.credit.validate');
-//          }
   }
   /*征信接口查询并生成征信报告，一次性查询多个接口
    从订单中取出state=1的订单type,确定用户购买的产品类型，根据
@@ -148,9 +110,17 @@ class CreditController extends Controller
               }else $arrids=$array1;}
           else if($interfaces_count>0) $arrids=array_column($interfaces_list->toArray(),"interface_id");
           if ($arrids!=null)
-              $interfaces=Interfaces::where('pro_id',$order["pro_id"])->where('isenable',1)->whereNotIn("id",$arrids)->get();
+              $interfaces=DB::table('interfaces')
+                  ->leftJoin('pro_interface','interface.id','=','pro_interface.interface_id')
+                  ->where('pro_id',$order["pro_id"])
+                  ->where('pro_interface.isenable',1)
+                  ->whereNotIn("interfaces.id",$arrids)->get();
            else
-               $interfaces=Interfaces::where('pro_id',$order["pro_id"])->where('isenable',1)->whereNotIn("id",$arrids)->get();
+               $interfaces=DB::table('interfaces')
+                   ->leftJoin('pro_interface','interface.id','=','pro_interface.interface_id')
+                   ->where('pro_id',$order["pro_id"])
+                   ->where('pro_interface.isenable',1)
+                   ->get(['interfaces.id','interfaces.api_name']);
           $num=count($interfaces);
           if($order["pro_id"]==1&&$num>0) {
               $i = 0;
