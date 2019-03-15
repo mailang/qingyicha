@@ -47,7 +47,7 @@ class ReportController extends Controller
                 /*企业异常*/
                 case "abnormalBusinessOperationHJ":$abnormalBusinessOperationHJ= new Src\abnormalBusinessOperationHJ();$data = $abnormalBusinessOperationHJ->handle_data($item->id,$item->order_id,$result);$report['abnormalBusinessOperationHJ']=$data;break;
                 /*运营商三要素*/
-                case "operatorThreeElements":$operatorThreeElements= new Src\operatorThreeElements();$data = $operatorThreeElements->handle_data($item->id,$item->order_id,$result);$report['$operatorThreeElements']=$data;break;
+                case "operatorThreeElements":$operatorThreeElements= new Src\operatorThreeElements();$data = $operatorThreeElements->handle_data($item->id,$item->order_id,$result);$report['operatorThreeElements']=$data;break;
 
                 /*
                 case "businessData";if ($user['creditCode']!="")$url="https://rip.linrico.com/businessData/result".$pram."&key=".urlencode($user['creditCode'])."&keyType=2";else {if ($user['entname']!="")$url="https://rip.linrico.com/businessData/result".$pram."&key=".urlencode($user['entname'])."&keyType=1";} break;
