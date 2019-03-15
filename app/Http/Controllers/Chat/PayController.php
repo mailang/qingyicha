@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\URL;
 use Monolog\Handler\ElasticSearchHandler;
 use Illuminate\Support\Facades\DB;
 use Qcloud\Sms\SmsSingleSender;
-use App\Models\Authorization;
+use App\Models\Return_fee;
 
 class PayController extends Controller
 {
@@ -265,8 +265,29 @@ class PayController extends Controller
             return "订单不存在";
 
     }
-
+    /*自定义支付完成跳转页面
+    如果有推荐人，则往返现表填满数据
+    */
     function order_payback($order_id){
+        $openid = $_SESSION['wechat_user']['id'];;
+        $wxuser=Wxuser::where('openid',$openid)->get();
+        if(count($wxuser)>0)
+        {
+            $user=$wxuser->first();
+            if ($user["referee"]!=null&&$user["referee"]!='')
+            {
+              $list=DB::table('product')->leftJoin('order','product.id','=','order.pro_id')
+               ->get(['product.return_fee','order.id','order.pro_id','order.total_fee'])->first();
+               $fee["pro_id"]=$list->pro_id;
+               $fee["order_id"]=$list->id;
+                $fee["referee"]=$user->referee;
+                $fee["openid"]=$openid;
+               $fee["fee"]=$list->return_fee;
+               $fee["price"]=$list->total_fee;
+               $fee["state"]=0;
+                Return_fee::create($fee);
+            }
+        }
         return view("wechat.credit.payback",compact("order_id"));
     }
     /*

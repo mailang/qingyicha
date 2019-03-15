@@ -15,6 +15,8 @@ class ReturnFee extends Migration
     {
         Schema::create('return_fee', function (Blueprint $table) {
             $table->increments('id');
+            $table->integer('pro_id');
+            $table->integer('order_id');
             /*推荐人（返现者）*/
             $table->string('referee');
             /*被推荐人*/
@@ -23,7 +25,7 @@ class ReturnFee extends Migration
             $table->double('fee')->default(0);
             /*订单价格*/
             $table->double('price')->default(0);
-            /*0:未返回1:返回未领取第一次2：返回未领第二次3:领取 成功4:撤回*/
+            /*0:未返现1:返回未领取第一次2：返回未领第二次3:领取 成功4:撤回*/
             $table->integer('state')->nullable;
             $table->timestamps();
         });
