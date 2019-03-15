@@ -28,7 +28,7 @@ class PayController extends Controller
     /*发送验证码*/
     function Sendsms($phone)
     {
-        $bool=false;
+        $bool="验证码发送失败";
         $qcode=config('qsms');
         try {
             $ssender = new SmsSingleSender($qcode["appid"], $qcode["appkey"]);
@@ -42,8 +42,8 @@ class PayController extends Controller
                   $openid = $_SESSION['wechat_user']['id'];
                   $time = Date('Y-m-d H:i:s');
                   $expired = date('Y-m-d H:i:s',strtotime('+ 1 hour'));
-                  DB::insert('insert into user_validate(result_code,openid,url,code,phone,expired,created_at) values(?,?,?,?,?,?)', [$result, $openid, "Qcode", $params,$expired,$phone,$time]);
-                  $bool = true;
+                  DB::insert('insert into user_validate(result_code,openid,url,code,phone,expired,created_at) values(?,?,?,?,?,?.?)', [$result, $openid, "Qcode", $params,$expired,$phone,$time]);
+               $bool="验证码已发送";
               }
         } catch(\Exception $e) {
             echo var_dump($e);
