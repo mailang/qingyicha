@@ -11,12 +11,10 @@ use App\Http\Controllers\Controller;
 use App\Src\base;
 use  App\Models\Wxuser;
 use App\Models\Product;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\URL;
-use Monolog\Handler\ElasticSearchHandler;
 use Illuminate\Support\Facades\DB;
 use Qcloud\Sms\SmsSingleSender;
 use App\Models\Return_fee;
+use  App\Models\Person_attach;
 
 class PayController extends Controller
 {
@@ -114,7 +112,7 @@ class PayController extends Controller
              $attach["name"]=$name;
              $attach["phone"]=$phone;
              $attach["cardNo"]=$idCard;
-             DB::table('person_attach')->insert($attach);
+              Person_attach::create($attach);
             return json_encode($config);
         }
         else return -3;
