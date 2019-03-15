@@ -17,7 +17,7 @@ class UserInterface extends Migration
             $table->increments('id');
             $table->integer('interface_id');
             $table->integer('order_id');
-            $table->integer('auth_id');
+            $table->integer('auth_id')->nullable();
             $table->string('openid');
             $table->text('result_code');
             $table->string('url');

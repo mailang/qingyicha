@@ -8,7 +8,6 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Wxuser;
 use App\Models\Order;
-use App\Models\Authorization;
 use App\Models\User_interface;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
@@ -23,9 +22,7 @@ class CreditController extends Controller
         $order=Order::find($order_id);//获取用户购买的订单
         if ($order["state"]==1||$order["state"]==3)
         {
-            $list=DB::table("wxuser")->leftJoin('authorization','wxuser.auth_id','=','authorization.id')
-                ->where('wxuser.id',$order["wxuser_id"])->get(['authorization.id','authorization.name','authorization.phone','authorization.cardNo']);
-            $oauth=$list->first();
+            $oauth=Person_attach::where('order_id',$order_id)->first();
             return view('wechat.credit.reapply',compact('oauth','order_id'));
         }
         else
@@ -50,7 +47,6 @@ class CreditController extends Controller
             return view("wechat.credit.validate")->with('reurl',$reurl);
         }
     }
-
     /*征信查询*/
   function  apply()
   {
