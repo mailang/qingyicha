@@ -48,9 +48,8 @@ class CreditController extends Controller
         }
     }
     /*征信查询*/
-  function  apply()
+  function  apply($id)
   {
-      $id=$_GET["proid"];
       $product=Product::find($id);
       return view('wechat.credit.apply',compact('product'));
   }
