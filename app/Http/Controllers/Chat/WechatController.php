@@ -80,7 +80,7 @@ class WechatController extends Controller
             $user["city"]=$wx['city'];
             $user["country"]=$wx['country'];
             $data["headimgurl"]=$wx['headimgurl'];
-            $user["referee"]=empty($_SESSION['referee'])?'':$_SESSION['referee'];
+            //$user["referee"]=empty($_SESSION['referee'])?'':$_SESSION['referee'];
             $user->save();
         }
         else
@@ -92,7 +92,9 @@ class WechatController extends Controller
             $data["city"]=$wx['city'];
             $data["country"]=$wx['country'];
             $data["headimgurl"]=$wx['headimgurl'];
-            $data["referee"]=empty($_SESSION['referee'])?'':$_SESSION['referee'];
+            $refreecode = isset($_GET["refereecode"])?$_GET["refereecode"]:"";
+            $refereeuser = where('code',$refreecode)->first();
+            $data["referee"] = $refereeuser?$refereeuser->id:0;
             $base=new base();
             $data["code"]=$base->code();
             Wxuser::create($data);
