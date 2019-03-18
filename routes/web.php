@@ -41,7 +41,7 @@ Route::group(['prefix'=>'chat','namespace'=>'Chat'],function(){
 
 });
 //,'middleware'=>['oauth']
-Route::group(['prefix' => 'weixin', 'namespace' => 'Chat','middleware'=>['oauth']], function () {
+Route::group(['prefix' => 'weixin', 'namespace' => 'Chat','middleware'=>['oauth','wechatshare']], function () {
     include base_path('routes/weixin.php');
 });
 Route::get('/test',['uses'=>'Controller@test']);

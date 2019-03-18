@@ -3,6 +3,7 @@
 namespace App\Http;
 
 use App\Http\Middleware\WechatOauth;
+use App\Http\Middleware\WechatShare;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
 class Kernel extends HttpKernel
@@ -61,5 +62,6 @@ class Kernel extends HttpKernel
         'admin'=>\App\Http\Middleware\AdminsAuthenticate::class,
         'menu'=>\App\Http\Middleware\Leftmenu::class,
         'oauth'=>WechatOauth::class,
+        'wechatshare'=>WechatShare::class
     ];
 }

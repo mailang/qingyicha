@@ -26,5 +26,28 @@
         wx.hideMenuItems({
             menuList: [ "menuItem:share:qq","menuItem:share:weiboApp", "menuItem:share:facebook","menuItem:share:QZone", "menuItem:copyUrl","menuItem:originPage","menuItem:openWithQQBrowser","menuItem:openWithSafari", "menuItem:share:email"] // 要隐藏的菜单项，只能隐藏“传播类”和“保护类”按钮，所有menu项见附录3
         });
+        var title = "普信天下";
+        var link = location.href + "?referee=" + "{{$user}}";
+        var desc = "查询个人信息";
+        var imgUrl = "{{asset('wechat/images/logo.jpg')}}";
+        wx.updateAppMessageShareData({
+            title: title, // 分享标题
+            desc: desc, // 分享描述
+            link: link, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+            imgUrl: imgUrl, // 分享图标
+            success: function () {
+                // 设置成功
+            }
+        });
+        wx.updateTimelineShareData({
+            title: title, // 分享标题
+            link: link, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+            imgUrl: imgUrl, // 分享图标
+            success: function () {
+                // 设置成功
+            }
+        })
     });
+
+
 </script>
