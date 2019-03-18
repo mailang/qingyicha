@@ -34,4 +34,6 @@ Route::get("/order/info/{id}",['uses'=>"OrderController@order_info",'as'=>'order
 Route::get("/order/list/{time}",['uses'=>"OrderController@orderlist",'as'=>'order.list']);
 //腾讯云发送验证码
 Route::get("/Qcode/sms/{phone}",['uses'=>"PayController@Sendsms",'as'=>'Qcode.sms']);
+/*分享二维码的地址链接*/
+Route::get("/tuiguang",['uses'=>"TuiguangController@tuiguang",'as'=>'weixin.tuiguang']);
 
