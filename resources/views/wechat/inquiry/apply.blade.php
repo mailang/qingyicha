@@ -47,8 +47,6 @@
             <input type="submit" value="支付（1元）" id="btnsubmit"  class="weui-btn radio_disable"/></div>
     </div></section>
 @include('wechat.layouts.footer')
-<script src="//res.wx.qq.com/open/js/jweixin-1.4.0.js"></script>
-<script src="http://res2.wx.qq.com/open/js/jweixin-1.4.0.js"></script>
 <script>
     $(function () {
         wx.config(<?php echo app('wechat.official_account')->jssdk->buildConfig(array('chooseWXPay'), false) ?>);

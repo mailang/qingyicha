@@ -49,8 +49,6 @@
 
 @include('wechat.layouts.footer')
 <script src="{{asset('wechat/js/jquery.form.js')}}"></script>
-<script src="//res.wx.qq.com/open/js/jweixin-1.4.0.js"></script>
-<script src="http://res2.wx.qq.com/open/js/jweixin-1.4.0.js"></script>
 <script>
     //var loading = weui.loading('');
     $(function () {
