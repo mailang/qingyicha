@@ -205,11 +205,10 @@ class InquiryController extends Controller
                $attach=Person_attach::where('order_id',$interface->order_id)->first();
                $baseurl="https://rip.linrico.com/personalComplaintInquiry/result".$pram."&name=".urlencode($interface->name)."&idCard=".$attach->cardNo;
            }
-           $order->state = 2;
            if ($total>1) {
                $j = 0;
-               for ($i = 2; $i < $total; $i++) {
-                   $curl_url = $baseurl . '&pageIndex=' . $i;
+               for ($i = 2; $i <=$total; $i++) {
+                   $curl_url =  $baseurl . '&pageIndex=' . $i;
                    $chArr[$j] = curl_init();
                    curl_setopt($chArr[$j], CURLOPT_URL, $curl_url);
                    curl_setopt($chArr[$j], CURLOPT_RETURNTRANSFER, 1);
@@ -238,9 +237,11 @@ class InquiryController extends Controller
                        $result = curl_multi_getcontent($done['handle']);//链接返回值；
                        $parse = parse_url($info['url']);
                        $base = new Src\base();
-                       $params = $base->convertUrlQuery($parse["query"]);
-                       $inter["name"] = isset($params["name"]) ? urldecode($params["name"]) : urldecode($params["key"]);
-                       $inter["pagesize"] = isset($params["pageNum"]) ? $params["pageNum"] : isset($params["pageIndex"]) ? $params["pageIndex"] : 0;
+                       if (isset($parse["query"])){
+                           $params = $base->convertUrlQuery($parse["query"]);
+                           $inter["name"] = isset($params["name"]) ? urldecode($params["name"]) : isset($params["key"])?urldecode($params["key"]):"";
+                           $inter["pagesize"] = isset($params["pageNum"]) ? $params["pageNum"] : isset($params["pageIndex"]) ? $params["pageIndex"] : 0;
+                       }
                        $inter["interface_id"] = $interface->interface_id;
                        $inter["order_id"] = $interface->order_id;
                        //$inter["auth_id"]=$auth['id'];
