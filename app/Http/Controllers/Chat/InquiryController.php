@@ -21,7 +21,7 @@ class InquiryController extends Controller
         $order=DB::table('order')
             ->where('pid',$id)
             ->where('pro_id',2)
-            ->where('state',1)
+            ->where('state',2)
             ->where('name',$name)
             ->get();
         if (count($order)>0)
@@ -63,7 +63,7 @@ class InquiryController extends Controller
             ->where('pid',$id)
             ->where('pro_id',2)
             ->where('name',$name)
-            ->where('state',1)
+            ->where('state',2)
             ->get();
         if (count($order)>0) {
             $list = DB::table('user_interface')->leftJoin('interfaces', 'interfaces.id', '=', 'user_interface.interface_id')
