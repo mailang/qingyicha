@@ -7,7 +7,7 @@
         $.ajax({
             url:'{{route('inquiry.check',$user_interface->id)}}',
             type:"get",
-            datatype:'text',
+            datatype:'json',
             success:function (data) {
                 loading.hide();
                if (data!="")
@@ -22,9 +22,9 @@
                    location.href=$url;
                    //weui.toast('提交成功', 3000);
                }
-
             },
             error:function () {
+                alert("{{route('inquiry.check',$user_interface->id)}}");
                 weui.toast('服务出错', 3000);
             }
         });

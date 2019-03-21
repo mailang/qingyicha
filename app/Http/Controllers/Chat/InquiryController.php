@@ -172,7 +172,7 @@ class InquiryController extends Controller
         $interface=DB::table('user_interface')->leftJoin('interfaces', 'interfaces.id', '=', 'user_interface.interface_id')
             ->where('user_interface.id', $user_interid)
             ->get(['user_interface.id','user_interface.name', "interface_id", "order_id", "api_name","url", "result_code", 'state', 'pagesize'])->first();
-       if ($interface->api_name=="personalComplaintInquiry")
+        if ($interface->api_name=="personalComplaintInquiry")
        {
            $order=DB::table('order')
                ->where('pid',$interface->order_id)
@@ -193,6 +193,8 @@ class InquiryController extends Controller
                ->where('name',$interface->name)
                ->where('state',1)
                ->get()->first();
+
+
            if ($order)
            {
                $enterpriseLitigationInquiry = new Src\enterpriseLitigationInquiry();
@@ -269,7 +271,7 @@ class InquiryController extends Controller
        }
        else
        {
-           return "不存在已付款的订单";
+           echo "不存在已付款的订单";
        }
 
     }
