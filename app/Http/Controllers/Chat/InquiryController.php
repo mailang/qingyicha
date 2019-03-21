@@ -193,8 +193,6 @@ class InquiryController extends Controller
                ->where('name',$interface->name)
                ->where('state',1)
                ->get()->first();
-
-
            if ($order)
            {
                $enterpriseLitigationInquiry = new Src\enterpriseLitigationInquiry();
@@ -267,11 +265,11 @@ class InquiryController extends Controller
            DB::table('order')
                ->where('id', $order->id)
                ->update(['state' => 2]);//订单状态值改变
-            return true;
+            return "";
        }
        else
        {
-           echo "不存在已付款的订单";
+           return "不存在已付款的订单";
        }
 
     }
