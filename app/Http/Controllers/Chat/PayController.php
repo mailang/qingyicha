@@ -23,36 +23,93 @@ class PayController extends Controller
         $app = app('wechat.official_account');
         return $app->jssdk->buildConfig(array('chooseWXPay'), true);//$app->configSignature();
     }
-    /*发送验证码*/
-    function Sendsms($phone)
+    /*获取短信认证的验证码*/
+    function  ytx_code($name,$idCard,$phone)
     {
-        $bool="验证码发送失败";
-        $qcode=config('qsms');
-        try {
-            $ssender = new SmsSingleSender($qcode["appid"], $qcode["appkey"]);
-              //数组具体的元素个数和模板中变量个数必须一致，例如事例中 templateId:5678对应一个变量，参数数组中元素个数也必须是一个
-              $params= mt_rand(100001,999999);
-            $result = $ssender->sendWithParam("86", $phone,$qcode["templateId"],
-              [$params], $qcode["smsSign"], "", "");  // 签名参数未提供或者为空时，会使用默认签名发送短信
-            $rsp = json_decode($result);
-            //{"result":0,"errmsg":"OK","ext":"","sid":"8:OSHaXqBpq57E3b5Fokz20190313","fee":1}
-              if ($rsp->result==0&&$rsp->errmsg=="OK") {
-                  $openid = $_SESSION['wechat_user']['id'];
-                  $time = Date('Y-m-d H:i:s');
-                  $expired = date('Y-m-d H:i:s',strtotime('+ 1 hour'));
-                  DB::insert('insert into user_validate(result_code,openid,url,code,phone,expired,created_at) values(?,?,?,?,?,?,?)', [$result, $openid, "Qcode", $params,$phone,$expired,$time]);
-                  $bool="验证码已发送";
-              }
-        } catch(\Exception $e) {
-            echo var_dump($e);
+        $path='https://rip.linrico.com/userAuthorization/addSMS?';
+        $prams='username=shbd&accessToken=40db8b4b95ac91ed6e905c80d45ebac5'."&name=".$name.'&idCard='.$idCard."&phone=".$phone;
+        $url=$path.$prams;
+        $base=new base();
+        $output=$base->get_curl($url);
+        if ($output!=null&&$output!='')
+        {
+            //{"success": true,"message": "该用户已经授权","code": 0,"timestamp": 1551942308648 }
+            $msg=json_decode($output);
+            return $msg->message;
         }
-        return $bool;
+        return "服务出错";
+    }
+    /*存储验证码验证存储*/
+    function ytx_store($name,$idCard,$phone,$telcode)
+    {
+        $path='https://rip.linrico.com/userAuthorization/input?';
+        //用户验证成功
+        $prams='username=shbd&accessToken=40db8b4b95ac91ed6e905c80d45ebac5'."&name=".urlencode($name).'&idCard='.urlencode($idCard)."&phone=".urlencode($phone)."&securityCode=".urlencode($telcode);
+        $url=$path.$prams;
+        $base=new base();
+        $output=$base->get_curl($url);
+        //$output ="{\"success\":true,\"message\":\"短信认证通过，已完成授权\",\"code\":0,\"timestamp\":1550640489731}";
+        if ($output!=null&&$output!='')
+        {
+            //用户验证成功
+            $re=array();
+            $openid=$_SESSION['wechat_user']['id'];
+            $time=date('Y-m-d h:i:s');
+            $expired = date('Y-m-d H:i:s',strtotime('+ 1 hour'));
+            DB::insert('insert into user_validate(result_code,openid,url,code,phone,expired,created_at) values(?,?,?,?,?,?,?)', [$output, $openid, $url, "",$phone,$expired,$time]);
+            $msg=json_decode($output);
+            if ($msg->code=='0'&&$msg->success)
+            {
+                $data["openid"]=$openid;
+                $data["name"]=$name;
+                $data["cardNo"]=$idCard;
+                $data["phone"]=$phone;
+                $id=DB::table('authorization')->insertGetId($data);
+                $re["state"]=1;$re["msg"]="";
+            }
+            else
+            {  $re["state"]=-1;$re["msg"]=$msg->message;}
+        } else {$re["state"]=-2;$re["msg"]="上游接口返回数据不正确";}
+        return $re;
+    }
+    /*发送验证码*/
+    function Sendsms()
+    {   $type='ytx';
+        $name=urlencode($_GET["name"]);
+        $idCard=urlencode($_GET["cardNo"]);
+        $phone=urlencode($_GET["phone"]);
+        $re=$this->ytx_code($name,$idCard,$phone);
+        if ($re=="该用户已经授权")
+        {   /*已经授权的用户调用腾讯云发送短信*/
+            $qcode=config('qsms');
+            try {
+                $ssender = new SmsSingleSender($qcode["appid"], $qcode["appkey"]);
+                //数组具体的元素个数和模板中变量个数必须一致，例如事例中 templateId:5678对应一个变量，参数数组中元素个数也必须是一个
+                $params= mt_rand(100001,999999);
+                $result = $ssender->sendWithParam("86", $phone,$qcode["templateId"],
+                    [$params], $qcode["smsSign"], "", "");  // 签名参数未提供或者为空时，会使用默认签名发送短信
+                $rsp = json_decode($result);
+                //{"result":0,"errmsg":"OK","ext":"","sid":"8:OSHaXqBpq57E3b5Fokz20190313","fee":1}
+                if ($rsp->result==0&&$rsp->errmsg=="OK") {
+                    $openid = $_SESSION['wechat_user']['id'];
+                    $time = Date('Y-m-d H:i:s');
+                    $expired = date('Y-m-d H:i:s',strtotime('+ 1 hour'));
+                    DB::insert('insert into user_validate(result_code,openid,url,code,phone,expired,created_at) values(?,?,?,?,?,?,?)', [$result, $openid, "Qcode", $params,$phone,$expired,$time]);
+                    $re="短信发送成功";
+                    $type='qsms';
+                }
+            } catch(\Exception $e) {
+                echo var_dump($e);
+            }
+        }
+        return json_encode(array("msg"=>$re,"type"=>$type));
     }
     /*生成订单前验证码验证
      return -1：验证码不正确，-2：验证码已过期；1：验证通过
     */
     function validate_code($phone,$code)
     {
+        $re=array();
        $list=DB::table('user_validate')
            ->where('phone',$phone)
            ->where('code',$code)
@@ -60,10 +117,12 @@ class PayController extends Controller
         if (count($list)>0)
         {
             $first=$list->first();
-          if (strtotime($first->expired)>time()) return 1;
-          else return -2;
+          if (strtotime($first->expired)>time()){  $re["state"]=1;$re["msg"]="";}
+          else {  $re["state"]=-2;$re["msg"]="验证码不正确";}
         }
-        else return -1;
+        else {  $re["state"]=-1;$re["msg"]="验证码已过期";}
+
+        return $re;
     }
     /*基础查询生成订单,并发起支付*/
     function  order_create($id)
@@ -73,10 +132,13 @@ class PayController extends Controller
         $idCard=$_POST["cardNo"];
         $phone=$_POST["phone"];
         $telcode=$_POST["telcode"];
-        $bool=$this->validate_code($phone,$telcode);//$this->validate_code($name,$idCard,$phone,$telcode);
-        if($bool>0)
+        $smstype=$_POST["type"];
+        if ($smstype=="qsms")
+        $re=$this->validate_code($phone,$telcode);
+        else {if ($smstype=="ytx") $re=$this->ytx_store($name,$idCard,$phone,$telcode);}
+        if(isset($re["state"])&&$re["state"]>0)
         {
-          $app = app('wechat.payment');
+            $app = app('wechat.payment');
         $jssdk = $app->jssdk;
         $openid=$_SESSION['wechat_user']['id'];//'offTY1fb81WxhV84LWciHzn4qwqU';
         $user=Wxuser::where('openid',$openid)->first();
@@ -112,15 +174,16 @@ class PayController extends Controller
              $attach["name"]=$name;
              $attach["phone"]=$phone;
              $attach["cardNo"]=$idCard;
-              Person_attach::create($attach);
+             Person_attach::create($attach);
+             $config["state"]=1;
             return json_encode($config);
         }
-        else return -3;
+        else return json_encode(array("state"=>0,"msg"=>"下单失败"));
     }
     else
     {
      //   -1：验证码不正确，-2：验证码已过期；
-    return $bool;
+    return json_encode($re);
     }
     }
     /*未付款订单重新支付*/

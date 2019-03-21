@@ -51,4 +51,18 @@ class base
         else
          return   date('YmdHis').rand(1,999);
     }
+    /*分解地址参数*/
+    function convertUrlQuery($query)
+    {
+        $queryParts = explode('&', $query);
+
+        $params = array();
+        foreach ($queryParts as $param)
+        {
+            $item = explode('=', $param);
+            $params[$item[0]] = $item[1];
+        }
+
+        return $params;
+    }
 }

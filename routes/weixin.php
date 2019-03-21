@@ -22,6 +22,10 @@ Route::get("/get/repay/{order_id}",['uses'=>"PayController@re_create",'as'=>'ord
 Route::get("/order/payback/{orderid}",['uses'=>"PayController@order_payback",'as'=>'order.payback']);//订单回调
 /*信用报告*/
 Route::get("/order/report/{id}",['uses'=>"ReportController@report",'as'=>'order.report']);
+Route::get("/{user_interface}",['uses'=>"InquiryController@apply",'as'=>'inquiry.apply']);
+Route::get("/inquiry/order",['uses'=>"InquiryController@order_create",'as'=>'inquiry.order']);
+Route::get("/inquiry/payback/{user_interid}",['uses'=>"InquiryController@payback",'as'=>'inquiry.payback']);
+Route::get("/inquiry/check",['uses'=>"InquiryController@check_inquiry",'as'=>'inquiry.check']);
 Route::get("/enterprise/{id}/{name}/{page?}",['uses'=>"InquiryController@enterprise",'as'=>'enterprise.inquiry']);
 Route::get("/person/{id}/{name}/{page?}",['uses'=>"InquiryController@person",'as'=>'person.inquiry']);
 Route::get("/company/{id}/{name}",['uses'=>"ReportController@enterprise",'as'=>'enterprise.info']);
@@ -33,7 +37,7 @@ Route::get("/order/refund/{id}",['uses'=>"PayController@refund",'as'=>'order.ref
 Route::get("/order/info/{id}",['uses'=>"OrderController@order_info",'as'=>'order.info']);
 Route::get("/order/list/{time}",['uses'=>"OrderController@orderlist",'as'=>'order.list']);
 //腾讯云发送验证码
-Route::get("/Qcode/sms/{phone}",['uses'=>"PayController@Sendsms",'as'=>'Qcode.sms']);
+Route::get("/Qcode/sms",['uses'=>"PayController@Sendsms",'as'=>'Qcode.sms']);
 /*分享二维码的地址链接*/
 Route::get("/tuiguang",['uses'=>"TuiguangController@tuiguang",'as'=>'weixin.tuiguang']);
 

@@ -3,9 +3,10 @@
 <section class="qyc_container">
     <div class="page__bd">
         <div class="headTop">
-            <a href="javascript:history.go(-1)" class="back"><i class="iconBack"></i></a><span>{{$api["api_name"]=="personalComplaintInquiry"?"个人":"企业"}}涉诉详情</span><a class="more"><i class="iconDian"></i><i class="iconDian"></i><i class="iconDian"></i></a>
+            <a href="javascript:history.go(-1)" class="back"><i class="iconBack"></i></a><span>{{$user_interface->api_name=="personalComplaintInquiry"?"个人":"企业"}}涉诉详情</span><a class="more"><i class="iconDian"></i><i class="iconDian"></i><i class="iconDian"></i></a>
         </div>
-        @if($api["api_name"]=="enterpriseLitigationInquiry")
+        <div class="weui-cell"><div style="color: red">查看涉诉详情需要再次支付费用</div> </div>
+        @if($user_interface->api_name=="enterpriseLitigationInquiry")
             <div class="weui-cell">
                 <div class="weui-cell__hd">
                     <label class="weui-label">购买服务:</label></div>
@@ -17,7 +18,7 @@
                 <div class="weui-cell__hd">
                     <label class="weui-label">企业名:</label></div>
                 <div class="weui-cell__bd">
-                    {{$api["name"]}}
+                    {{$user_interface->name}}
                 </div>
             </div>
             @else
@@ -32,19 +33,13 @@
                 <div class="weui-cell__hd">
                     <label class="weui-label">姓名:</label></div>
                 <div class="weui-cell__bd">
-                    {{$api["name"]}}
+                    {{$user_interface->name}}
                 </div>
             </div>
         @endif
+
         <div class="weui-cell">
-            <div class="weui-cell__hd">
-                <label class="weui-label">购买页面</label></div>
-            <div class="weui-cell__bd">
-            第{{$api["page"]}}页
-            </div>
-        </div>
-        <div class="weui-cell">
-            <input type="submit" value="支付（1元）" id="btnsubmit"  class="weui-btn radio_disable"/></div>
+            <input type="submit" value="支付{{$product->price}}元" id="btnsubmit"  class="weui-btn weui-btn_primary"/></div>
     </div></section>
 @include('wechat.layouts.footer')
 <script>
@@ -53,9 +48,10 @@
         wx.ready(function(){
             $("#btnsubmit").click(function () {
                         $.ajax({
-                            url: '{{route('order.create',1)}}',
+                            url: '{{route('inquiry.order')}}',
                             type: 'get',
                             datatype: 'json',
+                            data:{"pro_id":"{{$product->id}}","pid":"{{$user_interface->order_id}}","name":"{{$user_interface->name}}"},
                             success: function (data) {
                                 if (data != null) {
                                     var re = $.parseJSON(data);
@@ -71,7 +67,7 @@
                                             // 支付成功后的回调函数
                                             if (res.errMsg == "chooseWXPay:ok") {
                                                 //支付成功
-                                                window.location.href = "/weixin/order/payback/" + re["order_id"];
+                                                window.location.href = "{{route('inquiry.payback',$user_interface->id)}}";
                                             } else {
                                                 weui.toast(res.errMsg);
                                             }

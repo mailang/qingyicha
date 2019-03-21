@@ -42,7 +42,8 @@
                 阅读并同意<a href="{{route('wechat.xieyi')}}">《相关条款》</a>
                 </span>
         </label>
-</form>
+            <input id="smstype" type="hidden" value="">
+  </form>
         <div class="weui-cell">
             <input type="submit" value="支付（{{$product->price}}元）" id="btnsubmit"  class="weui-btn radio_disable"/></div>
     </div></section>
@@ -78,6 +79,7 @@
                     $num = $("#cardNo").val();
                     $tel = $("#phone").val();
                     $code = $.trim($("#valicode").val());
+                    $type=$("#smstype").val();
                     if (!error) {
                         if ($code == "") {
                             weui.toast("请输入验证码");
@@ -92,14 +94,13 @@
                                 'cardNo': $num,
                                 'phone': $tel,
                                 'telcode': $code,
+                                'type':$type,
                                 '_token': '{{csrf_token()}}'
                             },
                             success: function (data) {
                                 if (data != null) {
-                                    if (data==-1){weui.toast("验证码不正确");return;}
-                                    if (data==-2) {weui.toast("验证码已过期");return;}
-                                    if (data==-3) {weui.toast("下单失败");return;}
                                     var re = $.parseJSON(data);
+                                    if (re["state"]<0){weui.toast($re["msg"]);return;}
                                     wx.chooseWXPay({
                                         timestamp: re["timestamp"],
                                         nonceStr: re["nonceStr"],
@@ -158,17 +159,23 @@
             that = this;
             $name = $("#name").val();
             $num = $("#cardNo").val();
-            $tel = $("#phone").val();
+            $tel = $.trim($("#phone").val());
             weui.form.validate('#form1', function (error) {
                 if (!error) {
                     settime(that);
                     $.ajax({
-                        url: "/weixin/Qcode/sms/"+$.trim($tel),
+                        url: "{{route('Qcode.sms')}}",
                         type: 'get',
                         datatype: "text",
-                        data: {'phone': $tel},
+                        data: {
+                            'name': $name,
+                            'cardNo': $num,
+                            'phone': $tel
+                        },
                         success: function (data) {
-                            weui.toast(data, 3000);
+                            var re = $.parseJSON(data);
+                            $("#smstype").val(re["type"]);
+                            weui.toast(re["msg"], 3000);
                         }
                     });
                 }

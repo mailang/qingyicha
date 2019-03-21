@@ -218,7 +218,7 @@ class CreditController extends Controller
          if ($output!=null&&$output!='')
          {
              //{"success": true,"message": "该用户已经授权","code": 0,"timestamp": 1551942308648 }
-             $msg=\GuzzleHttp\json_decode($output);
+             $msg=json_decode($output);
              return $msg->message;
          }
          return "服务出错";

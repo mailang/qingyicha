@@ -4,8 +4,7 @@
     <div class="weui-tab__panel">
         <div class="home-head white-bgcolor clearfix">
             <div class="head-img">
-                <div class="head-logo"><img src="{{$_SESSION['wechat_user']['avatar']}}" alt=""></div>
-                <div class="head-name">{{$_SESSION['wechat_user']['nickname']}}</div>
+
             </div>
         </div>
         <div class="weui-cells">
