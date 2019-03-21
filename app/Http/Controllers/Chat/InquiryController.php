@@ -120,10 +120,9 @@ class InquiryController extends Controller
             $name=$_GET["name"];
             $pro_id=$_GET["pro_id"];
             $pid=$_GET["pid"];
-
             $app = app('wechat.payment');
             $jssdk = $app->jssdk;
-            $openid=$_SESSION['wechat_user']['id'];//'offTY1fb81WxhV84LWciHzn4qwqU';
+            $openid=$_SESSION['wechat_user']['id'];
             $user=Wxuser::where('openid',$openid)->first();
             $base=new base();
             $order_No=$base->No_create($user["id"]);//获取订单号
@@ -141,7 +140,6 @@ class InquiryController extends Controller
                 $config = $jssdk->sdkConfig($result["prepay_id"]); // 返回数组
                 $data["openid"]=$openid;
                 $data["wxuser_id"]=$user["id"];
-                //$data["auth_id"]=$user["auth_id"];
                 $data["out_trade_no"]=$order_No;
                 $data["body"]='普信天下'.$product->pro_name;
                 $data["total_fee"]=$product->price;
@@ -154,11 +152,9 @@ class InquiryController extends Controller
                 $data["name"]=$name;
                 $order_id=DB::table('order')->insertGetId($data);
                 $config["order_id"]=$order_id;
-                $config["state"]=1;
                 return json_encode($config);
             }
             else return json_encode(array("state"=>0,"msg"=>"下单失败"));
-
     }
     function payback($user_interid)
     {

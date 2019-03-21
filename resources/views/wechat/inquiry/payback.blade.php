@@ -20,11 +20,9 @@
                        $url="/weixin/person/{{$user_interface->order_id}}/{{$user_interface->name}}/1";
                    else $url="/weixin/enterprise/{{$user_interface->order_id}}/{{$user_interface->name}}/1";
                    location.href=$url;
-                   //weui.toast('提交成功', 3000);
                }
             },
             error:function () {
-                alert("{{route('inquiry.check',$user_interface->id)}}");
                 weui.toast('服务出错', 3000);
             }
         });

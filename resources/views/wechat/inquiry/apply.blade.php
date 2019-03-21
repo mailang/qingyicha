@@ -38,8 +38,8 @@
             </div>
         @endif
 
-        <div class="weui-cell">
-            <input type="submit" value="支付{{$product->price}}元" id="btnsubmit"  class="weui-btn weui-btn_primary"/></div>
+        <div class="weui-cell" id="btnsubmit">
+            <input type="submit" value="支付{{$product->price}}元" class="weui-btn weui-btn_primary"/></div>
     </div></section>
 @include('wechat.layouts.footer')
 <script>
