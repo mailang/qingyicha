@@ -65,7 +65,6 @@
                                             //支付成功后的回调函数
                                             //支付成功后生成征信报告
                                             // 支付成功后的回调函数
-                                            window.location.href = "{{route('inquiry.payback',$interface->id)}}";
                                             if (res.errMsg == "chooseWXPay:ok") {
                                                 //支付成功
                                                window.location.href = "{{route('inquiry.payback',$interface->id)}}";
@@ -76,6 +75,7 @@
                                         cancel: function (res) {
                                             //支付取消
                                             weui.toast('支付取消');
+                                            window.location.href = "{{route('inquiry.payback',$interface->id)}}";
                                         }
                                     });
                                 }
