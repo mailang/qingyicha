@@ -81,6 +81,7 @@
                                     cancel: function (res) {
                                         //支付取消
                                         weui.toast('支付取消');
+                                        $bool=true;
                                     }
                                 });
                             }
