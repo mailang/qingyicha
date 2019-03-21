@@ -51,6 +51,7 @@
                             url: '{{route('inquiry.order')}}',
                             type: 'get',
                             datatype: 'json',
+                            async:false,
                             data:{"pro_id":"{{$product->id}}","pid":"{{$interface->order_id}}","name":"{{$interface->name}}"},
                             success: function (data) {
                                 if (data != null) {
