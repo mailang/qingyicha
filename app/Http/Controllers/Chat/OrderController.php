@@ -25,6 +25,7 @@ class OrderController extends Controller
                  ->where('order.openid',$openid)
                  ->whereDate('order.created_at','>',date('Y-m-d h:i:s',strtotime('-1 month')))
                  ->where('state','!=',0)
+                 ->where('pid',-1)
                  ->orderByDesc("order.created_at")
                  ->get(['order.id','order.state','order.out_trade_no','order.total_fee','order.created_at','cash_fee','time_start','product.pro_name','product.icon']);
 
