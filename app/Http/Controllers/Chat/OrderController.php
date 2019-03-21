@@ -17,6 +17,7 @@ class OrderController extends Controller
              $orderlist=DB::table('product')->leftJoin('order','product.id','=','order.pro_id')
                  ->where('order.openid',$openid)
                  ->where('state','!=',0)
+                 ->where('pid',-1)
                  ->orderByDesc("order.created_at")
                  ->get(['order.id','order.state','order.out_trade_no','order.total_fee','order.created_at','cash_fee','time_start','product.pro_name','product.icon']);
          }else
