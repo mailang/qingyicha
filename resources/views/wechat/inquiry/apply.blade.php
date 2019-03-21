@@ -52,7 +52,8 @@
                             type: 'post',
                             datatype: 'json',
                             async:false,
-                            data:{"pro_id":"{{$product->id}}","pid":"{{$interface->order_id}}","name":"{{$interface->name}}", '_token': '{{csrf_token()}}'},
+                            data:{"pro_id":"{{$product->id}}","pid":"{{$interface->order_id}}","name":"{{$interface->name}}",
+                                '_token': '{{csrf_token()}}', "connect_redirect":1},
                             success: function (data) {
                                 if (data != null) {
                                     var re = $.parseJSON(data);
