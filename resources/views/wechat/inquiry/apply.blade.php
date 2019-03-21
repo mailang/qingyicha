@@ -75,7 +75,6 @@
                                         cancel: function (res) {
                                             //支付取消
                                             weui.toast('支付取消');
-                                            window.location.href = "{{route('inquiry.payback',$interface->id)}}";
                                         }
                                     });
                                 }

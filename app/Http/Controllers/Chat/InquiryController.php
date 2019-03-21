@@ -209,6 +209,7 @@ class InquiryController extends Controller
                $attach=Person_attach::where('order_id',$interface->order_id)->first();
                $baseurl="https://rip.linrico.com/personalComplaintInquiry/result".$pram."&name=".urlencode($interface->name)."&idCard=".$attach->cardNo;
            }
+           $order->state = 2;
            if ($total>1) {
                $j = 0;
                for ($i = 2; $i < $total; $i++) {
@@ -228,7 +229,6 @@ class InquiryController extends Controller
                    curl_multi_add_handle($mh, $ch); //2 增加句柄
                }
                $active = null;
-               $order->state = 2;
                do {
                    while (($mrc = curl_multi_exec($mh, $active)) == CURLM_CALL_MULTI_PERFORM) ;
                    if ($mrc != CURLM_OK) {
@@ -262,7 +262,9 @@ class InquiryController extends Controller
                } while ($active);
                curl_multi_close($mh); //7 关闭全部句柄
            }
-           $order->save();//订单状态值改变
+           DB::table('order')
+               ->where('id', $order->id)
+               ->update(['state' => 2]);//订单状态值改变
             return true;
        }
        else
