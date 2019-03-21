@@ -102,7 +102,7 @@ class InquiryController extends Controller
            $interface=DB::table('user_interface')->leftJoin('interfaces', 'interfaces.id', '=', 'user_interface.interface_id')
             ->where('user_interface.id', $user_interface)
             ->get(['user_interface.id','user_interface.name', "interface_id", "order_id", "api_name", "result_code", 'state', 'pagesize'])->first();
-        if (count($interface)>0){
+        if ($interface){
             if ($interface->api_name=="personalComplaintInquiry")
                 $product=Product::find(3);
             else $product=Product::find(2);
@@ -160,7 +160,7 @@ class InquiryController extends Controller
     }
     function payback($user_interid)
     {
-        $uer_interface=User_interface::find($user_interid);
+        $user_interface=User_interface::find($user_interid);
         return view('wechat.inquiry.payback',compact('user_interface'));
     }
     /*抓取所有页数的涉诉情况*/
@@ -177,8 +177,8 @@ class InquiryController extends Controller
                ->where('pro_id',3)
                ->where('name',$interface->name)
                ->where('state',1)
-               ->get();
-           if (count($order)>0) {
+               ->get()->first();
+           if ($order) {
                $personalComplaintInquiry = new Src\personalComplaintInquiry();
                $report = $personalComplaintInquiry->inquiry_info($interface->id, $interface->result_code);
            }
@@ -191,7 +191,7 @@ class InquiryController extends Controller
                ->where('name',$interface->name)
                ->where('state',1)
                ->get()->first();
-           if (count($order)>0)
+           if ($order)
            {
                $enterpriseLitigationInquiry = new Src\enterpriseLitigationInquiry();
                $report = $enterpriseLitigationInquiry->inquiry_info($interface->id, $interface->result_code);
@@ -237,7 +237,6 @@ class InquiryController extends Controller
                    $error = curl_error($done['handle']);
                    $result= curl_multi_getcontent($done['handle']);//链接返回值；
                    $parse=parse_url($info['url']);
-                   $api_name=explode('/',$parse["path"])[1];
                    $base=new Src\base();
                    $params=$base->convertUrlQuery($parse["query"]);
                    $inter["name"]=isset($params["name"])?urldecode($params["name"]):urldecode($params["key"]);
