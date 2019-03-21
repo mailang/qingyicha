@@ -52,7 +52,7 @@
                             type: 'get',
                             datatype: 'json',
                             async:false,
-                            data:{"pro_id":"{{$product->id}}","pid":"{{$interface->order_id}}","name":"{{$interface->name}}"},
+                            data:{"pro_id":"{{$product->id}}","pid":"{{$interface->order_id}}","name":"{{$interface->name}}","connect_redirect":1},
                             success: function (data) {
                                 if (data != null) {
                                     var re = $.parseJSON(data);
