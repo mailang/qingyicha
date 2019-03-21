@@ -158,7 +158,7 @@ class PayController extends Controller
              $config = $jssdk->sdkConfig($result["prepay_id"]); // 返回数组
              $data["openid"]=$openid;
              $data["wxuser_id"]=$user["id"];
-             $data["auth_id"]=$user["auth_id"];
+             //$data["auth_id"]=$user["auth_id"];
              $data["out_trade_no"]=$order_No;
              $data["body"]='普信天下'.$product->pro_name;
              $data["total_fee"]=$product->price;

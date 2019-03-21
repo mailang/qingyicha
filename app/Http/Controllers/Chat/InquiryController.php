@@ -141,7 +141,7 @@ class InquiryController extends Controller
                 $config = $jssdk->sdkConfig($result["prepay_id"]); // 返回数组
                 $data["openid"]=$openid;
                 $data["wxuser_id"]=$user["id"];
-                $data["auth_id"]=$user["auth_id"];
+                //$data["auth_id"]=$user["auth_id"];
                 $data["out_trade_no"]=$order_No;
                 $data["body"]='普信天下'.$product->pro_name;
                 $data["total_fee"]=$product->price;
@@ -209,56 +209,59 @@ class InquiryController extends Controller
                $attach=Person_attach::where('order_id',$interface->order_id)->first();
                $baseurl="https://rip.linrico.com/personalComplaintInquiry/result".$pram."&name=".urlencode($interface->name)."&idCard=".$attach->cardNo;
            }
-           $j=0;
-           for ($i=2;$i<$total;$i++)
-           {
-                $curl_url=$baseurl.'&pageIndex='.$i;
-               $chArr[$j] = curl_init();
-               curl_setopt($chArr[$j], CURLOPT_URL, $curl_url);
-               curl_setopt($chArr[$j], CURLOPT_RETURNTRANSFER, 1);
-               //curl_setopt($chArr[$i], CURLOPT_HEADER, 1);
-               curl_setopt($chArr[$j], CURLOPT_HTTPHEADER, array("Content-type: application/json;charset='utf-8'"));
-               curl_setopt($chArr[$j], CURLOPT_SSL_VERIFYPEER, FALSE); // https请求 不验证证书和hosts
-               curl_setopt($chArr[$j], CURLOPT_SSL_VERIFYHOST, FALSE);
-               curl_setopt($chArr[$j], CURLOPT_TIMEOUT, 5);
-               $j++;
-           }
-           $mh = curl_multi_init(); //1 创建批处理cURL句柄
-           foreach($chArr as $k => $ch){
-               curl_multi_add_handle($mh, $ch); //2 增加句柄
-           }
-           $active = null;
-           $order->state=2;
-           do {
-               while (($mrc = curl_multi_exec($mh, $active)) == CURLM_CALL_MULTI_PERFORM) ;
-               if ($mrc != CURLM_OK) { break; }
-               // a request was just completed -- find out which one
-               while ($done = curl_multi_info_read($mh)) {
-                   //get the info and content returned on the request
-                   $info = curl_getinfo($done['handle']);
-                   $error = curl_error($done['handle']);
-                   $result= curl_multi_getcontent($done['handle']);//链接返回值；
-                   $parse=parse_url($info['url']);
-                   $base=new Src\base();
-                   $params=$base->convertUrlQuery($parse["query"]);
-                   $inter["name"]=isset($params["name"])?urldecode($params["name"]):urldecode($params["key"]);
-                   $inter["pagesize"]=isset($params["pageNum"])?$params["pageNum"]:isset($params["pageIndex"])?$params["pageIndex"]:0;
-                   $inter["interface_id"]=$interface->interface_id;
-                   $inter["order_id"]=$interface->order_id;
-                   //$inter["auth_id"]=$auth['id'];
-                   $inter["openid"]=$_SESSION['wechat_user']['id'];;
-                   $inter["result_code"]=$result;
-                   $inter["url"]=$info['url'];
-                   User_interface::create($inter);
-                   //remove the curl handle that just completed
-                   curl_multi_remove_handle($mh, $done['handle']);
-                   curl_close($done['handle']);
+           if ($total>1) {
+               $j = 0;
+               for ($i = 2; $i < $total; $i++) {
+                   $curl_url = $baseurl . '&pageIndex=' . $i;
+                   $chArr[$j] = curl_init();
+                   curl_setopt($chArr[$j], CURLOPT_URL, $curl_url);
+                   curl_setopt($chArr[$j], CURLOPT_RETURNTRANSFER, 1);
+                   //curl_setopt($chArr[$i], CURLOPT_HEADER, 1);
+                   curl_setopt($chArr[$j], CURLOPT_HTTPHEADER, array("Content-type: application/json;charset='utf-8'"));
+                   curl_setopt($chArr[$j], CURLOPT_SSL_VERIFYPEER, FALSE); // https请求 不验证证书和hosts
+                   curl_setopt($chArr[$j], CURLOPT_SSL_VERIFYHOST, FALSE);
+                   curl_setopt($chArr[$j], CURLOPT_TIMEOUT, 5);
+                   $j++;
                }
-               if ($active > 0) {
-                   curl_multi_select($mh);
+               $mh = curl_multi_init(); //1 创建批处理cURL句柄
+               foreach ($chArr as $k => $ch) {
+                   curl_multi_add_handle($mh, $ch); //2 增加句柄
                }
-           } while ($active);
-           curl_multi_close($mh); //7 关闭全部句柄
+               $active = null;
+               $order->state = 2;
+               do {
+                   while (($mrc = curl_multi_exec($mh, $active)) == CURLM_CALL_MULTI_PERFORM) ;
+                   if ($mrc != CURLM_OK) {
+                       break;
+                   }
+                   // a request was just completed -- find out which one
+                   while ($done = curl_multi_info_read($mh)) {
+                       //get the info and content returned on the request
+                       $info = curl_getinfo($done['handle']);
+                       $error = curl_error($done['handle']);
+                       $result = curl_multi_getcontent($done['handle']);//链接返回值；
+                       $parse = parse_url($info['url']);
+                       $base = new Src\base();
+                       $params = $base->convertUrlQuery($parse["query"]);
+                       $inter["name"] = isset($params["name"]) ? urldecode($params["name"]) : urldecode($params["key"]);
+                       $inter["pagesize"] = isset($params["pageNum"]) ? $params["pageNum"] : isset($params["pageIndex"]) ? $params["pageIndex"] : 0;
+                       $inter["interface_id"] = $interface->interface_id;
+                       $inter["order_id"] = $interface->order_id;
+                       //$inter["auth_id"]=$auth['id'];
+                       $inter["openid"] = $_SESSION['wechat_user']['id'];;
+                       $inter["result_code"] = $result;
+                       $inter["url"] = $info['url'];
+                       User_interface::create($inter);
+                       //remove the curl handle that just completed
+                       curl_multi_remove_handle($mh, $done['handle']);
+                       curl_close($done['handle']);
+                   }
+                   if ($active > 0) {
+                       curl_multi_select($mh);
+                   }
+               } while ($active);
+               curl_multi_close($mh); //7 关闭全部句柄
+           }
            $order->save();//订单状态值改变
        }
        else
