@@ -3,10 +3,10 @@
 <section class="qyc_container">
     <div class="page__bd">
         <div class="headTop">
-            <a href="javascript:history.go(-1)" class="back"><i class="iconBack"></i></a><span>{{$user_interface->api_name=="personalComplaintInquiry"?"个人":"企业"}}涉诉详情</span><a class="more"><i class="iconDian"></i><i class="iconDian"></i><i class="iconDian"></i></a>
+            <a href="javascript:history.go(-1)" class="back"><i class="iconBack"></i></a><span>{{$interface->api_name=="personalComplaintInquiry"?"个人":"企业"}}涉诉详情</span><a class="more"><i class="iconDian"></i><i class="iconDian"></i><i class="iconDian"></i></a>
         </div>
         <div class="weui-cell"><div style="color: red">查看涉诉详情需要再次支付费用</div> </div>
-        @if($user_interface->api_name=="enterpriseLitigationInquiry")
+        @if($interface->api_name=="enterpriseLitigationInquiry")
             <div class="weui-cell">
                 <div class="weui-cell__hd">
                     <label class="weui-label">购买服务:</label></div>
@@ -18,7 +18,7 @@
                 <div class="weui-cell__hd">
                     <label class="weui-label">企业名:</label></div>
                 <div class="weui-cell__bd">
-                    {{$user_interface->name}}
+                    {{$interface->name}}
                 </div>
             </div>
             @else
@@ -33,7 +33,7 @@
                 <div class="weui-cell__hd">
                     <label class="weui-label">姓名:</label></div>
                 <div class="weui-cell__bd">
-                    {{$user_interface->name}}
+                    {{$interface->name}}
                 </div>
             </div>
         @endif
@@ -51,7 +51,7 @@
                             url: '{{route('inquiry.order')}}',
                             type: 'get',
                             datatype: 'json',
-                            data:{"pro_id":"{{$product->id}}","pid":"{{$user_interface->order_id}}","name":"{{$user_interface->name}}"},
+                            data:{"pro_id":"{{$product->id}}","pid":"{{$interface->order_id}}","name":"{{$interface->name}}"},
                             success: function (data) {
                                 if (data != null) {
                                     var re = $.parseJSON(data);
@@ -67,7 +67,7 @@
                                             // 支付成功后的回调函数
                                             if (res.errMsg == "chooseWXPay:ok") {
                                                 //支付成功
-                                                window.location.href = "{{route('inquiry.payback',$user_interface->id)}}";
+                                                window.location.href = "{{route('inquiry.payback',$interface->id)}}";
                                             } else {
                                                 weui.toast(res.errMsg);
                                             }

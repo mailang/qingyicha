@@ -99,14 +99,14 @@ class InquiryController extends Controller
     function apply($user_interface)
     {
            //没有购买，购买下一页的查询数据
-           $user_interface=DB::table('user_interface')->leftJoin('interfaces', 'interfaces.id', '=', 'user_interface.interface_id')
+           $interface=DB::table('user_interface')->leftJoin('interfaces', 'interfaces.id', '=', 'user_interface.interface_id')
             ->where('user_interface.id', $user_interface)
             ->get(['user_interface.id','user_interface.name', "interface_id", "order_id", "api_name", "result_code", 'state', 'pagesize'])->first();
-        if (count($user_interface)>0){
-            if ($user_interface->api_name=="personalComplaintInquiry")
+        if (count($interface)>0){
+            if ($interface->api_name=="personalComplaintInquiry")
                 $product=Product::find(3);
             else $product=Product::find(2);
-            return view('wechat.inquiry.apply', compact('user_interface','product'));
+            return view('wechat.inquiry.apply', compact('interface','product'));
         }
         else dd("找不到相关数据");
 
