@@ -48,7 +48,7 @@ class InquiryController extends Controller
                 ->where('name', $name)
                 ->where('interfaces.api_name', 'enterpriseLitigationInquiry')
                 ->get(['user_interface.id'])->first();
-             return redirect()->route('inquiry.apply',$user_interface->id);
+               return redirect()->route('inquiry.apply',$user_interface->id);
             /*
         $api["api_name"] = "enterpriseLitigationInquiry";
         $api["name"] = $name;

@@ -9,7 +9,6 @@
             type:"get",
             datatype:'text',
             success:function (data) {
-
                 loading.hide();
                if (data!="")
                {
@@ -18,8 +17,8 @@
                else {
                    var type="{{$user_interface->interface_id}}";
                    if (type==3)
-                       $url="/weixin/person/{{$user_interface->id}}/{{$user_interface->name}}/1";
-                   else $url="/weixin/enterprise/{{$user_interface->id}}/{{$user_interface->name}}/1";
+                       $url="/weixin/person/{{$user_interface->order_id}}/{{$user_interface->name}}/1";
+                   else $url="/weixin/enterprise/{{$user_interface->order_id}}/{{$user_interface->name}}/1";
                    location.href=$url;
                    //weui.toast('提交成功', 3000);
                }
