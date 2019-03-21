@@ -38,7 +38,7 @@ class InquiryController extends Controller
             if ($report != null)
                 return view('wechat.inquiry.cominquiry', compact('report'));
             else
-                dd('服务商请求数据异常,请联系服务商');
+              return '服务商请求数据异常,请联系服务商';
         }
         else {
             //没有购买，购买下一页的查询数据
@@ -77,7 +77,7 @@ class InquiryController extends Controller
                 if ($report != null)
                     return view('wechat.inquiry.persoinquiry', compact('report'));
                 else
-                    dd('服务商请求数据异常,请联系服务商');
+                   return '服务商请求数据异常,请联系服务商';
         }
         else {
             //没有购买，购买下一页的查询数据
@@ -110,7 +110,7 @@ class InquiryController extends Controller
             else $product=Product::find(2);
             return view('wechat.inquiry.apply', compact('interface','product'));
         }
-        else dd("找不到相关数据");
+        else return "找不到相关数据";
 
     }
       /*涉诉订单支付*/
@@ -263,11 +263,12 @@ class InquiryController extends Controller
                curl_multi_close($mh); //7 关闭全部句柄
            }
            $order->save();//订单状态值改变
+            return true;
        }
        else
        {
-           dd("不存在已付款的订单");
+           return "不存在已付款的订单";
        }
-    return true;
+
     }
 }
