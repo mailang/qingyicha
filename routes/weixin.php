@@ -25,7 +25,7 @@ Route::get("/order/report/{id}",['uses'=>"ReportController@report",'as'=>'order.
 Route::get("/{user_interface}",['uses'=>"InquiryController@apply",'as'=>'inquiry.apply']);
 Route::get("/inquiry/order",['uses'=>"InquiryController@order_create",'as'=>'inquiry.order']);
 Route::get("/inquiry/payback/{user_interid}",['uses'=>"InquiryController@payback",'as'=>'inquiry.payback']);
-Route::get("/inquiry/check",['uses'=>"InquiryController@check_inquiry",'as'=>'inquiry.check']);
+Route::get("/inquiry/check/{user_interid}",['uses'=>"InquiryController@check_inquiry",'as'=>'inquiry.check']);
 Route::get("/enterprise/{id}/{name}/{page?}",['uses'=>"InquiryController@enterprise",'as'=>'enterprise.inquiry']);
 Route::get("/person/{id}/{name}/{page?}",['uses'=>"InquiryController@person",'as'=>'person.inquiry']);
 Route::get("/company/{id}/{name}",['uses'=>"ReportController@enterprise",'as'=>'enterprise.info']);
