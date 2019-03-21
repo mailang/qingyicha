@@ -44,47 +44,53 @@
 @include('wechat.layouts.footer')
 <script>
     $(function () {
+        $bool=true;
         wx.config(<?php echo app('wechat.official_account')->jssdk->buildConfig(array('chooseWXPay'), false) ?>);
         wx.ready(function(){
             $("#btnsubmit").click(function () {
-                        $.ajax({
-                            url: '{{route('inquiry.order')}}',
-                            type: 'post',
-                            datatype: 'json',
-                            async:false,
-                            data:{"pro_id":"{{$product->id}}","pid":"{{$interface->order_id}}","name":"{{$interface->name}}",
-                                '_token': '{{csrf_token()}}', "connect_redirect":1},
-                            success: function (data) {
-                                if (data != null) {
-                                    var re = $.parseJSON(data);
-                                    wx.chooseWXPay({
-                                        timestamp: re["timestamp"],
-                                        nonceStr: re["nonceStr"],
-                                        package: re["package"],
-                                        signType: re["signType"],
-                                        paySign: re["paySign"], // 支付签名
-                                        success: function (res) {
-                                            //支付成功后的回调函数
-                                            //支付成功后生成征信报告
-                                            // 支付成功后的回调函数
-                                            if (res.errMsg == "chooseWXPay:ok") {
-                                                //支付成功
-                                               window.location.href = "{{route('inquiry.payback',$interface->id)}}";
-                                            } else {
-                                                weui.toast(res.errMsg);
-                                            }
-                                        },
-                                        cancel: function (res) {
-                                            //支付取消
-                                            weui.toast('支付取消');
+                if ($bool)
+                {
+                    $bool=false;
+                    $.ajax({
+                        url: '{{route('inquiry.order')}}',
+                        type: 'post',
+                        datatype: 'json',
+                        async:false,
+                        data:{"pro_id":"{{$product->id}}","pid":"{{$interface->order_id}}","name":"{{$interface->name}}",
+                            '_token': '{{csrf_token()}}', "connect_redirect":1},
+                        success: function (data) {
+                            if (data != null) {
+                                var re = $.parseJSON(data);
+                                wx.chooseWXPay({
+                                    timestamp: re["timestamp"],
+                                    nonceStr: re["nonceStr"],
+                                    package: re["package"],
+                                    signType: re["signType"],
+                                    paySign: re["paySign"], // 支付签名
+                                    success: function (res) {
+                                        //支付成功后的回调函数
+                                        //支付成功后生成征信报告
+                                        // 支付成功后的回调函数
+                                        if (res.errMsg == "chooseWXPay:ok") {
+                                            //支付成功
+                                            window.location.href = "{{route('inquiry.payback',$interface->id)}}";
+                                        } else {
+                                            weui.toast(res.errMsg);
                                         }
-                                    });
-                                }
-                            },
-                            error: function () {
-                                weui.toast('系统故障');
+                                    },
+                                    cancel: function (res) {
+                                        //支付取消
+                                        weui.toast('支付取消');
+                                    }
+                                });
                             }
-                        });
+                        },
+                        error: function () {
+                            weui.toast('系统故障');
+                        }
+                    });
+                }
+
                    });
             });
             wx.error(function(res){
