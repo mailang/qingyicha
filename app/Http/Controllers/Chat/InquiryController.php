@@ -150,8 +150,8 @@ class InquiryController extends Controller
                 $data["updated_at"]=date('Y-m-d H:i:s');
                 $data["pid"]=$pid;
                 $data["name"]=$name;
-                $order_id=DB::table('order')->insertGetId($data);
-                $config["order_id"]=$order_id;
+                //order_id=DB::table('order')->insertGetId($data);
+                //$config["order_id"]=$order_id;
                 return json_encode($config);
             }
             else return json_encode(array("state"=>0,"msg"=>"下单失败"));

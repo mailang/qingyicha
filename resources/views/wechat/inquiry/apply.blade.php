@@ -38,8 +38,8 @@
             </div>
         @endif
 
-        <div class="weui-cell" id="btnsubmit">
-            <input type="submit" value="支付{{$product->price}}元" class="weui-btn weui-btn_primary"/></div>
+        <div class="weui-cell">
+            <input type="submit" value="支付{{$product->price}}元" id="btnsubmit" class="weui-btn weui-btn_primary"/></div>
     </div></section>
 @include('wechat.layouts.footer')
 <script>
@@ -47,8 +47,6 @@
         wx.config(<?php echo app('wechat.official_account')->jssdk->buildConfig(array('chooseWXPay'), false) ?>);
         wx.ready(function(){
             $("#btnsubmit").click(function () {
-                $("#btnsubmit").addClass('radio_disable').removeClass('weui-btn_primary');
-                $("#btnsubmit").prop('disabled', true);
                         $.ajax({
                             url: '{{route('inquiry.order')}}',
                             type: 'get',
