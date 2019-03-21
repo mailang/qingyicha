@@ -8,6 +8,8 @@ use App\Http\Controllers\Controller;
 use App\Models\User_interface;
 use Illuminate\Support\Facades\DB;
 use App\Src;
+use App\Models\Wxuser;
+use App\Src\base;
 
 class InquiryController extends Controller
 {
