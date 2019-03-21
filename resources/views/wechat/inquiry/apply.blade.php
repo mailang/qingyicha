@@ -47,6 +47,8 @@
         wx.config(<?php echo app('wechat.official_account')->jssdk->buildConfig(array('chooseWXPay'), false) ?>);
         wx.ready(function(){
             $("#btnsubmit").click(function () {
+                $("#btnsubmit").addClass('radio_disable').removeClass('weui-btn_primary');
+                $("#btnsubmit").prop('disabled', true);
                         $.ajax({
                             url: '{{route('inquiry.order')}}',
                             type: 'get',
