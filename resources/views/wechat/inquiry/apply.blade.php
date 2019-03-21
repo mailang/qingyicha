@@ -49,10 +49,10 @@
             $("#btnsubmit").click(function () {
                         $.ajax({
                             url: '{{route('inquiry.order')}}',
-                            type: 'get',
+                            type: 'post',
                             datatype: 'json',
                             async:false,
-                            data:{"pro_id":"{{$product->id}}","pid":"{{$interface->order_id}}","name":"{{$interface->name}}","connect_redirect":1},
+                            data:{"pro_id":"{{$product->id}}","pid":"{{$interface->order_id}}","name":"{{$interface->name}}", '_token': '{{csrf_token()}}'},
                             success: function (data) {
                                 if (data != null) {
                                     var re = $.parseJSON(data);

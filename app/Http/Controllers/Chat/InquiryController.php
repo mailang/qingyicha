@@ -117,9 +117,9 @@ class InquiryController extends Controller
     function order_create()
     {
             //return '{"appId":"wxaffee917b46f14d8","nonceStr":"5c46d829ee4c6","package":"prepay_id=wx221645424410449e96a87f0b2066641826","signType":"MD5","paySign":"6C4600732B204DA08AEC02283C997BE3","timestamp":"1548146729"}';
-            $name=$_GET["name"];
-            $pro_id=$_GET["pro_id"];
-            $pid=$_GET["pid"];
+            $name=$_POST["name"];
+            $pro_id=$_POST["pro_id"];
+            $pid=$_POST["pid"];
             $app = app('wechat.payment');
             $jssdk = $app->jssdk;
             $openid=$_SESSION['wechat_user']['id'];
