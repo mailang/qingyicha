@@ -12,7 +12,7 @@
                         <span style="display: block;color: green; font-weight: bold; font-size: 15px;">企业基本信息</span>
                     </div>
                 </div>
-              @if(count($basic)==0)
+              @if(empty($basic))
                     <div class="weui-cell" style="border-bottom: 1px solid #eee;">
                         <div>
                             <span style="display: block;color:darkolivegreen; font-size: 15px;">无</span>
@@ -107,7 +107,7 @@
                     <div class="weui-cell ">
                         <div class="weui-cell__hd"><label>经营(业务)范围及方式：</label></div>
                         <div class="weui-cell__bd font12">
-                            {{$basic->opScoandForm?"无":$basic->opScoandForm}}
+                            {{$basic->opScoandForm==null?"无":$basic->opScoandForm}}
                         </div>
                     </div>
                     <div class="weui-cell ">
@@ -119,41 +119,41 @@
                     <div class="weui-cell ">
                         <div class="weui-cell__hd"><label>变更日期：</label></div>
                         <div class="weui-cell__bd font12">
-                            {{$basic->changDate?"无":$basic->changDate}}
+                            {{$basic->changDate==null?"无":$basic->changDate}}
                         </div>
                         <div class="weui-cell__hd"><label>注销日期：</label></div>
                         <div class="weui-cell__bd font12">
-                            {{$basic->canDate?"无":$basic->canDate}}
+                            {{$basic->canDate==null?"无":$basic->canDate}}
                         </div>
                     </div>
                     <div class="weui-cell ">
                         <div class="weui-cell__hd"><label>吊销日期：</label></div>
                         <div class="weui-cell__bd font12">
-                            {{$basic->revDate?"无":$basic->revDate}}
+                            {{$basic->revDate==null?"无":$basic->revDate}}
                         </div>
                         <div class="weui-cell__hd"><label>最后年检日期：</label></div>
                         <div class="weui-cell__bd font12">
-                            {{$basic->anCheDate?"无":$basic->anCheDate}}
+                            {{$basic->anCheDate==null?"无":$basic->anCheDate}}
                         </div>
                     </div>
                     <div class="weui-cell ">
                         <div class="weui-cell__hd"><label>行业门类代码：</label></div>
                         <div class="weui-cell__bd font12">
-                            {{$basic->induStryphyCode?"无":$basic->induStryphyCode}}
+                            {{$basic->induStryphyCode==null?"无":$basic->induStryphyCode}}
                         </div>
                         <div class="weui-cell__hd"><label>行业门类名称：</label></div>
                         <div class="weui-cell__bd font12">
-                            {{$basic->induStryphyName?"无":$basic->induStryphyName}}
+                            {{$basic->induStryphyName==null?"无":$basic->induStryphyName}}
                         </div>
                     </div>
                     <div class="weui-cell ">
                         <div class="weui-cell__hd"><label>国民经济行业代码：</label></div>
                         <div class="weui-cell__bd font12">
-                            {{$basic->induStryCoCode?"无":$basic->induStryCoCode}}
+                            {{$basic->induStryCoCode==null?"无":$basic->induStryCoCode}}
                         </div>
                         <div class="weui-cell__hd"><label>国民经济行业名称：</label></div>
                         <div class="weui-cell__bd font12">
-                            {{$basic->induStryCoName?"无":$basic->induStryCoName}}
+                            {{$basic->induStryCoName==null?"无":$basic->induStryCoName}}
                         </div>
                     </div>
                     <div class="weui-cell ">
@@ -165,7 +165,7 @@
                     <div class="weui-cell ">
                         <div class="weui-cell__hd"><label>行业门类代码及名称：</label></div>
                         <div class="weui-cell__bd font12">
-                            {{$basic->industryPhyAll?"无":$basic->industryPhyAll}}
+                            {{$basic->industryPhyAll==null?"无":$basic->industryPhyAll}}
                         </div>
                     </div>
                     <div class="weui-cell ">
@@ -1702,7 +1702,7 @@
                     </div>
                 </div>
                 <?php $orgDetails=$enterprise['businessData']["orgDetails"]?>
-                @if(count($orgDetails)==0)
+                @if(empty($orgDetails))
                     <div class="weui-cell" style="border-bottom: 1px solid #eee;">
                         <div>
                             <span style="display: block;color:darkolivegreen; font-size: 15px;">无</span>

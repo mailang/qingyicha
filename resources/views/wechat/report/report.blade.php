@@ -27,28 +27,6 @@
             </div>
         </div>
         <div class="report white-bgcolor">
-            <div class="weui-cells__title rp_head" ><img src="{{asset('wechat/images/icon1.png')}}" alt="" style="vertical-align:middle;"><span style="font-size: 14px;">&nbsp;运营商三要素验证</span></div>
-            @if(isset($report["operatorThreeElements"]))@if($report["operatorThreeElements"]["state"]==0)
-                <div class="weui-cell" style="color: #666666;" >
-                    <div class="weui-cell__hd">{{$report["operatorThreeElements"]["msg"]}}</div>
-                </div>
-            @else
-                <div class="weui-cell" style="color: #666666;" >
-                    <div class="weui-cell__hd"><label class="weui-label">手机在网状态：</label></div>
-                    <div class="weui-cell__bd">
-                        <?php $operatorThreeElements=$report["operatorThreeElements"]["data"];?>
-                        @switch($operatorThreeElements->key)
-                                @case("0000")  核对一致 @break;
-                                @case("9998")  不一致@break;
-                                @case("3")  无记录 @break;
-                            @endswitch
-                    </div>
-                </div>
-            @endif
-            @endif
-        </div>
-
-        <div class="report white-bgcolor">
             <div class="weui-cells__title rp_head" ><img src="{{asset('wechat/images/icon1.png')}}" alt="" style="vertical-align:middle;"><span style="font-size: 14px;">&nbsp;手机检测</span></div>
             @if(isset($report["phone"]))@if($report["phone"]["state"]==0)
                 <div class="weui-cell" style="color: #666666;" >
@@ -341,7 +319,7 @@
                            <div class="weui-cell" style="color: #666666;" >
                                <div class="weui-cell__hd" style="color: red">企业{{++$key}}：</div>
                                <div class="weui-cell__bd">
-                                   {{$holder->entName}}
+                                   <a href="{{route('business.data',array('id'=>$report["order_id"],'name'=>$holder->entName))}}">{{$holder->entName}}</a>
                                </div>
                            </div>
                            <div class="weui-cell" style="color: #666666;" >
@@ -398,7 +376,7 @@
                            <div class="weui-cell" style="color: #666666;" >
                                <div class="weui-cell__hd">企业名称：</div>
                                <div class="weui-cell__bd">
-                                   {{$manager->entName}}
+                                   <a href="{{route('business.data',array('id'=>$report["order_id"],'name'=>$manager->entName))}}">{{$manager->entName}}</a>
                                </div>
                                <div class="weui-cell__hd">职位：</div>
                                <div class="weui-cell__bd">

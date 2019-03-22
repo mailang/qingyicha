@@ -183,7 +183,7 @@ class CreditController extends Controller
                     if (in_array($api_name,$apis))
                     {$inter["name"]=isset($params["name"])?urldecode($params["name"]):urldecode($params["key"]);}
                     if (isset($params["pageNum"])||isset($params["pageIndex"]))
-                    {$inter["pagesize"]=isset($params["pageNum"])?$params["pageNum"]:isset($params["pageIndex"])?$params["pageIndex"]:0;}
+                    {$inter["pagesize"]=isset($params["pageNum"])?$params["pageNum"]:(isset($params["pageIndex"])?$params["pageIndex"]:0);}
                     $api=$interfaces->where('api_name',$api_name)->first();
                     if ($api)$inter["interface_id"]=$api->id;
                     $inter["order_id"]=$order['id'];
