@@ -160,6 +160,11 @@
             $name = $("#name").val();
             $num = $("#cardNo").val();
             $tel = $.trim($("#phone").val());
+
+            $("#name").attr("readonly","readonly");
+            $("#cardNo").attr("readonly","readonly");
+            $("#phone").attr("readonly","readonly");
+
             weui.form.validate('#form1', function (error) {
                 if (!error) {
                     settime(that);
