@@ -48,7 +48,7 @@
             <input type="submit" value="支付（{{$product->price}}元）" id="btnsubmit"  class="weui-btn radio_disable"/></div>
     </div></section>
 
-@include('wechat.layouts.footer')
+@include('wechat.layouts.footer1')
 <script src="{{asset('wechat/js/jquery.form.js')}}"></script>
 <script>
     //var loading = weui.loading('');

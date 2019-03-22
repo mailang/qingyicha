@@ -41,7 +41,7 @@
         <div class="weui-cell">
             <input type="submit" value="支付{{$product->price}}元" id="btnsubmit" class="weui-btn weui-btn_primary"/></div>
     </div></section>
-@include('wechat.layouts.footer')
+@include('wechat.layouts.footer1')
 <script>
     $(function () {
         $bool=true;
