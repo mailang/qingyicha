@@ -87,10 +87,12 @@
                         <span><label>身份证或组织机构：</label></span>
                         <span>{{$item->identificationNO }}</span>
                     </div>
+                    @if(isset($item->executionTarget))
                     <div>
                         <span><label>执行标的：</label></span>
                         <span>{{$item->executionTarget}}元</span>
                     </div>
+                    @endif
                     <div>
                         <span><label>内容：</label></span>
                         <span>{{$item->content}}</span>

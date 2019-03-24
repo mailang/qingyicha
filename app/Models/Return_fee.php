@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Return_fee extends Model
 {
-    protected  $table="pro_interface";
+    protected  $table="return_fee";
     protected $fillable=[
         'pro_id','order_id','referee','openid','fee','price','state'
     ];
