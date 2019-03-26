@@ -177,6 +177,11 @@
                             var re = $.parseJSON(data);
                             $("#smstype").val(re["type"]);
                             weui.toast(re["msg"], 3000);
+                            if(re["msg"] == "短信发送成功"){
+                                $("#name").attr("readonly","readonly");
+                                $("#cardNo").attr("readonly","readonly");
+                                $("#phone").attr("readonly","readonly");
+                            }
                         }
                     });
                 }
