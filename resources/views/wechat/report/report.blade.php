@@ -410,7 +410,7 @@
                             <div class="weui-cell" style="color: #666666;">
                                 <div class="weui-cell__hd">企业名称：</div>
                                 <div class="weui-cell__bd">
-                                    <a href="{{route('business.data',array('id'=>$report["order_id"],'name'=>$holder->entName))}}">{{$manager->entName}}
+                                    <a href="{{route('business.data',array('id'=>$report["order_id"],'name'=>$holder->entName))}}">{{$manager->entName}}</a>
                                 </div>
                                 <div class="weui-cell__hd">职位：</div>
                                 <div class="weui-cell__bd">
