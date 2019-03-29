@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Chat;
 
+use App\Models\Authorization;
 use App\Models\Order;
 use App\Models\Order_refund;
 use App\Models\Order_result;
@@ -80,27 +81,40 @@ class PayController extends Controller
         $phone=urlencode($_GET["phone"]);
         $re=$this->ytx_code($name,$idCard,$phone);
         if ($re=="该用户已经授权")
-        {   /*已经授权的用户调用腾讯云发送短信*/
-            $qcode=config('qsms');
-            try {
-                $ssender = new SmsSingleSender($qcode["appid"], $qcode["appkey"]);
-                //数组具体的元素个数和模板中变量个数必须一致，例如事例中 templateId:5678对应一个变量，参数数组中元素个数也必须是一个
-                $params= mt_rand(100001,999999);
-                $result = $ssender->sendWithParam("86", $phone,$qcode["templateId"],
-                    [$params], $qcode["smsSign"], "", "");  // 签名参数未提供或者为空时，会使用默认签名发送短信
-                $rsp = json_decode($result);
-                //{"result":0,"errmsg":"OK","ext":"","sid":"8:OSHaXqBpq57E3b5Fokz20190313","fee":1}
-                if ($rsp->result==0&&$rsp->errmsg=="OK") {
-                    $openid = $_SESSION['wechat_user']['id'];
-                    $time = Date('Y-m-d H:i:s');
-                    $expired = date('Y-m-d H:i:s',strtotime('+ 1 hour'));
-                    DB::insert('insert into user_validate(result_code,openid,url,code,phone,expired,created_at) values(?,?,?,?,?,?,?)', [$result, $openid, "Qcode", $params,$phone,$expired,$time]);
-                    $re="短信发送成功";
-                    $type='qsms';
+        {
+            /*已授权用户判断是否和实名库里存储一致*/
+            $auth = Authorization::where("name",$name)
+                ->where("cardNo",$idCard)
+                ->where("phone",$phone)
+                ->get();
+            if (count($auth)>0){
+                /*与实名库中一致调用腾讯云发送短信*/
+                $qcode=config('qsms');
+                try {
+                    $ssender = new SmsSingleSender($qcode["appid"], $qcode["appkey"]);
+                    //数组具体的元素个数和模板中变量个数必须一致，例如事例中 templateId:5678对应一个变量，参数数组中元素个数也必须是一个
+                    $params= mt_rand(100001,999999);
+                    $result = $ssender->sendWithParam("86", $phone,$qcode["templateId"],
+                        [$params], $qcode["smsSign"], "", "");  // 签名参数未提供或者为空时，会使用默认签名发送短信
+                    $rsp = json_decode($result);
+                    //{"result":0,"errmsg":"OK","ext":"","sid":"8:OSHaXqBpq57E3b5Fokz20190313","fee":1}
+                    if ($rsp->result==0&&$rsp->errmsg=="OK") {
+                        $openid = $_SESSION['wechat_user']['id'];
+                        $time = Date('Y-m-d H:i:s');
+                        $expired = date('Y-m-d H:i:s',strtotime('+ 1 hour'));
+                        DB::insert('insert into user_validate(result_code,openid,url,code,phone,expired,created_at) values(?,?,?,?,?,?,?)', [$result, $openid, "Qcode", $params,$phone,$expired,$time]);
+                        $re="短信发送成功";
+                        $type='qsms';
+                    }
+                } catch(\Exception $e) {
+                    echo var_dump($e);
                 }
-            } catch(\Exception $e) {
-                echo var_dump($e);
+
             }
+            else {
+                $re = "短信鉴权，需本人实名手机号！";
+            }
+
         }
         return json_encode(array("msg"=>$re,"type"=>$type));
     }

@@ -163,7 +163,6 @@
 
             weui.form.validate('#form1', function (error) {
                 if (!error) {
-                    settime(that);
                     $.ajax({
                         url: "{{route('Qcode.sms')}}",
                         type: 'get',
@@ -178,6 +177,7 @@
                             $("#smstype").val(re["type"]);
                             weui.toast(re["msg"], 3000);
                             if(re["msg"] == "短信发送成功"){
+                                settime(that);
                                 $("#name").attr("readonly","readonly");
                                 $("#cardNo").attr("readonly","readonly");
                                 $("#phone").attr("readonly","readonly");
