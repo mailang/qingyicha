@@ -305,7 +305,9 @@ class CreditController extends Controller
      */
    function success($id)
    {
-      return view('wechat.credit.success',compact('id'));
+       //直接跳转至报告页面
+      //return view('wechat.credit.success',compact('id'));
+      return redirect()->route('order.report',[$id]);
    }
    /*解析获取名下企业*/
    function getentname($output)

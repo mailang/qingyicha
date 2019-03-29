@@ -15,7 +15,7 @@
                 //weui.toast('提交成功', 3000);
             },
             error:function () {
-                weui.toast('服务出错', 3000);
+                weui.toast('服务出错', 5000);
             }
         });
     });

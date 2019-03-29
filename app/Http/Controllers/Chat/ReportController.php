@@ -70,7 +70,7 @@ class ReportController extends Controller
                 return view('wechat.report.report',compact('person','report'));
         }
         else
-            dd("无该订单的接口查询记录");
+            echo ("无该订单的接口查询记录");
 
     }
 
