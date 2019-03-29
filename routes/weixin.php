@@ -22,7 +22,7 @@ Route::get("/get/repay/{order_id}",['uses'=>"PayController@re_create",'as'=>'ord
 Route::get("/order/payback/{orderid}",['uses'=>"PayController@order_payback",'as'=>'order.payback']);//订单回调
 /*信用报告*/
 Route::get("/order/report/{id}",['uses'=>"ReportController@report",'as'=>'order.report']);
-Route::get("/{user_interface}",['uses'=>"InquiryController@apply",'as'=>'inquiry.apply']);
+Route::get("/inquiry/{user_interface}",['uses'=>"InquiryController@apply",'as'=>'inquiry.apply']);
 Route::post("/inquiry/order",['uses'=>"InquiryController@order_create",'as'=>'inquiry.order']);
 Route::get("/inquiry/payback/{user_interid}",['uses'=>"InquiryController@payback",'as'=>'inquiry.payback']);
 Route::get("/inquiry/check/{user_interid}",['uses'=>"InquiryController@check_inquiry",'as'=>'inquiry.check']);
