@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Chat;
 
-use App\Models\Person_attach;
+use App\Models\Interfaces;
 use App\Models\Product;
 use App\Http\Controllers\Controller;
 use App\Models\User_interface;
@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\DB;
 use App\Src;
 use App\Models\Wxuser;
 use App\Src\base;
+use App\Models\Person_attach;
 
 class InquiryController extends Controller
 {
@@ -18,30 +19,65 @@ class InquiryController extends Controller
      */
     function enterprise($id, $name, $page = 1)
     {
+        //pro_id为2是企业涉诉
         $order=DB::table('order')
             ->where('pid',$id)
             ->where('pro_id',2)
-            ->where('state',2)
             ->where('name',$name)
+            ->where('state','>',0)
             ->get();
+        $data=array("order_id"=>$id,"current"=>$page);
         if (count($order)>0)
         {
+            //存在已付款的该企业的涉诉详情，并取出要查询的页数
             $list = DB::table('user_interface')->leftJoin('interfaces', 'interfaces.id', '=', 'user_interface.interface_id')
                 ->where('order_id', $id)
                 ->where('user_interface.pagesize', $page)
                 ->where('name', $name)
                 ->where('interfaces.api_name', 'enterpriseLitigationInquiry')
                 ->get(['user_interface.id', "interface_id", "order_id", "auth_id", "openid", "result_code", "url", 'state', 'pagesize']);
-            $interface = $list->first();
-            $enterpriseLitigationInquiry = new Src\enterpriseLitigationInquiry();
-            $report = $enterpriseLitigationInquiry->inquiry_info($interface->id, $interface->result_code);
-            if ($report != null)
-                return view('wechat.inquiry.cominquiry', compact('report'));
+            if (count($list)>0)
+            { $interface = $list->first();
+                $enterpriseLitigationInquiry = new Src\enterpriseLitigationInquiry();
+                $report = $enterpriseLitigationInquiry->inquiry_info($interface->id, $interface->result_code);
+                if ($report != null)
+                    return view('wechat.inquiry.cominquiry', compact('report','data'));
+                else
+                    return '服务商请求数据异常,请联系服务商';
+            }
             else
-              return '服务商请求数据异常,请联系服务商';
+            {   //查询的页数还未抓取，调用易天下接口去抓取该页数据
+                $pram="?username=shbd&accessToken=40db8b4b95ac91ed6e905c80d45ebac5";
+                $baseurl="https://rip.linrico.com/enterpriseLitigationInquiry/result".$pram."&name=".urlencode($name);
+                $curl_url =  $baseurl . '&pageIndex=' . $page;
+                $base=new base();
+                $result_code=$base->get_curl($curl_url);
+                if ($result_code!="")
+                {
+                    $interfaces=Interfaces::where("api_name","enterpriseLitigationInquiry")->first();
+                    $data["interface_id"]=$interfaces->id;
+                    $data["order_id"]=$id;
+                    $data["openid"]=$_SESSION['wechat_user']['id'];
+                    $data["result_code"]=$result_code;
+                    $data["url"]=$curl_url;
+                    $data["state"]=1;
+                    $data["pagesize"]=$page;
+                    $data["name"]=$name;
+                    User_interface::create($data);
+                    $enterpriseLitigationInquiry = new Src\enterpriseLitigationInquiry();
+                    $report = $enterpriseLitigationInquiry->inquiry_info($interfaces->id, $result_code);
+                    if ($report != null)
+                        return view('wechat.inquiry.cominquiry', compact('report','data'));
+                    else
+                        return '服务商请求数据异常,请联系服务商';
+                }
+                else
+                    return '服务商请求链接异常,请联系服务商';
+
+            }
         }
         else {
-            //没有购买，购买下一页的查询数据
+            //没有购买，购买详情的查询数据
              $user_interface=DB::table('user_interface')->leftJoin('interfaces', 'interfaces.id', '=', 'user_interface.interface_id')
                 ->where('order_id', $id)
                 ->where('user_interface.pagesize', 1)
@@ -61,23 +97,58 @@ class InquiryController extends Controller
     {
         $order=DB::table('order')
             ->where('pid',$id)
-            ->where('pro_id',2)
+            ->where('pro_id',3)
             ->where('name',$name)
-            ->where('state',2)
+            ->where('state','>',0)
             ->get();
+        $data=array("order_id"=>$id,"current"=>$page);
         if (count($order)>0) {
             $list = DB::table('user_interface')->leftJoin('interfaces', 'interfaces.id', '=', 'user_interface.interface_id')
                 ->where('order_id', $id)
                 ->where('user_interface.pagesize', $page)
                 ->where('interfaces.api_name', 'personalComplaintInquiry')
                 ->get(['user_interface.id', "interface_id", "order_id", "auth_id", "openid", "result_code", "url", 'state', 'pagesize']);
-                $interface = $list->first();
-                $personalComplaintInquiry = new Src\personalComplaintInquiry();
-                $report = $personalComplaintInquiry->inquiry_info($interface->id, $interface->result_code);
-                if ($report != null)
-                    return view('wechat.inquiry.persoinquiry', compact('report'));
-                else
-                   return '服务商请求数据异常,请联系服务商';
+               if (count($list)>0)
+               {
+                   $interface = $list->first();
+                   $personalComplaintInquiry = new Src\personalComplaintInquiry();
+                   $report = $personalComplaintInquiry->inquiry_info($interface->id, $interface->result_code);
+                   if ($report != null)
+                       return view('wechat.inquiry.persoinquiry', compact('report','data'));
+                   else
+                       return '服务商请求数据异常,请联系服务商';
+               }
+               else
+               {
+                   //查询的页数还未抓取，调用易天下接口去抓取该页数据
+                   $pram="?username=shbd&accessToken=40db8b4b95ac91ed6e905c80d45ebac5";
+                   $attach=Person_attach::where('order_id',$id)->first();
+                   $baseurl="https://rip.linrico.com/personalComplaintInquiry/result".$pram."&name=".urlencode($name)."&idCard=".$attach->cardNo;
+                   $curl_url =  $baseurl . '&pageIndex=' . $page;
+                   $base=new base();
+                   $result_code=$base->get_curl($curl_url);
+                   if ($result_code!="")
+                   {
+                       $interfaces=Interfaces::where("api_name","enterpriseLitigationInquiry")->first();
+                       $data["interface_id"]=$interfaces->id;
+                       $data["order_id"]=$id;
+                       $data["openid"]=$_SESSION['wechat_user']['id'];
+                       $data["result_code"]=$result_code;
+                       $data["url"]=$curl_url;
+                       $data["state"]=1;
+                       $data["pagesize"]=$page;
+                       $data["name"]=$name;
+                       User_interface::create($data);
+                       $personalComplaintInquiry = new Src\personalComplaintInquiry();
+                       $report = $personalComplaintInquiry->inquiry_info($interfaces->id, $result_code);
+                       if ($report != null)
+                           return view('wechat.inquiry.cominquiry', compact('report','data'));
+                       else
+                           return '服务商请求数据异常,请联系服务商';
+                   }
+                   else
+                       return '服务商请求链接异常,请联系服务商';
+               }
         }
         else {
             //没有购买，购买下一页的查询数据
@@ -161,14 +232,17 @@ class InquiryController extends Controller
         $user_interface=User_interface::find($user_interid);
         return view('wechat.inquiry.payback',compact('user_interface'));
     }
-    /*抓取所有页数的涉诉情况*/
+    /*用户购买查看详情页数，付款成功后默认给查看第一页，
+    *存在其他页用户点击后才抓取查看其他页
+    */
     function check_inquiry($user_interid)
     {
+        $re="";
         //没有购买，购买下一页的查询数据
         $interface=DB::table('user_interface')->leftJoin('interfaces', 'interfaces.id', '=', 'user_interface.interface_id')
             ->where('user_interface.id', $user_interid)
             ->get(['user_interface.id','user_interface.name', "interface_id", "order_id", "api_name","url", "result_code", 'state', 'pagesize'])->first();
-        if ($interface->api_name=="personalComplaintInquiry")
+        if ($interface)
        {
            $order=DB::table('order')
                ->where('pid',$interface->order_id)
@@ -176,98 +250,10 @@ class InquiryController extends Controller
                ->where('name',$interface->name)
                ->where('state',1)
                ->get()->first();
-           if ($order) {
-               $personalComplaintInquiry = new Src\personalComplaintInquiry();
-               $report = $personalComplaintInquiry->inquiry_info($interface->id, $interface->result_code);
+           if (!$order) {
+              $re="不存在已付款的订单";
            }
        }
-       else
-       {
-           $order=DB::table('order')
-               ->where('pid',$interface->order_id)
-               ->where('pro_id',2)
-               ->where('name',$interface->name)
-               ->where('state',1)
-               ->get()->first();
-           if ($order)
-           {
-               $enterpriseLitigationInquiry = new Src\enterpriseLitigationInquiry();
-               $report = $enterpriseLitigationInquiry->inquiry_info($interface->id, $interface->result_code);
-           }
-       }
-       if (isset($report))
-       {
-           $total=$report["pagination"]->totalPage;
-           $pram="?username=shbd&accessToken=40db8b4b95ac91ed6e905c80d45ebac5";
-           $baseurl="https://rip.linrico.com/enterpriseLitigationInquiry/result".$pram."&name=".urlencode($interface->name);
-           if ($interface->api_name=="personalComplaintInquiry")
-           {
-               $attach=Person_attach::where('order_id',$interface->order_id)->first();
-               $baseurl="https://rip.linrico.com/personalComplaintInquiry/result".$pram."&name=".urlencode($interface->name)."&idCard=".$attach->cardNo;
-           }
-           if ($total>1) {
-               $j = 0;
-               for ($i = 2; $i <=$total; $i++) {
-                   $curl_url =  $baseurl . '&pageIndex=' . $i;
-                   $chArr[$j] = curl_init();
-                   curl_setopt($chArr[$j], CURLOPT_URL, $curl_url);
-                   curl_setopt($chArr[$j], CURLOPT_RETURNTRANSFER, 1);
-                   //curl_setopt($chArr[$i], CURLOPT_HEADER, 1);
-                   curl_setopt($chArr[$j], CURLOPT_HTTPHEADER, array("Content-type: application/json;charset='utf-8'"));
-                   curl_setopt($chArr[$j], CURLOPT_SSL_VERIFYPEER, FALSE); // https请求 不验证证书和hosts
-                   curl_setopt($chArr[$j], CURLOPT_SSL_VERIFYHOST, FALSE);
-                   curl_setopt($chArr[$j], CURLOPT_TIMEOUT, 5);
-                   $j++;
-               }
-               $mh = curl_multi_init(); //1 创建批处理cURL句柄
-               foreach ($chArr as $k => $ch) {
-                   curl_multi_add_handle($mh, $ch); //2 增加句柄
-               }
-               $active = null;
-               do {
-                   while (($mrc = curl_multi_exec($mh, $active)) == CURLM_CALL_MULTI_PERFORM) ;
-                   if ($mrc != CURLM_OK) {
-                       break;
-                   }
-                   // a request was just completed -- find out which one
-                   while ($done = curl_multi_info_read($mh)) {
-                       //get the info and content returned on the request
-                       $info = curl_getinfo($done['handle']);
-                       $error = curl_error($done['handle']);
-                       $result = curl_multi_getcontent($done['handle']);//链接返回值；
-                       $parse = parse_url($info['url']);
-                       $base = new Src\base();
-                       if (isset($parse["query"])){
-                           $params = $base->convertUrlQuery($parse["query"]);
-                           $inter["name"] = isset($params["name"]) ? urldecode($params["name"]) : isset($params["key"])?urldecode($params["key"]):"";
-                           $inter["pagesize"] = isset($params["pageNum"]) ? $params["pageNum"] : isset($params["pageIndex"]) ? $params["pageIndex"] : 0;
-                       }
-                       $inter["interface_id"] = $interface->interface_id;
-                       $inter["order_id"] = $interface->order_id;
-                       //$inter["auth_id"]=$auth['id'];
-                       $inter["openid"] = $_SESSION['wechat_user']['id'];;
-                       $inter["result_code"] = $result;
-                       $inter["url"] = $info['url'];
-                       User_interface::create($inter);
-                       //remove the curl handle that just completed
-                       curl_multi_remove_handle($mh, $done['handle']);
-                       curl_close($done['handle']);
-                   }
-                   if ($active > 0) {
-                       curl_multi_select($mh);
-                   }
-               } while ($active);
-               curl_multi_close($mh); //7 关闭全部句柄
-           }
-           DB::table('order')
-               ->where('id', $order->id)
-               ->update(['state' => 2]);//订单状态值改变
-            return "";
-       }
-       else
-       {
-           return "不存在已付款的订单";
-       }
-
+       return $re;
     }
 }

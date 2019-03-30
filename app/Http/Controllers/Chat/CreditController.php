@@ -180,7 +180,7 @@ class CreditController extends Controller
                     $parse=parse_url($info['url']);
                     $api_name=explode('/',$parse["path"])[1];
                     $params=$this->convertUrlQuery($parse["query"]);
-                    if (in_array($api_name,$apis))
+                    if (isset($params["name"])||$params["key"])
                     {$inter["name"]=isset($params["name"])?urldecode($params["name"]):urldecode($params["key"]);}
                     if (isset($params["pageNum"])||isset($params["pageIndex"]))
                     {$inter["pagesize"]=isset($params["pageNum"])?$params["pageNum"]:(isset($params["pageIndex"])?$params["pageIndex"]:0);}

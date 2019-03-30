@@ -47,11 +47,11 @@ body{height: 100%;overflow-y: auto;  background: #eee;font-family: Helvetica Neu
 .pager{font-size: 14px}
 .pager:after{clear: both;}
 .pager:after, .pager:before {display: table;content: " "; }
-.pager-left {width: 40%;border: 0px solid #D5D5D5;text-align: center;background-color: #fff;border-radius: 5px;float: left;}
-.pager-cen {float: left;width: 19%;text-align: center;padding: 7px 0;}
-.pager-right {width: 40%;border: 0px solid #D5D5D5;text-align: center;background-color: #fff;border-radius: 5px;float: right;}
-.pager-first {width: 44%;padding: 7px 0;float: left;border-right: 1px solid #EFEFEF;}
-.pager-pre {width: 55%;padding: 7px 0;float: right;}
-.pager-next {width: 55%;padding: 7px 0;float: left;border-right: 1px solid #EFEFEF;}
-.pager-end {width: 44%;padding: 7px 0;float: right;}
+.pager-left {border: 0px solid #D5D5D5;text-align: center;background-color: #fff;border-radius: 5px;float: left;}
+.pager-cen {float: left;text-align: center;padding: 7px 0;}
+.pager-right {border: 0px solid #D5D5D5;text-align: center;background-color: #fff;border-radius: 5px;float: left;}
+.pager-first {padding: 7px 0;float: left;border-right: 1px solid #EFEFEF;}
+.pager-pre {padding: 7px 0;float: right;}
+.pager-next {padding: 7px 0;float: left;border-right: 1px solid #EFEFEF;}
+.pager-end {padding: 7px 0;float: right; }
 .page_div {margin-top: 20px;margin-bottom: 20px;font-size: 15px;font-family: "microsoft yahei";color: #666666;margin-right: 10px;padding-left: 20px;box-sizing: border-box;}

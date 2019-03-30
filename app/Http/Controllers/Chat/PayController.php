@@ -65,6 +65,9 @@ class PayController extends Controller
                 $data["name"]=$name;
                 $data["cardNo"]=$idCard;
                 $data["phone"]=$phone;
+                $data["phone"]=$phone;
+                $data["created_at"]=$time;
+                $data["updated_at"]=$time;
                 $id=DB::table('authorization')->insertGetId($data);
                 $re["state"]=1;$re["msg"]="";
             }

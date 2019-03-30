@@ -274,17 +274,28 @@
                     @break;
                 @endswitch
             @endforeach
+        @if($report["pagination"]!=null)
+                <div class="weui-cell">
                 <div class="font14">
+                    <div class="pager-cen" style="color: #0f9ae0; font-size: 8px;">当前页<span style="color:black">{{$data["current"]}}</span>总页数<span style="color:black">{{$report["pagination"]->totalPage}}</span></div>
                     <div class="pager-left">
-                        <div class="pager-first"><a class="pager-nav">首页</a></div>
-                        <div class="pager-pre"><a class="pager-nav">上一页</a></div>
+                        @if($data["current"]>1)
+                        <div class="pager-pre"><a class="pager-nav" href="{{route('enterprise.inquiry',array('id'=>$data["order_id"],'name'=>$report["name"],'page'=>--$data["current"]))}}">上一页</a></div>
+                        @else
+                            <div class="pager-next">上一页</div>
+                        @endif
                     </div>
-                    <div class="pager-cen">1/120</div>
                     <div class="pager-right">
-                        <div class="pager-next"><a class="pager-nav">下一页</a></div>
-                        <div class="pager-end"><a class="pager-nav">尾页</a></div>
+                        @if($data["current"]<$report["pagination"]->totalPage)
+                        <div class="pager-next"><a class="pager-nav" href="{{route('enterprise.inquiry',array('id'=>$data["order_id"],'name'=>$report["name"],'page'=>++$data["current"]))}}">下一页</a></div>
+                      @else
+                            <div class="pager-next">下一页</div>
+                        @endif
                     </div>
+                    <div class="pager-end"><span style="padding-left: 2px"><input id="num" type="number" style="width:3em;line-height: 2.3;margin: 0 0.5em;" required></span><span><a  href="javaScript:void(0)" onclick="javascript:tiaozhuan();" class="weui-btn_mini weui-btn_plain-primary">跳转</a></span></div>
                 </div>
+                </div>
+            @endif
         @else
             <div class="weui-cell">
                 <div>未查询到相关涉诉记录</div>
@@ -292,5 +303,20 @@
         @endif
     </div></section>
 @include('wechat.layouts.footer')
+<script>
+function tiaozhuan() {
+    var num=$("#num").val();
+     var total="{{$report["pagination"]->totalPage}}";
+     if (num>0&&num<=total)
+     {
+         var url="{{route('enterprise.inquiry',array('id'=>$data["order_id"],'name'=>$report["name"]))}}";
+         location.href=url+"/"+num;
+     }
+     else
+     {  if(num>total)weui.toast('跳转页超出范围');
+        if(num<1) weui.toast('跳转页不合法');
+     }
+}
+</script>
 </body>
 </html>
