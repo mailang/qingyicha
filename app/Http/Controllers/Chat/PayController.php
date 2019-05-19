@@ -27,7 +27,7 @@ class PayController extends Controller
     /*获取短信认证的验证码*/
     function  ytx_code($name,$idCard,$phone)
     {
-        $path='https://rip.linrico.com/userAuthorization/addSMS?';
+        $path=env('domain')."/userAuthorization/addSMS?";
         $prams='username=shbd&accessToken=40db8b4b95ac91ed6e905c80d45ebac5'."&name=".$name.'&idCard='.$idCard."&phone=".$phone;
         $url=$path.$prams;
         $base=new base();
@@ -43,7 +43,7 @@ class PayController extends Controller
     /*存储验证码验证存储*/
     function ytx_store($name,$idCard,$phone,$telcode)
     {
-        $path='https://rip.linrico.com/userAuthorization/input?';
+        $path=env('domain')."/userAuthorization/input?";
         //用户验证成功
         $prams='username=shbd&accessToken=40db8b4b95ac91ed6e905c80d45ebac5'."&name=".urlencode($name).'&idCard='.urlencode($idCard)."&phone=".urlencode($phone)."&securityCode=".urlencode($telcode);
         $url=$path.$prams;

@@ -208,7 +208,7 @@ class CreditController extends Controller
   /*获取短信认证的验证码*/
   function  validate_code()
   {
-        $path='https://rip.linrico.com/userAuthorization/addSMS?';
+        $path=env('domain')."/userAuthorization/addSMS?";
         $name=urlencode($_GET["name"]);
         $idCard=urlencode($_GET["cardNo"]);
         $phone=urlencode($_GET["phone"]);
@@ -227,7 +227,7 @@ class CreditController extends Controller
   /*存储*/
   function validate_store()
   {
-      $path='https://rip.linrico.com/userAuthorization/input?';
+      $path=env('domain')."/userAuthorization/input?";
       $name=$_POST["name"];
       $idCard=$_POST["cardNo"];
       $phone=$_POST["phone"];
@@ -273,29 +273,30 @@ class CreditController extends Controller
    */
    function  init_url($user,$auth,$api_name)
    {
-       $url="";
+       $url="";//https://rip.linrico.com/
        $pram="?username=shbd&accessToken=40db8b4b95ac91ed6e905c80d45ebac5";
+       $domain=env('domain');
        $name=urlencode($auth["name"]);
        $idCard=urlencode($auth["cardNo"]);
        $phone=urlencode($auth["phone"]);
       switch ($api_name)
       {
-          case "multipleLoanQuery";$url="https://rip.linrico.com/multipleLoanQuery/result".$pram."&mobile=".$phone;break;
-          case "personalComplaintInquiry";$url="https://rip.linrico.com/personalComplaintInquiry/result".$pram."&name=".$name."&idCard=".$idCard.'&pageIndex=1'; break;
-          case "personalEnterprise";$url="https://rip.linrico.com/personalEnterprise/result".$pram."&key=".$idCard; break;
-          case "businessData";if ($user['entname']!="")$url="https://rip.linrico.com/businessData/result".$pram."&key=".urlencode($user['entname'])."&keyType=1";else {if ($user['creditCode']!="")$url="https://rip.linrico.com/businessData/result".$pram."&key=".urlencode($user['creditCode'])."&keyType=2";} break;
-          case "enterpriseLitigationInquiry";if ($user['entname']!="") $url="https://rip.linrico.com/enterpriseLitigationInquiry/result".$pram."&name=".urlencode($user['entname']).'&pageIndex=1';break;
-          case "thePhoneIsOnTheInternet"; $url="https://rip.linrico.com/thePhoneIsOnTheInternet/result".$pram."&phone=".$phone;break;
-          case "mobileConsumptionLevel";$url="https://rip.linrico.com/mobileConsumptionLevel/result".$pram."&phone=".$phone;break;
-          case "bankCardFourElements";if ($user['bankcard']!="")$url="https://rip.linrico.com/bankCardFourElements/result".$pram."&name=".$name."&idNumber=".$idCard."&bankCard=".urlencode($user['bankcard'])."&mobile=".$phone; break;
-          case  "personSubjectToEnforcementHJ":if($user['entname']!="")$url="https://rip.linrico.com/personSubjectToEnforcementHJ/result".$pram."&name=".urlencode($user['entname'])."&pageNum=1";break;
-          case  "administrativePenaltyInformationHJ":if($user['entname']!="")$url="https://rip.linrico.com/administrativePenaltyInformationHJ/result".$pram."&name=".urlencode($user['entname'])."&pageNum=1";break;
-          case  "abnormalBusinessOperationHJ":if($user['entname']!="")$url="https://rip.linrico.com/abnormalBusinessOperationHJ/result".$pram."&name=".urlencode($user['entname'])."&pageNum=1";break;
-          case  "businessBrokenPromisesHJ":$url="https://rip.linrico.com/businessBrokenPromisesHJ/result".$pram."&name=".urlencode($user['entname'])."&pageNum=1";break;
-          case  "corporateLawHJ":$url="https://rip.linrico.com/corporateLawHJ/result".$pram."&name=".urlencode($user['entname'])."&pageNum=1";break;
-          case  "inTheNetworkTime":$url="https://rip.linrico.com/inTheNetworkTime/result".$pram."&mobile=".$phone; break;
-          case "basicInformationOfTheEnterpriseHJ": if($user['entname']!="")$url="https://rip.linrico.com/basicInformationOfTheEnterpriseHJ/result".$pram."&name=".urlencode($user['entname']);break;
-          case  "operatorThreeElements": $url="https://rip.linrico.com/operatorThreeElements/result".$pram."&name=".$name."&mobile=".$phone."&idNumber=".$idCard;break;
+          case "multipleLoanQuery";$url=$domain."/multipleLoanQuery/result".$pram."&mobile=".$phone;break;
+          case "personalComplaintInquiry";$url=$domain."/personalComplaintInquiry/result".$pram."&name=".$name."&idCard=".$idCard.'&pageIndex=1'; break;
+          case "personalEnterprise";$url=$domain."/personalEnterprise/result".$pram."&key=".$idCard; break;
+          case "businessData";if ($user['entname']!="")$url=$domain."/businessData/result".$pram."&key=".urlencode($user['entname'])."&keyType=1";else {if ($user['creditCode']!="")$url="https://rip.linrico.com/businessData/result".$pram."&key=".urlencode($user['creditCode'])."&keyType=2";} break;
+          case "enterpriseLitigationInquiry";if ($user['entname']!="") $url=$domain."/enterpriseLitigationInquiry/result".$pram."&name=".urlencode($user['entname']).'&pageIndex=1';break;
+          case "thePhoneIsOnTheInternet"; $url=$domain."/thePhoneIsOnTheInternet/result".$pram."&phone=".$phone;break;
+          case "mobileConsumptionLevel";$url=$domain."/mobileConsumptionLevel/result".$pram."&phone=".$phone;break;
+          case "bankCardFourElements";if ($user['bankcard']!="")$url=$domain."/bankCardFourElements/result".$pram."&name=".$name."&idNumber=".$idCard."&bankCard=".urlencode($user['bankcard'])."&mobile=".$phone; break;
+          case  "personSubjectToEnforcementHJ":if($user['entname']!="")$url=$domain."/personSubjectToEnforcementHJ/result".$pram."&name=".urlencode($user['entname'])."&pageNum=1";break;
+          case  "administrativePenaltyInformationHJ":if($user['entname']!="")$url=$domain."/administrativePenaltyInformationHJ/result".$pram."&name=".urlencode($user['entname'])."&pageNum=1";break;
+          case  "abnormalBusinessOperationHJ":if($user['entname']!="")$url=$domain."/abnormalBusinessOperationHJ/result".$pram."&name=".urlencode($user['entname'])."&pageNum=1";break;
+          case  "businessBrokenPromisesHJ":$url=$domain."/businessBrokenPromisesHJ/result".$pram."&name=".urlencode($user['entname'])."&pageNum=1";break;
+          case  "corporateLawHJ":$url=$domain."/corporateLawHJ/result".$pram."&name=".urlencode($user['entname'])."&pageNum=1";break;
+          case  "inTheNetworkTime":$url=$domain."/inTheNetworkTime/result".$pram."&mobile=".$phone; break;
+          case "basicInformationOfTheEnterpriseHJ": if($user['entname']!="")$url=$domain."/basicInformationOfTheEnterpriseHJ/result".$pram."&name=".urlencode($user['entname']);break;
+          case  "operatorThreeElements": $url=$domain."/operatorThreeElements/result".$pram."&name=".$name."&mobile=".$phone."&idNumber=".$idCard;break;
           default :break;
       }
     return $url;

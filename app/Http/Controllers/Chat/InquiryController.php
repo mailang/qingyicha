@@ -48,7 +48,7 @@ class InquiryController extends Controller
             else
             {   //查询的页数还未抓取，调用易天下接口去抓取该页数据
                 $pram="?username=shbd&accessToken=40db8b4b95ac91ed6e905c80d45ebac5";
-                $baseurl="https://rip.linrico.com/enterpriseLitigationInquiry/result".$pram."&name=".urlencode($name);
+                $baseurl=env('domain')."/enterpriseLitigationInquiry/result".$pram."&name=".urlencode($name);
                 $curl_url =  $baseurl . '&pageIndex=' . $page;
                 $base=new base();
                 $result_code=$base->get_curl($curl_url);
@@ -123,7 +123,7 @@ class InquiryController extends Controller
                    //查询的页数还未抓取，调用易天下接口去抓取该页数据
                    $pram="?username=shbd&accessToken=40db8b4b95ac91ed6e905c80d45ebac5";
                    $attach=Person_attach::where('order_id',$id)->first();
-                   $baseurl="https://rip.linrico.com/personalComplaintInquiry/result".$pram."&name=".urlencode($name)."&idCard=".$attach->cardNo;
+                   $baseurl=env('domain')."/personalComplaintInquiry/result".$pram."&name=".urlencode($name)."&idCard=".$attach->cardNo;
                    $curl_url =  $baseurl . '&pageIndex=' . $page;
                    $base=new base();
                    $result_code=$base->get_curl($curl_url);
